@@ -45,9 +45,13 @@ From **Git Settings** in [app.mintlify.com](https://app.mintlify.com):
 | Branch | `main` |
 | Subdirectory | off (`docs.json` at repo root) |
 
-The GitHub App is **Active** on the org. Pushes to `Fluid-Technologies/docs` `main` trigger deploys. **Free plan — no API keys.**
+The GitHub App is **Active** on the org. **Free plan — no API keys.**
 
-If deploy does not run, use the dashboard **Deploy** button ([manual deploy](https://www.mintlify.com/docs/deploy/deployments)).
+<Warning>
+A `git push` to `docs` does **not** always trigger a build. Mintlify may only auto-deploy when an **editor or admin** merges via the web editor. Direct pushes (local or CI) often require a **manual Deploy** from the dashboard. See [deployment permissions](https://www.mintlify.com/docs/dashboard/permissions).
+</Warning>
+
+If Activity shows the last deploy was days ago while GitHub has newer commits, click **Deploy** / trigger a manual update ([manual deploy](https://www.mintlify.com/docs/deploy/deployments)).
 
 ## Publishing flow
 
@@ -120,7 +124,9 @@ Set `NEXT_PUBLIC_DOCS_URL` in production to the Mintlify docs URL (not `/docs` o
 | --- | --- |
 | Live site still shows Mintlify starter | Run sync + push to `Fluid-Technologies/docs` |
 | FluideConnect merge did not update docs | Check `DOCS_REPO_PAT` on FluideConnect; review **Publish to Fluid-Technologies/docs** job |
-| Push to docs did not deploy | Confirm GitHub App has access to `docs` repo; click **Deploy** in dashboard |
+| Push to docs did not deploy | **Expected** for non-editor pushes — click **Deploy** in dashboard; confirm you are Mintlify **admin/editor** |
+| Activity stuck on old "Manual Update" | Trigger new **Deploy**; revalidate Git Settings (green checkmark); check GitHub **Webhooks** on `docs` repo |
+| Preview unavailable | Usually follows a failed or stale build — redeploy and check Activity log for errors |
 | OpenAPI stale | `node export-openapi.mjs` before sync |
 
 ## Related

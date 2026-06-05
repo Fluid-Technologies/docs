@@ -1,72 +1,131 @@
 ---
 title: Auth quickstart
-description: Install, configure, and run fluide-auth locally.
+description: Exchange developer credentials for a JWT and verify your integration is authorized.
 ---
 
 # Auth quickstart
 
-<Steps>
-  <Step title="Clone and install">
-    ```bash
-    git clone https://github.com/Fluid-Technologies/FluideAuth.git
-    cd FluideAuth
-    pnpm install
-    ```
-  </Step>
-  <Step title="Configure environment">
-    ```bash
-    cp .env.example .env
-    ```
+Get authorized in a few minutes. This guide assumes you already have API credentials from the Connect dashboard (**API Keys**). It does not cover running `fluide-auth` locally — that is internal platform operations.
 
-    Set at minimum:
+<Note>
+New to Fluide Connect? Complete email verification in the dashboard first. Your `apiKey` and one-time `apiSecret` are provisioned automatically.
+</Note>
 
-    - `DATABASE_URL` — PostgreSQL connection string
-    - `BETTER_AUTH_SECRET` — min 32 characters
-    - `KAFKA_BROKERS` — for email jobs (or disable if testing without mail)
-  </Step>
-  <Step title="Apply migrations">
-    ```bash
-    pnpm run db:migrate
-    ```
+## Prerequisites
 
-    Migrations also run on app bootstrap unless `DB_SKIP_MIGRATE_ON_BOOT=true`.
-  </Step>
-  <Step title="Start the API">
-    ```bash
-    pnpm run start:dev
-    ```
+| Variable | Example |
+| --- | --- |
+| `FLUIDE_BASE_URL` | `https://staging.api.fluidehr.com` |
+| `FLUIDE_API_KEY` | `fl_dev_...` |
+| `FLUIDE_API_SECRET` | From Connect at provisioning (store in a secret manager) |
 
-    API: `http://localhost:3000` (global prefix `/api`).
-  </Step>
-  <Step title="Developer token exchange (optional)">
-    After a developer account verifies email, exchange API credentials:
+See [Environments](/getting-started/environments) for staging vs production base URLs.
 
-    ```bash
-    curl -X POST "http://localhost:3000/api/v1/developer-access/token" \
-      -H "X-Fluide-Api-Key: fl_dev_..." \
-      -H "X-Fluide-Api-Secret: YOUR_SECRET" \
-      -H "X-Fluide-Client-Id: fluide-developer"
-    ```
+## 1. Exchange credentials for a JWT
 
-    Use the returned `accessToken` with `X-Fluide-Api-Key` on gateway calls. See [Authentication](/getting-started/authentication).
-  </Step>
-  <Step title="Optional: Postman">
-    Import `fluide-auth.postman_collection.json`. Set `baseUrl` and `Origin` header (required by Better Auth).
-  </Step>
-</Steps>
+Send your API key and secret **only** to the token endpoint. Never include the secret on product routes.
 
-## Bootstrap super admin
+<CodeGroup>
 
-```bash
-EMAIL=admin@example.com pnpm run bootstrap:super-admin
+```bash curl
+export FLUIDE_BASE_URL="https://staging.api.fluidehr.com"
+
+curl -X POST "$FLUIDE_BASE_URL/api/v1/developer-access/token" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Api-Secret: $FLUIDE_API_SECRET" \
+  -H "X-Fluide-Client-Id: fluide-developer"
 ```
 
-Requires `DATABASE_URL` and an existing user with that email.
+```javascript Node.js
+const baseUrl = process.env.FLUIDE_BASE_URL ?? 'https://staging.api.fluidehr.com';
 
-## Docker
+const res = await fetch(`${baseUrl}/api/v1/developer-access/token`, {
+  method: 'POST',
+  headers: {
+    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY!,
+    'X-Fluide-Api-Secret': process.env.FLUIDE_API_SECRET!,
+    'X-Fluide-Client-Id': 'fluide-developer',
+  },
+});
 
-```bash
-docker compose up -d
+if (!res.ok) throw new Error(`Token exchange failed: ${await res.text()}`);
+const { accessToken, exp } = await res.json();
 ```
 
-Uses `.env` for secrets; set `DATABASE_URL` host to `postgres` and `REDIS_HOST=redis` inside Compose.
+</CodeGroup>
+
+Save `accessToken` and refresh before `exp`. The API secret is used **only** for this call.
+
+## 2. Confirm your developer session
+
+With a valid token, fetch credential metadata (no secret is returned):
+
+<CodeGroup>
+
+```bash curl
+curl -X GET "$FLUIDE_BASE_URL/api/v1/developer-access/current" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Client-Id: fluide-developer"
+```
+
+```javascript Node.js
+const res = await fetch(`${baseUrl}/api/v1/developer-access/current`, {
+  headers: {
+    Authorization: `Bearer ${accessToken}`,
+    'X-Fluide-Client-Id': 'fluide-developer',
+  },
+});
+
+if (!res.ok) throw new Error(`Current credentials failed: ${await res.text()}`);
+const credentials = await res.json();
+```
+
+</CodeGroup>
+
+## 3. Call a product API
+
+Every product request needs **both** the Bearer token and your API key:
+
+<CodeGroup>
+
+```bash curl
+curl -X GET "$FLUIDE_BASE_URL/api/v1/hr/health" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer"
+```
+
+```javascript Node.js
+const res = await fetch(`${baseUrl}/api/v1/hr/health`, {
+  headers: {
+    Authorization: `Bearer ${accessToken}`,
+    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY!,
+    'X-Fluide-Client-Id': 'fluide-developer',
+  },
+});
+
+if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
+```
+
+</CodeGroup>
+
+<Warning>
+Do not send `X-Fluide-Api-Secret` on HR, payroll, payments, or other product routes.
+</Warning>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Authentication guide" icon="key" href="/getting-started/authentication">
+    Full token exchange, rotation, and header reference.
+  </Card>
+  <Card title="First request" icon="rocket" href="/getting-started/first-request">
+    End-to-end walkthrough with caching and error handling.
+  </Card>
+  <Card title="Auth API reference" icon="code" href="/api-reference/auth">
+    OpenAPI operations for developer access and health checks.
+  </Card>
+  <Card title="Auth overview" icon="book" href="/auth/overview">
+    Credential lifecycle and how auth fits the gateway.
+  </Card>
+</CardGroup>

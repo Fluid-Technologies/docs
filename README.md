@@ -13,4 +13,4 @@ cd /path/to/docs-checkout && git add -A && git commit && git push
 
 CI in FluideConnect runs export + publish on merge to `main` when `DOCS_REPO_PAT` is configured.
 
-Last sync source: FluideConnect @ 2026-06-05T11:38:37.697Z
+Last sync source: FluideConnect @ 2026-06-05T11:59:50.438Z
