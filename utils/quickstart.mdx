@@ -1,0 +1,82 @@
+---
+title: Utils quickstart
+description: Send a notification or generate a document through the Utils API.
+---
+
+# Utils quickstart
+
+**Fluide Utils** handles cross-cutting tasks your integration may need alongside HR, Payroll, Pay, or Books: notifications, file storage, and document generation.
+
+## Prerequisites
+
+Developer credentials and access token — [Authentication](/getting-started/authentication).
+
+## 1. Verify connectivity
+
+<CodeGroup>
+
+```bash curl
+curl -X GET "$FLUIDE_BASE_URL/api/v1/app" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer"
+```
+
+```javascript Node.js
+const res = await fetch(`${baseUrl}/api/v1/app`, {
+  headers: {
+    Authorization: `Bearer ${accessToken}`,
+    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY!,
+    'X-Fluide-Client-Id': 'fluide-developer',
+  },
+});
+
+if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
+```
+
+</CodeGroup>
+
+## 2. List notifications
+
+<CodeGroup>
+
+```bash curl
+curl -X GET "$FLUIDE_BASE_URL/api/v1/app/notifications" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer"
+```
+
+```javascript Node.js
+const res = await fetch(`${baseUrl}/api/v1/app/notifications`, {
+  headers: {
+    Authorization: `Bearer ${accessToken}`,
+    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY!,
+    'X-Fluide-Client-Id': 'fluide-developer',
+  },
+});
+
+if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
+```
+
+</CodeGroup>
+
+## Common use cases
+
+| Need | Module | Example |
+| --- | --- | --- |
+| In-app alert after payroll | Notifications | `POST /api/v1/app/notifications` |
+| Store an uploaded file | File Management | `POST /api/v1/app/files` |
+| Payslip or invoice PDF | Documents | `POST /api/v1/app/documents/payslips` |
+| Long-running export | Document Jobs | Create job, poll status |
+
+See [Utils modules](/utils/modules) and [Utils API reference](/api-reference/utils) for request shapes and response fields.
+
+<CardGroup cols={2}>
+  <Card title="Utils overview" icon="wrench" href="/utils/overview">
+    When to call Utils from other products.
+  </Card>
+  <Card title="Utils API reference" icon="code" href="/api-reference/utils">
+    Browse and try Utils endpoints.
+  </Card>
+</CardGroup>

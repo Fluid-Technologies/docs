@@ -1,29 +1,33 @@
 ---
 title: Pay overview
-description: FluidePay payments and wallet microservice.
+description: Digital wallets, transactions, and payment integrations.
 ---
 
 # Pay overview
 
-**FluidePay** provides digital wallets, transactions, and integrations with external payment providers (Ecobank, mobile money).
+**Fluide Pay** provides digital wallets, ledger transactions, and integrations with external payment providers.
 
-## Base URL
+## Base path
 
-All payments endpoints are under:
+`/api/v1/payments/*`
 
-- `/api/v1/payments/*`
+Authenticate with your developer credentials — see [Authentication](/getting-started/authentication).
 
-Authenticate using developer keys described in [authentication](/getting-started/authentication).
+## What you can build
 
-## Wallet types
+| Area | Description |
+| --- | --- |
+| Wallets | PRIMARY, SAVINGS, ESCROW, and other account types |
+| Transactions | Transfers, deposits, and payment lifecycle |
+| Providers | Ecobank, mobile money, and other supported rails |
 
-Accounts support types such as **PRIMARY**, **SAVINGS**, and **ESCROW** (see Swagger for full enum).
-
-## Async processing
-
-Transactions may be processed via **Kafka** for reliability. Metrics are exposed at `/metrics`.
+Some transactions complete asynchronously. Poll status endpoints or use webhooks where your integration supports them — see [Pay API reference](/api-reference/pay).
 
 <CardGroup cols={2}>
-  <Card title="API reference" icon="code" href="/api-reference" />
-  <Card title="First workflow" icon="rocket" href="/api-reference" />
+  <Card title="Pay quickstart" icon="rocket" href="/pay/quickstart">
+    Verify access and list wallets.
+  </Card>
+  <Card title="Pay API reference" icon="code" href="/api-reference/pay">
+    Endpoints, schemas, and interactive playground.
+  </Card>
 </CardGroup>

@@ -1,36 +1,34 @@
 ---
 title: Auth overview
-description: Developer onboarding, token exchange, and credentials via fluide-auth.
+description: Developer credentials, token exchange, and access tokens for Fluide APIs.
 ---
 
 # Auth overview
 
-`fluide-auth` issues RS256 JWTs and manages **developer API keys** for Fluide Connect integrations.
-
-## Responsibilities
-
-- Developer account creation (`type: developer`)
-- One-time API key + secret provisioning after email verification
-- Token exchange (`POST /api/v1/developer-access/token`)
-- JWT validation, org RBAC, and auth-context for the gateway
+The **Auth API** issues access tokens and manages **developer API keys** for Fluide Connect integrations.
 
 ## Authentication model
 
 | Step | Credentials |
 | --- | --- |
 | Token exchange | `X-Fluide-Api-Key`, `X-Fluide-Api-Secret`, `X-Fluide-Client-Id: fluide-developer` |
-| Product APIs (via gateway) | `Authorization: Bearer <token>`, `X-Fluide-Api-Key`, `X-Fluide-Client-Id: fluide-developer` |
+| Product APIs | `Authorization: Bearer <token>`, `X-Fluide-Api-Key`, `X-Fluide-Client-Id: fluide-developer` |
 
-The API secret is used **only** at token exchange, not on downstream product calls.
+The API secret is used **only** at token exchange, not on HR, Payroll, Pay, Books, or Utils routes.
 
 See [Authentication](/getting-started/authentication) for the full flow.
 
 ## Key lifecycle
 
-- **Provision:** automatically on first email verification for developer accounts
-- **View:** `GET /api/v1/developer-access/current` (metadata only; no secret)
-- **Rotate:** `POST /api/v1/developer-access/rotate-secret` (returns new secret once)
+- **Provision:** API key and one-time secret after email verification in Connect
+- **View:** `GET /api/v1/developer-access/current` (metadata only; secret never returned)
+- **Rotate:** `POST /api/v1/developer-access/rotate-secret` or the Connect dashboard
 
-<Note>
-Human operators using Fluide SPAs use email/password or OTP with `fluide-admin` / other client IDs — not the developer key flow.
-</Note>
+<CardGroup cols={2}>
+  <Card title="Auth quickstart" icon="rocket" href="/auth/quickstart">
+    Exchange credentials and verify your session.
+  </Card>
+  <Card title="Auth API reference" icon="code" href="/api-reference/auth">
+    Developer access endpoints and health checks.
+  </Card>
+</CardGroup>

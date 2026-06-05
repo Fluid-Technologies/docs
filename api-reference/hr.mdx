@@ -3,7 +3,7 @@ title: HR API
 description: Employee records, leave, performance, and HR operations for the Fluide Suite.
 ---
 
-The **HR API** (`fluide-hr`) is the canonical source for employee data in the Fluide Suite. Payroll, utils document generation, and admin dashboards consume HR records.
+The **HR API** is the canonical source for employee data in the Fluide Suite. Payroll, document generation, and other products consume HR records.
 
 ## Base path
 
@@ -11,7 +11,7 @@ The **HR API** (`fluide-hr`) is the canonical source for employee data in the Fl
 
 ## Authentication
 
-All endpoints — including `GET /api/v1/hr/health` — require **three** gateway headers:
+All endpoints — including `GET /api/v1/hr/health` — require **three** headers:
 
 - `Authorization: Bearer <accessToken>`
 - `X-Fluide-Api-Key: fl_dev_...`

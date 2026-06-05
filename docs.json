@@ -89,11 +89,11 @@
           },
           {
             "group": "Books",
-            "pages": ["books/overview"]
+            "pages": ["books/overview", "books/quickstart"]
           },
           {
             "group": "Utils",
-            "pages": ["utils/overview", "utils/modules"]
+            "pages": ["utils/overview", "utils/quickstart", "utils/modules"]
           }
         ]
       },

@@ -1,31 +1,79 @@
 ---
 title: Pay quickstart
-description: Run FluidePay locally.
+description: List wallets and initiate your first payment through the Pay API.
 ---
 
 # Pay quickstart
 
-<Steps>
-  <Step title="Install">
-    ```bash
-    cd FluidePay
-    npm install
-    cp .env.example .env
-    ```
-  </Step>
-  <Step title="Configure providers">
-    Set database, Redis, Kafka, and provider credentials (Ecobank, mobile money) per `.env.example`.
-  </Step>
-  <Step title="Start">
-    ```bash
-    npm run start:dev
-    ```
-  </Step>
-  <Step title="Swagger">
-    `http://localhost:5058/api/docs`
-  </Step>
-</Steps>
+**Fluide Pay** provides digital wallets and payment transactions for your organization. Use it to move money, record ledger activity, and integrate with supported payment providers.
 
-## Gateway webhooks
+## Prerequisites
 
-Dedicated Tyk apps proxy provider webhooks (for example Stripe, Flutterwave) without the standard JWT flow. See `FluideGateway/apps/payments-*-webhook.json`.
+Developer credentials and access token — [Authentication](/getting-started/authentication).
+
+## 1. Verify connectivity
+
+<CodeGroup>
+
+```bash curl
+curl -X GET "$FLUIDE_BASE_URL/api/v1/payments" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer"
+```
+
+```javascript Node.js
+const res = await fetch(`${baseUrl}/api/v1/payments`, {
+  headers: {
+    Authorization: `Bearer ${accessToken}`,
+    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY!,
+    'X-Fluide-Client-Id': 'fluide-developer',
+  },
+});
+
+if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
+```
+
+</CodeGroup>
+
+## 2. Explore wallets
+
+List wallet accounts for your organization. Account types include **PRIMARY**, **SAVINGS**, and **ESCROW** — see the API reference for the full set.
+
+<CodeGroup>
+
+```bash curl
+curl -X GET "$FLUIDE_BASE_URL/api/v1/payments/wallets" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer"
+```
+
+```javascript Node.js
+const res = await fetch(`${baseUrl}/api/v1/payments/wallets`, {
+  headers: {
+    Authorization: `Bearer ${accessToken}`,
+    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY!,
+    'X-Fluide-Client-Id': 'fluide-developer',
+  },
+});
+
+if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
+```
+
+</CodeGroup>
+
+<Tip>
+Wallet and transaction paths vary by integration. Use [Pay API reference](/api-reference/pay) to find the endpoints that match your use case (transfers, provider payments, status polling).
+</Tip>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="Pay overview" icon="credit-card" href="/pay/overview">
+    Wallet types, providers, and async settlement.
+  </Card>
+  <Card title="Pay API reference" icon="code" href="/api-reference/pay">
+    Browse and try Pay endpoints.
+  </Card>
+</CardGroup>

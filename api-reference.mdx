@@ -20,7 +20,7 @@ Open any endpoint to see parameters, request bodies, responses, and try the **in
 
 ## Playground authentication
 
-Product APIs are proxied through the Tyk gateway. The playground prompts for three credentials on every product route (including health checks):
+The playground prompts for three credentials on every product route (including health checks):
 
 | Header | Playground field | Required value |
 | --- | --- | --- |
@@ -28,7 +28,7 @@ Product APIs are proxied through the Tyk gateway. The playground prompts for thr
 | `X-Fluide-Api-Key` | **X-Fluide-Api-Key** | Your `fl_dev_...` developer key |
 | `X-Fluide-Client-Id` | **X-Fluide-Client-Id** | `fluide-developer` |
 
-Click **Authorize** before **Send**. If you skip it, the gateway returns `400 Authorization field missing` or `401` with codes such as `MISSING_API_KEY` or `CLIENT_AUDIENCE_MISMATCH`.
+Click **Authorize** before **Send**. If you skip it, the API returns `400 Authorization field missing` or `401` with codes such as `MISSING_API_KEY` or `CLIENT_AUDIENCE_MISMATCH`.
 
 <Card title="Get credentials" icon="key" href="/getting-started/authentication">
   Token exchange, header reference, and step-by-step playground setup.

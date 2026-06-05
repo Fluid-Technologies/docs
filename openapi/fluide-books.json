@@ -6521,7 +6521,7 @@
         "type": "apiKey",
         "in": "header",
         "name": "X-Fluide-Api-Key",
-        "description": "Developer API key (fl_dev_...). Required on every gateway call with a machine access token.",
+        "description": "Developer API key (fl_dev_...). Required on every API call with a machine access token.",
         "x-default": "fl_dev_your_key"
       },
       "fluideClientId": {

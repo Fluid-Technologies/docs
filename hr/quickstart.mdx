@@ -1,35 +1,107 @@
 ---
 title: HR quickstart
-description: Run fluide-hr locally and access Swagger.
+description: Verify access and create your first employee record through the HR API.
 ---
 
 # HR quickstart
 
-<Steps>
-  <Step title="Install">
-    ```bash
-    cd fluide-hr
-    npm install
-    cp .env.example .env
-    ```
-  </Step>
-  <Step title="Configure database">
-    Set `DB_HOST`, `DB_PORT`, `DB_USERNAME`, `DB_PASSWORD`, `DB_NAME` (default `fluide_hr`).
-  </Step>
-  <Step title="Start API">
-    ```bash
-    npm run start:dev
-    ```
-  </Step>
-  <Step title="Open Swagger">
-    `http://localhost:3000/api/docs` (or your configured `PORT`).
+Use this guide to confirm your integration can reach **Fluide HR** and create an employee. You need API credentials from the Connect dashboard — see [Authentication](/getting-started/authentication).
 
-    With gateway: `/api/v1/docs/hr/`.
-  </Step>
-</Steps>
+## Prerequisites
 
-## Authentication
+| Variable | Example |
+| --- | --- |
+| `FLUIDE_BASE_URL` | `https://staging.api.fluidehr.com` |
+| `FLUIDE_API_KEY` | `fl_dev_...` |
+| `FLUIDE_ACCESS_TOKEN` | JWT from token exchange |
 
-All tenant APIs require a valid JWT from `fluide-auth` through Tyk. Controllers use `GatewayUserGuard` and permission decorators such as `hr:employees:read`.
+## 1. Verify connectivity
 
-Internal controllers (platform employee list, auth link) are excluded from public Swagger where marked `@ApiExcludeController`.
+<CodeGroup>
+
+```bash curl
+curl -X GET "$FLUIDE_BASE_URL/api/v1/hr/health" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer"
+```
+
+```javascript Node.js
+const res = await fetch(`${baseUrl}/api/v1/hr/health`, {
+  headers: {
+    Authorization: `Bearer ${accessToken}`,
+    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY!,
+    'X-Fluide-Client-Id': 'fluide-developer',
+  },
+});
+
+if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
+```
+
+</CodeGroup>
+
+A `200` response means your credentials and base URL are correct.
+
+## 2. Create an employee
+
+Employee records in HR are the source of truth for payroll and other suite products.
+
+<CodeGroup>
+
+```bash curl
+curl -X POST "$FLUIDE_BASE_URL/api/v1/hr/employees" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "firstName": "Ada",
+    "lastName": "Lovelace",
+    "email": "ada@example.com",
+    "employeeCode": "EMP-001"
+  }'
+```
+
+```javascript Node.js
+const res = await fetch(`${baseUrl}/api/v1/hr/employees`, {
+  method: 'POST',
+  headers: {
+    Authorization: `Bearer ${accessToken}`,
+    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY!,
+    'X-Fluide-Client-Id': 'fluide-developer',
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    firstName: 'Ada',
+    lastName: 'Lovelace',
+    email: 'ada@example.com',
+    employeeCode: 'EMP-001',
+  }),
+});
+
+if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
+const employee = await res.json();
+```
+
+</CodeGroup>
+
+<Tip>
+Field requirements vary by endpoint. Open **Create HR employee record** in [HR API reference](/api-reference/hr) for the full schema and required properties.
+</Tip>
+
+## Next steps
+
+<CardGroup cols={2}>
+  <Card title="HR overview" icon="users" href="/hr/overview">
+    Modules, leave, contracts, and how HR fits your integration.
+  </Card>
+  <Card title="HR API reference" icon="code" href="/api-reference/hr">
+    Browse and try all HR endpoints.
+  </Card>
+  <Card title="Payroll quickstart" icon="wallet" href="/payroll/quickstart">
+    Run payroll after employees exist in HR.
+  </Card>
+  <Card title="API playground" icon="play" href="/getting-started/authentication">
+    Authorize requests directly in the docs.
+  </Card>
+</CardGroup>

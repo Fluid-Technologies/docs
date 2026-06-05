@@ -1,49 +1,41 @@
 ---
 title: Utils overview
-description: Shared notifications, files, and document generation for the Fluide Suite.
+description: Notifications, files, and document generation for Fluide integrations.
 ---
 
 # Utils overview
 
-**fluide-utils** is the shared utilities microservice for the Fluide Suite. Product APIs delegate cross-cutting work here so each domain service stays focused on its core domain.
+**Fluide Utils** provides shared capabilities your integration can call alongside HR, Payroll, Pay, or Books: notifications, file storage, and document generation.
 
-## Base URL
+## Base path
 
-All utils endpoints are under:
+`/api/v1/app/*`
 
-- `/api/v1/app/*`
+Authenticate with your developer credentials — see [Authentication](/getting-started/authentication).
 
-Authenticate using developer keys described in [authentication](/getting-started/authentication).
-
-## Responsibilities
+## Modules
 
 | Module | Purpose |
 | --- | --- |
-| Notifications | In-app and templated notifications for HR, payroll, and engagement flows |
+| Notifications | In-app and templated notifications |
 | File Management | Organization-scoped uploads and downloads |
-| Documents | PDF and spreadsheet generation (payslips, invoices, financial reports) |
-| Document Jobs | Async generation with job status polling |
-| Email | Transactional email delivery via Kafka (internal; not a public REST surface) |
+| Documents | PDF and spreadsheet generation (payslips, invoices, reports) |
+| Document Jobs | Long-running generation with status polling |
 
-## Who calls Utils
+## When to use Utils
 
-- **Payroll** — payslip PDF generation after a run completes
-- **Books** — invoice PDFs and financial statement exports
-- **HR / Admin** — file uploads and user notifications
-- **Gateway** — routes `/api/v1/app/*` with `utils:read` / `utils:write` scopes
-
-## Operations
-
-| Endpoint | Purpose |
-| --- | --- |
-| `GET /api/v1/app` | Service root |
-| `GET /api/v1/app/metrics` | Prometheus metrics |
+- After a **payroll run** — generate payslip PDFs
+- After **invoice creation** in Books — generate invoice PDFs
+- When your app needs **file storage** or **user notifications** tied to suite events
 
 <CardGroup cols={2}>
-  <Card title="Modules" icon="puzzle-piece" href="/utils/modules">
-    Per-module endpoints and integration notes.
+  <Card title="Utils quickstart" icon="rocket" href="/utils/quickstart">
+    Verify access and list notifications.
   </Card>
-  <Card title="API reference" icon="code" href="/api-reference/utils">
+  <Card title="Utils modules" icon="puzzle-piece" href="/utils/modules">
+    Per-module endpoints and examples.
+  </Card>
+  <Card title="Utils API reference" icon="code" href="/api-reference/utils">
     Browse and try Utils endpoints.
   </Card>
 </CardGroup>

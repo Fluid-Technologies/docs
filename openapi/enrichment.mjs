@@ -18,7 +18,7 @@ export const CONNECT_SECURITY_SCHEMES = {
     in: "header",
     name: "X-Fluide-Api-Key",
     description:
-      "Developer API key (fl_dev_...). Required on every gateway call with a machine access token.",
+      "Developer API key (fl_dev_...). Required on every API call with a machine access token.",
     "x-default": "fl_dev_your_key",
   },
   fluideClientId: {
@@ -83,7 +83,7 @@ export const PRODUCT_META = {
   "fluide-auth": {
     title: "Fluide Auth API",
     description:
-      "Identity, developer credentials, token exchange, organizations, and RBAC for the Fluide Suite. Use this API to obtain JWTs before calling product services through the gateway.",
+      "Developer credentials, token exchange, and session management for the Fluide Suite. Exchange your API key and secret for an access token before calling product APIs.",
     basePath: "/api/v1",
     productOverview: "/auth/overview",
   },
@@ -150,7 +150,7 @@ export const OPERATION_PATCHES = {
   "GET /api/v1/hr/health": {
     summary: "HR health check",
     description:
-      "Liveness probe for the HR service and its dependencies. Through the gateway, requires developer JWT, X-Fluide-Api-Key, and X-Fluide-Client-Id — use Authorize in the playground.",
+      "Liveness probe for the HR API. Requires developer JWT, X-Fluide-Api-Key, and X-Fluide-Client-Id — use Authorize in the playground.",
   },
   "GET /api/v1/hr/metrics": {
     summary: "HR Prometheus metrics",

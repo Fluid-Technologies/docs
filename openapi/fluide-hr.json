@@ -14,7 +14,7 @@
         "tags": [
           "Health"
         ],
-        "description": "Liveness probe for the HR service and its dependencies. Through the gateway, requires developer JWT, X-Fluide-Api-Key, and X-Fluide-Client-Id — use Authorize in the playground.",
+        "description": "Liveness probe for the HR API. Requires developer JWT, X-Fluide-Api-Key, and X-Fluide-Client-Id — use Authorize in the playground.",
         "security": [
           {
             "bearer": [],
@@ -3403,7 +3403,7 @@
         "type": "apiKey",
         "in": "header",
         "name": "X-Fluide-Api-Key",
-        "description": "Developer API key (fl_dev_...). Required on every gateway call with a machine access token.",
+        "description": "Developer API key (fl_dev_...). Required on every API call with a machine access token.",
         "x-default": "fl_dev_your_key"
       },
       "fluideClientId": {

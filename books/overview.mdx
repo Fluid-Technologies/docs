@@ -1,29 +1,31 @@
 ---
 title: Books overview
-description: FluideBooks accounting and general ledger microservice.
+description: Accounting, general ledger, invoicing, and financial reporting.
 ---
 
 # Books overview
 
-**FluideBooks** is the accounting service for the Fluide Suite: chart of accounts, journal entries, invoicing, bills, banking, budgets, and payroll GL integration.
+**Fluide Books** is the accounting product for the Fluide Suite: chart of accounts, journal entries, invoicing, bills, banking, budgets, and payroll GL integration.
 
-## Base URL
+## Base path
 
-All accounting endpoints are under:
+`/api/v1/*` (accounting routes are not prefixed with a product slug)
 
-- `/api/v1/*`
+Authenticate with your developer credentials — see [Authentication](/getting-started/authentication).
 
-Authenticate using developer keys described in [authentication](/getting-started/authentication).
+## What you can build
 
-## Core capabilities
-
-- Double-entry **journal entries** (post / void)
+- Double-entry **journal entries** (post and void)
 - **Chart of accounts** hierarchy (ASSET, LIABILITY, EQUITY, REVENUE, EXPENSE)
 - **Invoices** and **bills** lifecycle
-- **Payroll GL** mappings and Kafka consumer for completed payroll runs
-- Reporting, reconciliation, fixed assets, exchange rates, and more
+- **Payroll GL** mappings when payroll posts to the ledger
+- Reporting, reconciliation, fixed assets, and exchange rates
 
 <CardGroup cols={2}>
-  <Card title="API reference" icon="code" href="/api-reference" />
-  <Card title="First workflow" icon="rocket" href="/api-reference" />
+  <Card title="Books quickstart" icon="rocket" href="/books/quickstart">
+    Verify access and list chart of accounts.
+  </Card>
+  <Card title="Books API reference" icon="code" href="/api-reference/books">
+    Endpoints, schemas, and interactive playground.
+  </Card>
 </CardGroup>

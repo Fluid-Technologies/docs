@@ -65,7 +65,7 @@ Use the API secret only for token exchange. Never send it on product API routes.
 
 ## Test in the API playground
 
-Every product endpoint in [API reference](/api-reference) includes an interactive playground. The Tyk gateway rejects requests without the right headers — you will see `Authorization field missing` or `401` if any are omitted.
+Every product endpoint in [API reference](/api-reference) includes an interactive playground. Requests without the right headers are rejected — you will see `Authorization field missing` or `401` if any are omitted.
 
 <Steps>
 
@@ -85,13 +85,13 @@ Open any HR, Payroll, Pay, Books, or Utils endpoint and click **Authorize**. Fil
 </Step>
 
 <Step title="Send the request">
-Click **Send**. Health checks such as `GET /api/v1/hr/health` use the same headers as business endpoints — there is no anonymous access through the gateway.
+Click **Send**. Health checks such as `GET /api/v1/hr/health` use the same headers as business endpoints — there is no anonymous access.
 </Step>
 
 </Steps>
 
 <Tip>
-Gateway middleware validates that `X-Fluide-Client-Id` matches the JWT `fluide_client_id` claim and that `X-Fluide-Api-Key` matches `dev_api_key` on machine tokens. See [Fluide Gateway hybrid RBAC contract](https://github.com/Fluid-Technologies/FluideGateway/blob/main/docs/hybrid-rbac-contract.md) for the full inbound identity contract.
+`X-Fluide-Client-Id` must match the client ID embedded in your access token (`fluide-developer`). `X-Fluide-Api-Key` must match the API key bound to that token.
 </Tip>
 
 ## Call Fluide APIs

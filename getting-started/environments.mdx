@@ -5,7 +5,7 @@ description: Beta staging base URL and how to switch when production launches.
 
 # Environments
 
-Fluide Connect integrations target the **beta** gateway today. Production will use a separate base URL when GA launches.
+Fluide Connect integrations use the **beta** environment today. Production will use a separate base URL when GA launches.
 
 ## Base URLs
 
@@ -14,51 +14,19 @@ Fluide Connect integrations target the **beta** gateway today. Production will u
 | **Beta (staging)** | `https://staging.api.fluidehr.com` | Active — use for all integration work |
 | **Production** | TBD | Not yet available |
 
-All product APIs are reached through this single gateway host. Paths are product-scoped (`/api/v1/hr/*`, `/api/v1/payroll/*`, etc.).
+All product APIs share this host. Paths are product-scoped:
 
-## Gateway docs routes
-
-Each service publishes OpenAPI through the gateway at `/api/v1/docs/{product}/`:
-
-| Product | Docs route |
+| Product | Path prefix |
 | --- | --- |
-| Auth | `/api/v1/docs/auth/` |
-| HR | `/api/v1/docs/hr/` |
-| Payroll | `/api/v1/docs/payroll/` |
-| Payments | `/api/v1/docs/payments/` |
-| Accounting (Books) | `/api/v1/docs/accounting/` |
-| Utils | `/api/v1/docs/utils/` |
-
-Example: `https://staging.api.fluidehr.com/api/v1/docs/hr/` opens HR Swagger UI in the browser.
+| Auth | `/api/v1` |
+| HR | `/api/v1/hr` |
+| Payroll | `/api/v1/payroll` |
+| Pay | `/api/v1/payments` |
+| Books | `/api/v1` (accounting routes) |
+| Utils | `/api/v1/app` |
 
 ## Switching environments
 
 Use the same request shape in every environment. Only the base URL and credentials change.
 
-Set `FLUIDE_BASE_URL` (or `NEXT_PUBLIC_FLUIDE_API_URL` in the Connect app) to the gateway host for the environment you are targeting.
-
-## OpenAPI sync for the API reference tab
-
-Fluide Connect renders endpoints from checked-in OpenAPI files. Refresh them from the beta gateway:
-
-```bash
-node export-openapi.mjs
-```
-
-By default this pulls embedded specs from `https://staging.api.fluidehr.com/api/v1/docs/*/swagger-ui-init.js` and writes:
-
-- `openapi/fluide-auth.json`
-- `openapi/fluide-hr.json`
-- `openapi/fluide-payroll.json`
-- `openapi/fluide-pay.json`
-- `openapi/fluide-books.json`
-- `openapi/fluide-utils.json`
-
-Override the gateway host or a single service:
-
-```bash
-FLUIDE_API_BASE_URL=https://staging.api.fluidehr.com node export-openapi.mjs
-OPENAPI_HR_URL=https://staging.api.fluidehr.com/api/v1/docs/hr-json node export-openapi.mjs
-```
-
-After export, restart `mint dev` (or `npm run dev`) so the **API reference** sidebar reloads.
+Set `FLUIDE_BASE_URL` (or `NEXT_PUBLIC_FLUIDE_API_URL` in the Connect app) to the base URL for the environment you are targeting.

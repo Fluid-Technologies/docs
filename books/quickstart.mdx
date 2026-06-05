@@ -1,0 +1,81 @@
+---
+title: Books quickstart
+description: Reach the Books API and explore chart of accounts and journal entries.
+---
+
+# Books quickstart
+
+**Fluide Books** is the accounting product for chart of accounts, journal entries, invoices, bills, and financial reporting.
+
+## Prerequisites
+
+Developer credentials and access token — [Authentication](/getting-started/authentication).
+
+## 1. Verify connectivity
+
+<CodeGroup>
+
+```bash curl
+curl -X GET "$FLUIDE_BASE_URL/api/v1/health" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer"
+```
+
+```javascript Node.js
+const res = await fetch(`${baseUrl}/api/v1/health`, {
+  headers: {
+    Authorization: `Bearer ${accessToken}`,
+    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY!,
+    'X-Fluide-Client-Id': 'fluide-developer',
+  },
+});
+
+if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
+```
+
+</CodeGroup>
+
+## 2. List chart of accounts
+
+<CodeGroup>
+
+```bash curl
+curl -X GET "$FLUIDE_BASE_URL/api/v1/chart-of-accounts" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer"
+```
+
+```javascript Node.js
+const res = await fetch(`${baseUrl}/api/v1/chart-of-accounts`, {
+  headers: {
+    Authorization: `Bearer ${accessToken}`,
+    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY!,
+    'X-Fluide-Client-Id': 'fluide-developer',
+  },
+});
+
+if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
+```
+
+</CodeGroup>
+
+<Tip>
+Books routes live under `/api/v1/*` without a product prefix. Use [Books API reference](/api-reference/books) for journals, invoices, bills, and reporting endpoints.
+</Tip>
+
+## Typical flow
+
+1. Set up chart of accounts and fiscal periods
+2. Post journal entries or create invoices and bills
+3. Export financial reports (PDF via [Utils](/utils/overview) when needed)
+
+<CardGroup cols={2}>
+  <Card title="Books overview" icon="book-open" href="/books/overview">
+    GL, invoicing, and payroll integration.
+  </Card>
+  <Card title="Books API reference" icon="code" href="/api-reference/books">
+    Full endpoint list and playground.
+  </Card>
+</CardGroup>

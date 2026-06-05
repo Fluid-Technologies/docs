@@ -1,36 +1,79 @@
 ---
 title: Payroll quickstart
-description: Run FluidePayroll locally.
+description: Create a payroll run and retrieve payslips through the Payroll API.
 ---
 
 # Payroll quickstart
 
+**Fluide Payroll** processes pay runs and payslips. Employees must already exist in [HR](/hr/overview) before you run payroll.
+
+## Prerequisites
+
+- Developer credentials and access token — [Authentication](/getting-started/authentication)
+- At least one employee in HR — [HR quickstart](/hr/quickstart)
+
+## 1. List payroll runs
+
+Confirm you can reach the Payroll API:
+
+<CodeGroup>
+
+```bash curl
+curl -X GET "$FLUIDE_BASE_URL/api/v1/payroll/payroll" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer"
+```
+
+```javascript Node.js
+const res = await fetch(`${baseUrl}/api/v1/payroll/payroll`, {
+  headers: {
+    Authorization: `Bearer ${accessToken}`,
+    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY!,
+    'X-Fluide-Client-Id': 'fluide-developer',
+  },
+});
+
+if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
+const runs = await res.json();
+```
+
+</CodeGroup>
+
+## 2. Create and process a run
+
+Create a payroll run for your pay period, then process it. Exact fields depend on your organization's payroll configuration.
+
+<Tip>
+Open the **Payroll** group in [API reference](/api-reference/payroll) for create/process endpoints, request bodies, and status codes.
+</Tip>
+
+## 3. Fetch payslips
+
+After a run completes, retrieve payslips for employees in that period. You can generate PDF artifacts through [Utils](/utils/overview) when your integration needs downloadable payslips.
+
+## Typical flow
+
 <Steps>
-  <Step title="Install">
-    ```bash
-    cd FluidePayroll
-    npm install
-    cp .env.example .env
-    ```
+  <Step title="Sync employees in HR">
+    Create or update employee records via `/api/v1/hr/employees`.
   </Step>
-  <Step title="Configure">
-    Set PostgreSQL (`DB_*`), Redis, Kafka brokers, and `PAYROLL_INTERNAL_API_KEY` for HR mirror calls.
+  <Step title="Create a payroll run">
+    POST a run for the target period.
   </Step>
-  <Step title="Start">
-    ```bash
-    npm run start:dev
-    ```
+  <Step title="Process the run">
+    Trigger processing and poll until the run reaches a terminal status.
   </Step>
-  <Step title="Swagger">
-    `http://localhost:5051/api/docs`
+  <Step title="Deliver payslips">
+    Fetch payslip data via the API or generate PDFs through Utils.
   </Step>
 </Steps>
 
-## Public vs internal APIs
-
-| Audience | Path | Notes |
-| --- | --- | --- |
-| Tenants | `/api/v1/payroll/payroll/*`, `/payslips/*` | JWT via gateway |
-| HR / platform | `/api/v1/payroll/internal/*` | `x-internal-api-key` |
-
-Do **not** expose employee CRUD on public routes—use `fluide-hr` `/api/v1/hr/employees`.
+<CardGroup cols={2}>
+  <Card title="Payroll overview" icon="wallet" href="/payroll/overview">
+    Runs, payslips, and integration patterns.
+  </Card>
+  <Card title="Payroll API reference" icon="code" href="/api-reference/payroll">
+    Full endpoint list and playground.
+  </Card>
+</CardGroup>

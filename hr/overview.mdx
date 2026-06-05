@@ -1,35 +1,33 @@
 ---
 title: HR overview
-description: fluide-hr human resources microservice for the Fluide Suite.
+description: Employee records, leave, contracts, and HR operations for the Fluide Suite.
 ---
 
 # HR overview
 
-`fluide-hr` manages employees, employment contracts, leave, performance, OKRs, country configuration (CCS), compliance, and HR insights. It is the **canonical source** for employee records consumed by payroll.
+**Fluide HR** manages employees, employment contracts, leave, performance, OKRs, country configuration, compliance, and HR insights. It is the **canonical source** for employee records used by Payroll and other suite products.
 
-## Base URL
+## Base path
 
-All HR endpoints are under:
+`/api/v1/hr/*`
 
-- `/api/v1/hr/*`
+Authenticate with your developer credentials — see [Authentication](/getting-started/authentication).
 
-Authenticate using developer keys described in [authentication](/getting-started/authentication).
+## What you can build
 
-## Technology
-
-| Layer | Choice |
+| Area | Description |
 | --- | --- |
-| Framework | NestJS |
-| ORM | TypeORM + PostgreSQL |
-| i18n | nestjs-i18n |
-| Messaging | Kafka |
-| Metrics | Prometheus |
+| Employees | Create, update, and search employee records |
+| Leave | Policies, requests, and balances |
+| Contracts | Employment terms and lifecycle |
+| Performance | Reviews, goals, and OKRs |
+| Insights | HR analytics and reporting inputs |
 
 <CardGroup cols={2}>
-  <Card title="Modules" icon="puzzle-piece" href="/hr/modules">
-    Feature modules and permissions.
+  <Card title="HR quickstart" icon="rocket" href="/hr/quickstart">
+    Verify access and create your first employee.
   </Card>
-  <Card title="First workflow" icon="rocket" href="/api-reference">
-    Create an employee, then sync payroll (see API reference for exact endpoints).
+  <Card title="HR API reference" icon="code" href="/api-reference/hr">
+    Endpoints, schemas, and interactive playground.
   </Card>
 </CardGroup>

@@ -5385,7 +5385,7 @@
   },
   "info": {
     "title": "Fluide Auth API",
-    "description": "Identity, developer credentials, token exchange, organizations, and RBAC for the Fluide Suite. Use this API to obtain JWTs before calling product services through the gateway.",
+    "description": "Developer credentials, token exchange, and session management for the Fluide Suite. Exchange your API key and secret for an access token before calling product APIs.",
     "version": "1.0",
     "contact": {}
   },
@@ -5489,7 +5489,7 @@
         "type": "apiKey",
         "in": "header",
         "name": "X-Fluide-Api-Key",
-        "description": "Developer API key (fl_dev_...). Required on every gateway call with a machine access token.",
+        "description": "Developer API key (fl_dev_...). Required on every API call with a machine access token.",
         "x-default": "fl_dev_your_key"
       },
       "fluideClientId": {
