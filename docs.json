@@ -9,10 +9,10 @@
     "dark": "#0F766E"
   },
   "logo": {
-    "light": "/public/Fluide Connect.svg",
-    "dark": "/public/Fluide Connect-W.svg"
+    "light": "/logo/fluide-connect-light.svg",
+    "dark": "/logo/fluide-connect-dark.svg"
   },
-  "favicon": "/public/Fluide Connect.svg",
+  "favicon": "/favicon.svg",
   "navbar": {
     "links": [
       {
