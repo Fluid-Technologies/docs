@@ -6412,7 +6412,7 @@
   },
   "info": {
     "title": "Fluide Books API",
-    "description": "Accounting: chart of accounts, journal entries, invoices, bills, banking, budgets, and payroll GL integration. In the API playground, click Authorize and provide Bearer JWT (from token exchange), X-Fluide-Api-Key, and X-Fluide-Client-Id (fluide-developer).",
+    "description": "Accounting: chart of accounts, journal entries, invoices, bills, banking, budgets, and payroll GL integration. In the API playground, click Authorize and provide Bearer JWT, X-Fluide-Api-Key, and X-Fluide-Client-Id (fluide-developer).",
     "version": "1.0",
     "contact": {}
   },
@@ -6515,7 +6515,7 @@
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "JWT",
-        "description": "Access token from POST /api/v1/developer-access/token. Use the accessToken value from the response as Authorization: Bearer <token>. In the API playground, paste the JWT only."
+        "description": "Access token JWT. Use as Authorization: Bearer <token>. In the API playground, paste the JWT only."
       },
       "fluideApiKey": {
         "type": "apiKey",
@@ -6535,7 +6535,7 @@
         "type": "apiKey",
         "in": "header",
         "name": "X-Fluide-Api-Secret",
-        "description": "API secret — send only to POST /api/v1/developer-access/token. Never use on product routes."
+        "description": "API secret used only during token exchange. Never send on product routes."
       }
     },
     "schemas": {

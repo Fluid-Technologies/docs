@@ -11,3 +11,5 @@ package.json
 package-lock.json
 scripts/dev-with-docs.mjs
 .env*
+# Internal platform docs (not published to integrators)
+platform/

@@ -1,28 +1,25 @@
 ---
 title: Description
-description: Developer credentials, token exchange, organizations, and identity for the Fluide Suite.
+description: Developer credentials, organizations, and identity for the Fluide Suite.
 ---
 
-The **Auth API** is the entry point for Fluide Connect integrations. Exchange your developer API key and secret for an access token, then use that token on every product API call.
+The **Auth API** covers developer session management and identity for Fluide Connect integrations.
 
 ## Base path
 
 `/api/v1`
 
-## Authentication
+## Authorization
 
-| Step | Headers |
+| Context | Headers |
 | --- | --- |
-| Token exchange | `X-Fluide-Api-Key`, `X-Fluide-Api-Secret`, `X-Fluide-Client-Id: fluide-developer` |
-| Product APIs | `Authorization: Bearer <token>`, `X-Fluide-Api-Key`, `X-Fluide-Client-Id: fluide-developer` |
+| Developer session endpoints | `Authorization: Bearer <token>`, `X-Fluide-Api-Key`, `X-Fluide-Client-Id: fluide-developer` |
 
-See [Authentication](/getting-started/authentication) for curl and Node.js examples.
+See [Authorization](/getting-started/authorization) for curl and Node.js examples.
 
 ### API playground
 
-- **Developer Access** endpoints (`current`, `rotate-secret`): click **Authorize** and set **Bearer**, **X-Fluide-Api-Key**, and **X-Fluide-Client-Id** (`fluide-developer`).
-- **Token exchange** (`POST /api/v1/developer-access/token`): use **X-Fluide-Api-Key**, **X-Fluide-Api-Secret**, and **X-Fluide-Client-Id** — no Bearer JWT yet.
-
+For **Developer Access** endpoints (`current`, `rotate-secret`), click **Authorize** and set **Bearer**, **X-Fluide-Api-Key**, and **X-Fluide-Client-Id** (`fluide-developer`).
 
 ## Operations and monitoring
 
@@ -39,12 +36,8 @@ Prometheus metrics for auth may be exposed on the service directly depending on 
 
 <Steps>
 
-<Step title="Exchange credentials">
-Call `POST /api/v1/developer-access/token` with your API key and secret.
-</Step>
-
 <Step title="Call a product API">
-Use the returned JWT on HR, Payroll, Pay, Books, or Utils routes.
+Use your access token on HR, Payroll, Pay, Books, or Utils routes.
 </Step>
 
 <Step title="Rotate if needed">
@@ -54,5 +47,5 @@ Use `POST /api/v1/developer-access/rotate-secret` or the Connect dashboard if a 
 </Steps>
 
 <Card title="Product guide" icon="book" href="/auth/overview">
-  Developer credentials, token exchange, and credential lifecycle.
+  Developer credentials and credential lifecycle.
 </Card>

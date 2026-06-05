@@ -5385,7 +5385,7 @@
   },
   "info": {
     "title": "Fluide Auth API",
-    "description": "Developer credentials, token exchange, and session management for the Fluide Suite. Exchange your API key and secret for an access token before calling product APIs.",
+    "description": "Developer credentials, session management, and identity for the Fluide Suite.",
     "version": "1.0",
     "contact": {}
   },
@@ -5483,7 +5483,7 @@
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "JWT",
-        "description": "Access token from POST /api/v1/developer-access/token. Use the accessToken value from the response as Authorization: Bearer <token>. In the API playground, paste the JWT only."
+        "description": "Access token JWT. Use as Authorization: Bearer <token>. In the API playground, paste the JWT only."
       },
       "fluideApiKey": {
         "type": "apiKey",
@@ -5503,7 +5503,7 @@
         "type": "apiKey",
         "in": "header",
         "name": "X-Fluide-Api-Secret",
-        "description": "API secret — send only to POST /api/v1/developer-access/token. Never use on product routes."
+        "description": "API secret used only during token exchange. Never send on product routes."
       }
     },
     "schemas": {

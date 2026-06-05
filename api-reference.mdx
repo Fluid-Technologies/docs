@@ -18,20 +18,20 @@ Each product has an **overview page** with context, monitoring endpoints, and in
 
 Open any endpoint to see parameters, request bodies, responses, and try the **interactive playground** with **cURL** and **Node.js** examples.
 
-## Playground authentication
+## Playground authorization
 
 The playground prompts for three credentials on every product route (including health checks):
 
 | Header | Playground field | Required value |
 | --- | --- | --- |
-| `Authorization` | **Bearer** | JWT from `POST /api/v1/developer-access/token` |
+| `Authorization` | **Bearer** | Your access token JWT |
 | `X-Fluide-Api-Key` | **X-Fluide-Api-Key** | Your `fl_dev_...` developer key |
 | `X-Fluide-Client-Id` | **X-Fluide-Client-Id** | `fluide-developer` |
 
 Click **Authorize** before **Send**. If you skip it, the API returns `400 Authorization field missing` or `401` with codes such as `MISSING_API_KEY` or `CLIENT_AUDIENCE_MISMATCH`.
 
-<Card title="Get credentials" icon="key" href="/getting-started/authentication">
-  Token exchange, header reference, and step-by-step playground setup.
+<Card title="Get credentials" icon="key" href="/getting-started/authorization">
+  Header reference and step-by-step playground setup.
 </Card>
 
 ## Operations endpoints
@@ -47,5 +47,3 @@ Every service exposes operational routes under the **Operations** tag group wher
 ```bash
 node export-openapi.mjs
 ```
-
-See [Documentation pipeline](/platform/documentation-pipeline) for the full generation strategy, CI setup, and enrichment layer.

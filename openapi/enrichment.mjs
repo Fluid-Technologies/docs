@@ -11,7 +11,7 @@ export const CONNECT_SECURITY_SCHEMES = {
     scheme: "bearer",
     bearerFormat: "JWT",
     description:
-      "Access token from POST /api/v1/developer-access/token. Use the accessToken value from the response as Authorization: Bearer <token>. In the API playground, paste the JWT only.",
+      "Access token JWT. Use as Authorization: Bearer <token>. In the API playground, paste the JWT only.",
   },
   fluideApiKey: {
     type: "apiKey",
@@ -34,7 +34,7 @@ export const CONNECT_SECURITY_SCHEMES = {
     in: "header",
     name: "X-Fluide-Api-Secret",
     description:
-      "API secret — send only to POST /api/v1/developer-access/token. Never use on product routes.",
+      "API secret used only during token exchange. Never send on product routes.",
   },
 };
 
@@ -77,13 +77,13 @@ const HTTP_METHODS = new Set([
 ]);
 
 const PLAYGROUND_AUTH_NOTE =
-  " In the API playground, click Authorize and provide Bearer JWT (from token exchange), X-Fluide-Api-Key, and X-Fluide-Client-Id (fluide-developer).";
+  " In the API playground, click Authorize and provide Bearer JWT, X-Fluide-Api-Key, and X-Fluide-Client-Id (fluide-developer).";
 
 export const PRODUCT_META = {
   "fluide-auth": {
     title: "Fluide Auth API",
     description:
-      "Developer credentials, token exchange, and session management for the Fluide Suite. Exchange your API key and secret for an access token before calling product APIs.",
+      "Developer credentials, session management, and identity for the Fluide Suite.",
     basePath: "/api/v1",
     productOverview: "/auth/overview",
   },
@@ -132,7 +132,7 @@ export const TAG_DESCRIPTIONS = {
   Prometheus:
     "Prometheus scrape endpoint in text exposition format. Configure your metrics collector to poll this path on each service.",
   "Developer Access":
-    "Exchange API key + secret for JWTs and manage developer credentials.",
+    "Manage developer credentials and session.",
   "HR Employees": "Create and manage employee records tied to your organization.",
   Notifications: "In-app and multi-channel notifications for suite products.",
   "File Management": "Upload, download, and manage files scoped to your organization.",
@@ -267,6 +267,9 @@ export function enrichOpenApiSpec(doc, serviceKey) {
   }
 
   const paths = { ...doc.paths };
+  for (const hiddenPath of TOKEN_EXCHANGE_PATHS) {
+    delete paths[hiddenPath];
+  }
   for (const [pathKey, pathItem] of Object.entries(paths)) {
     const nextPathItem = { ...pathItem };
     for (const [method, operation] of Object.entries(pathItem)) {

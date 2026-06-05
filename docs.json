@@ -53,14 +53,11 @@
             "group": "Overview",
             "pages": [
               "introduction",
-              "getting-started/authentication",
+              "getting-started/authorization",
               "getting-started/environments",
               "getting-started/first-request",
               "getting-started/errors-and-rate-limits",
-              "changelog",
-              "platform/documentation-pipeline",
-              "platform/api-change-strategy",
-              "platform/mintlify-deployment"
+              "changelog"
             ]
           }
         ]

@@ -34,7 +34,6 @@ const SYNC_PATHS = [
   "pay",
   "books",
   "utils",
-  "platform",
   "api-reference",
   "openapi",
   "public",
