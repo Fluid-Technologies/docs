@@ -14,7 +14,14 @@
           "App"
         ],
         "summary": "Utils service root",
-        "description": "Returns a simple greeting confirming the utils service is reachable."
+        "description": "Returns a simple greeting confirming the utils service is reachable.",
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
+        ]
       }
     },
     "/api/v1/app/i18n-error": {
@@ -28,6 +35,13 @@
         },
         "tags": [
           "App"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -52,6 +66,13 @@
         },
         "tags": [
           "App"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -68,7 +89,14 @@
           "Prometheus"
         ],
         "summary": "Utils Prometheus metrics",
-        "description": "Prometheus scrape target for shared utilities service metrics."
+        "description": "Prometheus scrape target for shared utilities service metrics.",
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
+        ]
       }
     },
     "/api/v1/app/notifications": {
@@ -92,7 +120,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Send a notification",
@@ -159,7 +189,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "List notifications for the current user",
@@ -189,7 +221,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Create engagement lifecycle notification from template",
@@ -218,7 +252,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Dismiss an in-app notification",
@@ -247,7 +283,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Get notification by ID",
@@ -294,7 +332,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Upload a file",
@@ -345,7 +385,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "List uploaded files",
@@ -374,7 +416,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Get file info by ID",
@@ -401,7 +445,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Delete a file by ID",
@@ -430,7 +476,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Download a file by ID",
@@ -462,6 +510,13 @@
         "summary": "Persist a buffer as a managed file (service-to-service)",
         "tags": [
           "Internal Files"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -494,6 +549,13 @@
         "summary": "Stream file bytes for an organization (service-to-service)",
         "tags": [
           "Internal Files"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -528,7 +590,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Generate payslip PDF, store on disk, return public URL",
@@ -568,7 +632,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Generate invoice PDF, store on disk, return public URL",
@@ -608,7 +674,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Generate bill PDF, store on disk, return public URL",
@@ -648,7 +716,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Generate offer letter PDF for ATS (fluide-jobs)",
@@ -687,7 +757,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Generate balance sheet PDF (IFRS-style management report)",
@@ -726,7 +798,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Generate income statement / P&L PDF",
@@ -765,7 +839,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Generate statement of cash flows PDF",
@@ -804,7 +880,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Generate trial balance PDF",
@@ -843,7 +921,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Generate general ledger PDF (posted lines by account)",
@@ -882,7 +962,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Generate chart of accounts listing PDF",
@@ -921,7 +1003,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Generate balance sheet Excel workbook",
@@ -960,7 +1044,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Generate income statement Excel workbook",
@@ -999,7 +1085,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Generate statement of cash flows Excel workbook",
@@ -1038,7 +1126,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Generate trial balance Excel workbook",
@@ -1077,7 +1167,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Generate general ledger Excel workbook",
@@ -1116,7 +1208,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Generate chart of accounts Excel workbook",
@@ -1155,7 +1249,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Generate accounting transactions listing as XLSX",
@@ -1194,7 +1290,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Generate filtered invoice listing as XLSX",
@@ -1233,7 +1331,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Generate filtered invoice listing as PDF",
@@ -1272,7 +1372,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Generate filtered bill listing as XLSX",
@@ -1311,7 +1413,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Generate filtered bill listing as PDF",
@@ -1341,6 +1445,13 @@
         "summary": "Download generated artifact by public token (no JWT)",
         "tags": [
           "Public artifacts"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -1384,6 +1495,13 @@
         "summary": "Generate invoice payment receipt PDF (service-to-service from fluide-books)",
         "tags": [
           "Internal Documents"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -1409,7 +1527,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Enqueue a document generation job",
@@ -1460,7 +1580,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "List document jobs for the active organization",
@@ -1489,7 +1611,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Get one document job",
@@ -1516,7 +1640,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Cancel a pending or processing job (soft delete on job row TBD)",
@@ -1545,7 +1671,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Retry a failed or cancelled job",
@@ -1565,7 +1693,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "List enterprise document registry records (stub)",
@@ -1593,7 +1723,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -1631,7 +1763,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -1642,7 +1776,7 @@
   },
   "info": {
     "title": "Fluide Utils API",
-    "description": "Shared platform utilities: notifications, file storage, document generation (PDFs, spreadsheets), and document jobs used across the suite.",
+    "description": "Shared platform utilities: notifications, file storage, document generation (PDFs, spreadsheets), and document jobs used across the suite. In the API playground, click Authorize and provide Bearer JWT (from token exchange), X-Fluide-Api-Key, and X-Fluide-Client-Id (fluide-developer).",
     "version": "1.0",
     "contact": {}
   },
@@ -1694,9 +1828,30 @@
   "components": {
     "securitySchemes": {
       "bearer": {
+        "type": "http",
         "scheme": "bearer",
         "bearerFormat": "JWT",
-        "type": "http"
+        "description": "Developer access token from POST /api/v1/developer-access/token. Paste the raw JWT; Mintlify adds the Bearer prefix."
+      },
+      "fluideApiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Fluide-Api-Key",
+        "description": "Developer API key (fl_dev_...). Required on every gateway call with a machine access token.",
+        "x-default": "fl_dev_your_key"
+      },
+      "fluideClientId": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Fluide-Client-Id",
+        "description": "First-party client audience. Must match the fluide_client_id claim on the JWT. Use fluide-developer for Connect.",
+        "x-default": "fluide-developer"
+      },
+      "fluideApiSecret": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Fluide-Api-Secret",
+        "description": "API secret — send only to POST /api/v1/developer-access/token. Never use on product routes."
       }
     },
     "schemas": {
@@ -2286,5 +2441,12 @@
   "x-mint": {
     "productOverview": "/utils/overview",
     "basePath": "/api/v1/app"
-  }
+  },
+  "security": [
+    {
+      "bearer": [],
+      "fluideApiKey": [],
+      "fluideClientId": []
+    }
+  ]
 }

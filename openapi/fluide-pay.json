@@ -12,6 +12,13 @@
         },
         "tags": [
           "App"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -28,7 +35,14 @@
           "Prometheus"
         ],
         "summary": "Payments Prometheus metrics",
-        "description": "Prometheus scrape target for wallet and transaction metrics."
+        "description": "Prometheus scrape target for wallet and transaction metrics.",
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
+        ]
       }
     },
     "/api/v1/payments/wallets": {
@@ -84,7 +98,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "List wallets for the active organization",
@@ -112,7 +128,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Create an additional company wallet",
@@ -159,6 +177,13 @@
         "summary": "Resolve default company operating wallet for a payout currency",
         "tags": [
           "internal-wallets"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -295,7 +320,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "List transactions for the active organization",
@@ -451,7 +478,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Export transactions (csv/xlsx/pdf) with filters applied",
@@ -480,7 +509,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Get a transaction by id (scoped to the active organization)",
@@ -511,6 +542,13 @@
         "summary": "Create a new Flutterwave customer",
         "tags": [
           "Flutterwave"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       },
       "get": {
@@ -524,6 +562,13 @@
         "summary": "Retrieve all customers",
         "tags": [
           "Flutterwave"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -548,6 +593,13 @@
         "summary": "Retrieve a customer by Flutterwave ID",
         "tags": [
           "Flutterwave"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -573,6 +625,13 @@
         "summary": "Create a transfer recipient (Bank details)",
         "tags": [
           "Flutterwave"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       },
       "get": {
@@ -586,6 +645,13 @@
         "summary": "Retrieve all transfer recipients",
         "tags": [
           "Flutterwave"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -610,6 +676,13 @@
         "summary": "Retrieve a transfer recipient by ID",
         "tags": [
           "Flutterwave"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -629,6 +702,13 @@
         "summary": "Get Payment Methods",
         "tags": [
           "Flutterwave"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -654,6 +734,13 @@
         "summary": "Initiate a standard transfer using saved IDs",
         "tags": [
           "Flutterwave"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -679,6 +766,13 @@
         "summary": "Initiate a one-shot direct transfer (Orchestrator)",
         "tags": [
           "Flutterwave"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -704,6 +798,13 @@
         "summary": "Create a virtual account for a customer",
         "tags": [
           "Flutterwave"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       },
       "get": {
@@ -717,6 +818,13 @@
         "summary": "List all virtual accounts",
         "tags": [
           "Flutterwave"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -741,6 +849,13 @@
         "summary": "Get details of a specific virtual account",
         "tags": [
           "Flutterwave"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -756,6 +871,13 @@
         "summary": "Fetch charges with different status",
         "tags": [
           "Flutterwave"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       },
       "post": {
@@ -779,6 +901,13 @@
         "summary": "Create a charge (USSD or other).",
         "tags": [
           "Flutterwave"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -794,6 +923,13 @@
         "summary": "Fetch wallet balance for multiple currencies",
         "tags": [
           "Flutterwave"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -818,6 +954,13 @@
         "summary": "Fetch wallet balance for a specific currency",
         "tags": [
           "Flutterwave"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -844,6 +987,13 @@
         "summary": "Wallet-to-wallet transfer (simple flow)",
         "tags": [
           "Flutterwave"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -870,6 +1020,13 @@
         "summary": "Get supported banks for a country",
         "tags": [
           "Flutterwave"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -895,6 +1052,13 @@
         "summary": "Create a payment method",
         "tags": [
           "Flutterwave"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -919,6 +1083,13 @@
         "summary": "Retrieve a charge by ID",
         "tags": [
           "Flutterwave"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -944,6 +1115,13 @@
         "summary": "Initiate USSD collection (NGN only). Creates customer if needed, creates payment method, initiates charge, returns dial string.",
         "tags": [
           "Flutterwave"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -969,6 +1147,13 @@
         "summary": "Initiate OPay collection (NGN only). Creates payment method, initiates charge, returns redirect URL for customer authorization.",
         "tags": [
           "Flutterwave"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -994,6 +1179,13 @@
         "summary": "Initiate card collection. Creates card payment method and charge. Returns next_action for frontend to handle authorization.",
         "tags": [
           "Flutterwave"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -1028,6 +1220,13 @@
         "summary": "Authorize a pending card charge. Use after receiving requires_pin, requires_otp, or requires_additional_fields from initiate.",
         "tags": [
           "Flutterwave"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -1053,6 +1252,13 @@
         "summary": "Initiate a bank account transfer (payout). Debits your Flutterwave wallet and sends to recipient bank account.",
         "tags": [
           "Flutterwave"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -1078,6 +1284,13 @@
         "summary": "Initiate a mobile money transfer (payout). Debits your Flutterwave wallet and sends to recipient mobile wallet.",
         "tags": [
           "Flutterwave"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -1103,6 +1316,13 @@
         "summary": "Card refunds are completed between 3-15 days after the refund is initiated. Refunds to mobile money wallets take 3-5 days, while refunds to bank accounts are completed in 24 hours.",
         "tags": [
           "Flutterwave"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -1127,6 +1347,13 @@
         "summary": "Get refund status by ID",
         "tags": [
           "Flutterwave"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -1142,6 +1369,13 @@
         "summary": "List refunds with optional filters",
         "tags": [
           "Flutterwave"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -1166,6 +1400,13 @@
         "summary": "Flutterwave webhook endpoint (PWBT payment notification)",
         "tags": [
           "Flutterwave Webhooks"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -1184,6 +1425,13 @@
         "summary": "Generate access token for Ecobank APIs",
         "tags": [
           "Ecobank Services"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -1212,6 +1460,13 @@
         "summary": "Create a new account",
         "tags": [
           "Ecobank Services"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -1240,6 +1495,13 @@
         "summary": "Initiate a payment with Ecobank",
         "tags": [
           "Ecobank Services"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -1268,6 +1530,13 @@
         "summary": "Get account balance",
         "tags": [
           "Ecobank Services"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -1296,6 +1565,13 @@
         "summary": "Get account statement",
         "tags": [
           "Ecobank Services"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -1324,6 +1600,13 @@
         "summary": "Process a cross-border remittance",
         "tags": [
           "Ecobank Services"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -1352,6 +1635,13 @@
         "summary": "Process a bill payment",
         "tags": [
           "Ecobank Services"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -1380,6 +1670,13 @@
         "summary": "Get list of supported institutions",
         "tags": [
           "Ecobank Services"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -1408,6 +1705,13 @@
         "summary": "Perform name enquiry on an account",
         "tags": [
           "Ecobank Services"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -1422,6 +1726,13 @@
         },
         "tags": [
           "MobileMoney"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -1445,6 +1756,13 @@
         },
         "tags": [
           "MobileMoney"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       },
       "delete": {
@@ -1466,6 +1784,13 @@
         },
         "tags": [
           "MobileMoney"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -1490,7 +1815,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Create a Stripe Payment Intent",
@@ -1521,6 +1848,13 @@
         "summary": "Create a Stripe Checkout session (internal)",
         "tags": [
           "Stripe Internal"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -1545,6 +1879,13 @@
         "summary": "Stripe webhook endpoint (checkout session completion)",
         "tags": [
           "Stripe Webhooks"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -1559,7 +1900,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Latest committed provider capabilities snapshot (global facts)",
@@ -1589,7 +1932,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Evaluate provider capability + org entitlements for a rail/currency/country",
@@ -1609,7 +1954,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "List payment providers",
@@ -1637,7 +1984,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Create a payment provider",
@@ -1676,7 +2025,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Update a payment provider (including demotion via active=false)",
@@ -1705,7 +2056,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "List rails (and corridors) for a provider",
@@ -1742,7 +2095,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Upsert (enable) a rail for a provider",
@@ -1781,7 +2136,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Activate/deactivate a rail",
@@ -1820,7 +2177,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Add a corridor to a rail",
@@ -1859,7 +2218,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Activate/deactivate a corridor",
@@ -1889,7 +2250,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Publish a new global capabilities snapshot from the current active graph",
@@ -1910,7 +2273,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "List supported payout rails and country/currency corridors (merged across providers)",
@@ -1930,7 +2295,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Billing overview: plan, seat usage, and current-period estimates",
@@ -1960,7 +2327,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Create or sync organization billing (plan, pricing band, provider ids)",
@@ -1991,6 +2360,13 @@
         "summary": "Internal: create or sync organization billing (plan onboarding)",
         "tags": [
           "billing-internal"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -2015,6 +2391,13 @@
         "summary": "Internal: whether billing is active and any invoice has been paid (referrals / eligibility)",
         "tags": [
           "billing-internal"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -2040,6 +2423,13 @@
         "summary": "Internal: ensure Flutterwave customer exists for org billing",
         "tags": [
           "billing-internal"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -2064,7 +2454,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Create hosted checkout for the current billing period (system computed)",
@@ -2094,7 +2486,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Create hosted checkout link (legacy hosted flow)",
@@ -2125,7 +2519,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Create hosted checkout for Mobile Money (Flutterwave v4 Orchestrator)",
@@ -2145,7 +2541,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -2174,6 +2572,13 @@
         "summary": "Flutterwave webhook (charge completed/failed)",
         "tags": [
           "billing-webhooks"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -2199,6 +2604,13 @@
         "summary": "Initiate a mobile money payout for a bill (internal)",
         "tags": [
           "Internal Payouts"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -2224,13 +2636,20 @@
         "summary": "Start AR invoice checkout for a payment channel",
         "tags": [
           "AR Collection Internal"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     }
   },
   "info": {
     "title": "Fluide Pay API",
-    "description": "Digital wallets, transactions, and payment provider integrations (Ecobank, mobile money). Supports async settlement via Kafka.",
+    "description": "Digital wallets, transactions, and payment provider integrations (Ecobank, mobile money). Supports async settlement via Kafka. In the API playground, click Authorize and provide Bearer JWT (from token exchange), X-Fluide-Api-Key, and X-Fluide-Client-Id (fluide-developer).",
     "version": "1.0",
     "contact": {}
   },
@@ -2309,9 +2728,30 @@
   "components": {
     "securitySchemes": {
       "bearer": {
+        "type": "http",
         "scheme": "bearer",
         "bearerFormat": "JWT",
-        "type": "http"
+        "description": "Developer access token from POST /api/v1/developer-access/token. Paste the raw JWT; Mintlify adds the Bearer prefix."
+      },
+      "fluideApiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Fluide-Api-Key",
+        "description": "Developer API key (fl_dev_...). Required on every gateway call with a machine access token.",
+        "x-default": "fl_dev_your_key"
+      },
+      "fluideClientId": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Fluide-Client-Id",
+        "description": "First-party client audience. Must match the fluide_client_id claim on the JWT. Use fluide-developer for Connect.",
+        "x-default": "fluide-developer"
+      },
+      "fluideApiSecret": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Fluide-Api-Secret",
+        "description": "API secret — send only to POST /api/v1/developer-access/token. Never use on product routes."
       }
     },
     "schemas": {
@@ -4565,5 +5005,12 @@
   "x-mint": {
     "productOverview": "/pay/overview",
     "basePath": "/api/v1/payments"
-  }
+  },
+  "security": [
+    {
+      "bearer": [],
+      "fluideApiKey": [],
+      "fluideClientId": []
+    }
+  ]
 }

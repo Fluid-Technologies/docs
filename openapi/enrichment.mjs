@@ -4,6 +4,81 @@
  * Edit here — then run `node export-openapi.mjs` or `node scripts/enrich-openapi.mjs`.
  */
 
+/** Tyk gateway + userFetcher contract for Fluide Connect developer integrations. */
+export const CONNECT_SECURITY_SCHEMES = {
+  bearer: {
+    type: "http",
+    scheme: "bearer",
+    bearerFormat: "JWT",
+    description:
+      "Developer access token from POST /api/v1/developer-access/token. Paste the raw JWT; Mintlify adds the Bearer prefix.",
+  },
+  fluideApiKey: {
+    type: "apiKey",
+    in: "header",
+    name: "X-Fluide-Api-Key",
+    description:
+      "Developer API key (fl_dev_...). Required on every gateway call with a machine access token.",
+    "x-default": "fl_dev_your_key",
+  },
+  fluideClientId: {
+    type: "apiKey",
+    in: "header",
+    name: "X-Fluide-Client-Id",
+    description:
+      "First-party client audience. Must match the fluide_client_id claim on the JWT. Use fluide-developer for Connect.",
+    "x-default": "fluide-developer",
+  },
+  fluideApiSecret: {
+    type: "apiKey",
+    in: "header",
+    name: "X-Fluide-Api-Secret",
+    description:
+      "API secret — send only to POST /api/v1/developer-access/token. Never use on product routes.",
+  },
+};
+
+/** AND-combined headers required on product APIs through Tyk (see FluideGateway userFetcher). */
+export const CONNECT_PRODUCT_SECURITY = [
+  { bearer: [], fluideApiKey: [], fluideClientId: [] },
+];
+
+/** Token exchange — no Bearer JWT yet. */
+export const TOKEN_EXCHANGE_SECURITY = [
+  { fluideApiKey: [], fluideApiSecret: [], fluideClientId: [] },
+];
+
+const PRODUCT_SERVICE_KEYS = new Set([
+  "fluide-hr",
+  "fluide-payroll",
+  "fluide-pay",
+  "fluide-books",
+  "fluide-utils",
+]);
+
+const TOKEN_EXCHANGE_PATHS = new Set([
+  "/api/v1/developer-access/token",
+  "/api/v1/developer-access/exchange",
+]);
+
+const DEVELOPER_SESSION_PATHS = new Set([
+  "/api/v1/developer-access/current",
+  "/api/v1/developer-access/rotate-secret",
+]);
+
+const HTTP_METHODS = new Set([
+  "get",
+  "post",
+  "put",
+  "patch",
+  "delete",
+  "head",
+  "options",
+]);
+
+const PLAYGROUND_AUTH_NOTE =
+  " In the API playground, click Authorize and provide Bearer JWT (from token exchange), X-Fluide-Api-Key, and X-Fluide-Client-Id (fluide-developer).";
+
 export const PRODUCT_META = {
   "fluide-auth": {
     title: "Fluide Auth API",
@@ -74,7 +149,8 @@ export const OPERATION_PATCHES = {
   },
   "GET /api/v1/hr/health": {
     summary: "HR health check",
-    description: "Liveness probe for the HR service and its dependencies.",
+    description:
+      "Liveness probe for the HR service and its dependencies. Through the gateway, requires developer JWT, X-Fluide-Api-Key, and X-Fluide-Client-Id — use Authorize in the playground.",
   },
   "GET /api/v1/hr/metrics": {
     summary: "HR Prometheus metrics",
@@ -107,6 +183,56 @@ export const OPERATION_PATCHES = {
   },
 };
 
+function mergeSecuritySchemes(existing) {
+  const merged = { ...(existing ?? {}) };
+  if (merged["access-token"] && !merged.bearer) {
+    merged.bearer = { ...merged["access-token"] };
+  }
+  for (const [key, scheme] of Object.entries(CONNECT_SECURITY_SCHEMES)) {
+    merged[key] = scheme;
+  }
+  return merged;
+}
+
+function resolveConnectSecurity(serviceKey, pathKey) {
+  if (TOKEN_EXCHANGE_PATHS.has(pathKey)) {
+    return TOKEN_EXCHANGE_SECURITY;
+  }
+  if (PRODUCT_SERVICE_KEYS.has(serviceKey)) {
+    return CONNECT_PRODUCT_SECURITY;
+  }
+  if (serviceKey === "fluide-auth" && DEVELOPER_SESSION_PATHS.has(pathKey)) {
+    return CONNECT_PRODUCT_SECURITY;
+  }
+  return null;
+}
+
+function injectGatewayAuth(doc, serviceKey) {
+  const components = {
+    ...(doc.components ?? {}),
+    securitySchemes: mergeSecuritySchemes(doc.components?.securitySchemes),
+  };
+
+  const paths = {};
+  for (const [pathKey, pathItem] of Object.entries(doc.paths ?? {})) {
+    const security = resolveConnectSecurity(serviceKey, pathKey);
+    const nextPathItem = { ...pathItem };
+    for (const [method, operation] of Object.entries(pathItem)) {
+      if (!HTTP_METHODS.has(method) || !operation || typeof operation !== "object") {
+        continue;
+      }
+      nextPathItem[method] =
+        security !== null ? { ...operation, security } : { ...operation };
+    }
+    paths[pathKey] = nextPathItem;
+  }
+
+  const security =
+    PRODUCT_SERVICE_KEYS.has(serviceKey) ? CONNECT_PRODUCT_SECURITY : doc.security;
+
+  return { ...doc, components, paths, security };
+}
+
 export function enrichOpenApiSpec(doc, serviceKey) {
   const meta = PRODUCT_META[serviceKey];
   if (!meta) return doc;
@@ -114,6 +240,9 @@ export function enrichOpenApiSpec(doc, serviceKey) {
   const info = { ...(doc.info ?? {}) };
   info.title = meta.title;
   info.description = meta.description;
+  if (PRODUCT_SERVICE_KEYS.has(serviceKey) && !info.description?.includes("API playground")) {
+    info.description = `${meta.description}${PLAYGROUND_AUTH_NOTE}`;
+  }
 
   const tagNames = new Set();
   for (const pathItem of Object.values(doc.paths ?? {})) {
@@ -147,14 +276,14 @@ export function enrichOpenApiSpec(doc, serviceKey) {
       if (!patch) continue;
       nextPathItem[method] = {
         ...operation,
-        summary: operation.summary || patch.summary,
-        description: operation.description || patch.description,
+        summary: patch.summary ?? operation.summary,
+        description: patch.description ?? operation.description,
       };
     }
     paths[pathKey] = nextPathItem;
   }
 
-  return {
+  const withPaths = {
     ...doc,
     info,
     tags: Array.from(tagByName.values()),
@@ -165,4 +294,6 @@ export function enrichOpenApiSpec(doc, serviceKey) {
       basePath: meta.basePath,
     },
   };
+
+  return injectGatewayAuth(withPaths, serviceKey);
 }

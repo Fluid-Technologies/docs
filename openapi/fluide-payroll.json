@@ -12,6 +12,13 @@
         },
         "tags": [
           "App"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -28,7 +35,14 @@
           "Prometheus"
         ],
         "summary": "Payroll Prometheus metrics",
-        "description": "Prometheus scrape target for payroll processing and API metrics."
+        "description": "Prometheus scrape target for payroll processing and API metrics.",
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
+        ]
       }
     },
     "/api/v1/payroll/payslips": {
@@ -52,7 +66,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Create a new payslip",
@@ -112,7 +128,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "List payslips (optional employeeId filter)",
@@ -141,7 +159,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Get payslip by ID",
@@ -171,7 +191,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Create a new RuleVersion (effective-dated, config-driven)",
@@ -206,7 +228,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "List RuleVersions",
@@ -235,7 +259,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Get RuleVersion by ID",
@@ -274,7 +300,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Create a TaxBracket row for a RuleVersion",
@@ -313,7 +341,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Create a StatutoryDeductionConfig row for a RuleVersion",
@@ -343,7 +373,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Create a new payroll run (DRAFT)",
@@ -394,7 +426,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "List payroll runs for the current company",
@@ -424,7 +458,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Process payroll for a company and period",
@@ -454,7 +490,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Process an off-cycle payroll run for explicit period boundaries",
@@ -483,7 +521,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Process a draft payroll run (full engine + snapshot + events)",
@@ -513,7 +553,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Validate an approved payroll run and generate payslips",
@@ -542,7 +584,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Per-group validation progress for a payroll run",
@@ -589,7 +633,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Sign off validation for a payroll group; finalizes run when all groups complete",
@@ -618,7 +664,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Download tax remittance summary PDF (CM/NG)",
@@ -657,7 +705,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Submit a computed payroll run for approval (freezes it)",
@@ -696,7 +746,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Approve a payroll run (as an assigned approver)",
@@ -735,7 +787,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Reject a payroll run (as an assigned approver)",
@@ -764,7 +818,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Reopen a rejected payroll run back to draft (clears approvals)",
@@ -803,7 +859,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Queue validated payslips for FluidePay disbursement (Kafka)",
@@ -832,7 +890,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Download payroll line import template (CSV or XLSX)",
@@ -861,7 +921,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Export payroll run register (CSV or XLSX)",
@@ -898,7 +960,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Export payslip lines for a payroll run (CSV or XLSX)",
@@ -927,7 +991,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Settlement snapshot and payslip disbursement summary for a payroll run",
@@ -956,7 +1022,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Reconcile payroll run against books journals (or internal payslip check)",
@@ -995,7 +1063,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Idempotently re-queue FAILED payslips for disbursement",
@@ -1024,7 +1094,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Get payroll run by ID with payslips",
@@ -1061,7 +1133,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Update a draft payroll run",
@@ -1090,7 +1164,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Get payroll settings for a subsidiary",
@@ -1118,7 +1194,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Upsert payroll settings for a subsidiary",
@@ -1147,7 +1225,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -1174,7 +1254,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -1212,7 +1294,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -1238,7 +1322,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -1266,7 +1352,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -1293,7 +1381,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -1331,7 +1421,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -1357,7 +1449,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -1395,7 +1489,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -1431,7 +1527,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -1459,7 +1557,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -1486,7 +1586,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -1497,7 +1599,7 @@
   },
   "info": {
     "title": "Fluide Payroll API",
-    "description": "Payroll runs, payslip generation, validators, and async payroll processing. Integrate after employee records exist in HR.",
+    "description": "Payroll runs, payslip generation, validators, and async payroll processing. Integrate after employee records exist in HR. In the API playground, click Authorize and provide Bearer JWT (from token exchange), X-Fluide-Api-Key, and X-Fluide-Client-Id (fluide-developer).",
     "version": "1.0",
     "contact": {}
   },
@@ -1534,9 +1636,30 @@
   "components": {
     "securitySchemes": {
       "bearer": {
+        "type": "http",
         "scheme": "bearer",
         "bearerFormat": "JWT",
-        "type": "http"
+        "description": "Developer access token from POST /api/v1/developer-access/token. Paste the raw JWT; Mintlify adds the Bearer prefix."
+      },
+      "fluideApiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Fluide-Api-Key",
+        "description": "Developer API key (fl_dev_...). Required on every gateway call with a machine access token.",
+        "x-default": "fl_dev_your_key"
+      },
+      "fluideClientId": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Fluide-Client-Id",
+        "description": "First-party client audience. Must match the fluide_client_id claim on the JWT. Use fluide-developer for Connect.",
+        "x-default": "fluide-developer"
+      },
+      "fluideApiSecret": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Fluide-Api-Secret",
+        "description": "API secret — send only to POST /api/v1/developer-access/token. Never use on product routes."
       }
     },
     "schemas": {
@@ -2095,5 +2218,12 @@
   "x-mint": {
     "productOverview": "/payroll/overview",
     "basePath": "/api/v1/payroll"
-  }
+  },
+  "security": [
+    {
+      "bearer": [],
+      "fluideApiKey": [],
+      "fluideClientId": []
+    }
+  ]
 }

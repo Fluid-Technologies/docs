@@ -18,6 +18,22 @@ Each product has an **overview page** with context, monitoring endpoints, and in
 
 Open any endpoint to see parameters, request bodies, responses, and try the **interactive playground** with **cURL** and **Node.js** examples.
 
+## Playground authentication
+
+Product APIs are proxied through the Tyk gateway. The playground prompts for three credentials on every product route (including health checks):
+
+| Header | Playground field | Required value |
+| --- | --- | --- |
+| `Authorization` | **Bearer** | JWT from `POST /api/v1/developer-access/token` |
+| `X-Fluide-Api-Key` | **X-Fluide-Api-Key** | Your `fl_dev_...` developer key |
+| `X-Fluide-Client-Id` | **X-Fluide-Client-Id** | `fluide-developer` |
+
+Click **Authorize** before **Send**. If you skip it, the gateway returns `400 Authorization field missing` or `401` with codes such as `MISSING_API_KEY` or `CLIENT_AUDIENCE_MISMATCH`.
+
+<Card title="Get credentials" icon="key" href="/getting-started/authentication">
+  Token exchange, header reference, and step-by-step playground setup.
+</Card>
+
 ## Operations endpoints
 
 Every service exposes operational routes under the **Operations** tag group where applicable:

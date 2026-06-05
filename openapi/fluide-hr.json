@@ -10,11 +10,18 @@
             "description": ""
           }
         },
-        "summary": "Liveness",
+        "summary": "HR health check",
         "tags": [
           "Health"
         ],
-        "description": "Liveness probe for the HR service and its dependencies."
+        "description": "Liveness probe for the HR service and its dependencies. Through the gateway, requires developer JWT, X-Fluide-Api-Key, and X-Fluide-Client-Id — use Authorize in the playground.",
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
+        ]
       }
     },
     "/api/v1/hr/metrics": {
@@ -30,7 +37,14 @@
           "Prometheus"
         ],
         "summary": "HR Prometheus metrics",
-        "description": "Prometheus exposition format for HR request counters, latency histograms, and process metrics."
+        "description": "Prometheus exposition format for HR request counters, latency histograms, and process metrics.",
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
+        ]
       }
     },
     "/api/v1/hr/employees": {
@@ -54,7 +68,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Create HR employee record",
@@ -120,7 +136,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "List employees",
@@ -151,7 +169,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Create employee and provision FluideAuth staff seat (single request)",
@@ -180,7 +200,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Download branded employee import template (CSV or XLSX)",
@@ -209,7 +231,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Export employees for the active company (CSV or XLSX)",
@@ -229,7 +253,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Validate employee import file (no persistence)",
@@ -259,7 +285,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Validate employee import rows from JSON (no persistence)",
@@ -289,7 +317,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Commit bulk employee import (partial success supported)",
@@ -318,7 +348,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Download payment rails import template (separate from core HR employee import)",
@@ -338,7 +370,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Validate payment rails import file (no persistence)",
@@ -368,7 +402,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Validate payment rails rows from JSON (no persistence)",
@@ -398,7 +434,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Commit payment rails bulk import (updates existing employees only)",
@@ -418,7 +456,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Current user's HR employee in the active organization",
@@ -439,7 +479,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Team L&D rollup (enrollments + skills from fluide-academy-core)",
@@ -469,7 +511,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Create employment invite draft (invite-first org flow before user accepts invite)",
@@ -499,7 +543,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Provision FluideAuth user + staff org seat for HR employees (not an elevated team invite)",
@@ -536,7 +582,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Download consolidated employee CV (PDF or DOCX)",
@@ -565,7 +613,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -601,7 +651,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -627,7 +679,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -655,7 +709,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Request default FluidePay wallet for the employee user (via payroll internal API)",
@@ -684,7 +740,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -720,7 +778,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -759,7 +819,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Record promotion or transfer",
@@ -788,7 +850,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -824,7 +888,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -852,7 +918,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -888,7 +956,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -917,7 +987,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Academy / L&D enrollments (fluide-academy-core proxy)",
@@ -947,7 +1019,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Academy / L&D skill declarations (fluide-academy-core proxy)",
@@ -977,7 +1051,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Emergency contacts",
@@ -1015,7 +1091,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Replace emergency contacts",
@@ -1045,7 +1123,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Reporting manager (auth user id)",
@@ -1083,7 +1163,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Set or clear reporting manager",
@@ -1113,7 +1195,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Employee dependents",
@@ -1151,7 +1235,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Replace dependents list",
@@ -1181,7 +1267,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Create employment contract",
@@ -1216,7 +1304,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "List contracts for the active company",
@@ -1245,7 +1335,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Download employment contract PDF (integrity metadata on headers)",
@@ -1274,7 +1366,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -1310,7 +1404,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -1336,7 +1432,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -1365,7 +1463,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Create leave type",
@@ -1383,7 +1483,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -1427,7 +1529,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -1471,7 +1575,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Rough projected balance by target date (linear accrual from maxDaysPerYear)",
@@ -1500,7 +1606,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -1529,7 +1637,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -1643,7 +1753,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -1672,7 +1784,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Count working days between dates (excludes weekends and company holidays)",
@@ -1717,7 +1831,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Leave overlapping a range for calendar / team views",
@@ -1754,7 +1870,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Recent leave activity for an employee (request-centric)",
@@ -1783,7 +1901,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Reporting manager hint from employee profileExtensions",
@@ -1813,7 +1933,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Submit an HR support message (audited)",
@@ -1833,7 +1955,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -1860,7 +1984,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -1879,7 +2005,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -1906,7 +2034,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -1925,7 +2055,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -1952,7 +2084,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -1971,7 +2105,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -1998,7 +2134,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -2026,7 +2164,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -2054,7 +2194,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -2073,7 +2215,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -2090,7 +2234,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -2109,7 +2255,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -2126,7 +2274,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -2145,7 +2295,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -2173,7 +2325,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -2201,7 +2355,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -2220,7 +2376,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -2239,7 +2397,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -2256,7 +2416,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -2284,7 +2446,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -2310,7 +2474,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -2338,7 +2504,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -2366,7 +2534,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -2394,7 +2564,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "List CCS versions (optional country filter)",
@@ -2412,7 +2584,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Publish new CCS version (superadmin workflow — protect in gateway)",
@@ -2441,7 +2615,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -2469,7 +2645,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -2507,7 +2685,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -2535,7 +2715,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -2554,7 +2736,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -2592,7 +2776,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -2611,7 +2797,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -2639,7 +2827,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -2658,7 +2848,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -2678,7 +2870,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Company HR metrics for the admin home dashboard",
@@ -2708,7 +2902,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Personal dashboard metrics for the logged-in employee",
@@ -2728,7 +2924,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Recruiting dashboard metrics (fluide-jobs when `JOBS_*` env is configured)",
@@ -2767,7 +2965,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Record a clock-in or clock-out punch. Optional idempotency via `clientRequestId` or `Idempotency-Key` header.",
@@ -2832,7 +3032,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "List clock events in a date range. Optional IANA `timeZone` interprets `from`/`to` as local calendar days. Without `hr:attendance:write`, scope is self-only (`hr:attendance:self:write` only), direct reports (`hr:attendance:read`), or full reporting subtree (`hr:attendance:read` + `hr:attendance:team:read`).",
@@ -2890,7 +3092,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Export daily attendance summary (CSV or XLSX)",
@@ -2936,7 +3140,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Per-day distinct clock-ins; expected = active headcount in scope. Optional `timeZone` for local-day bucketing.",
@@ -2966,7 +3172,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Create a planned work shift",
@@ -3018,7 +3226,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "List shifts overlapping a date range",
@@ -3057,7 +3267,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Update or cancel a work shift (status, times, label, notes)",
@@ -3078,7 +3290,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "List job applications (fluide-jobs proxy)",
@@ -3107,7 +3321,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Mark application hire-ready (fluide-jobs → fluide-hr onboarding seed)",
@@ -3119,7 +3335,7 @@
   },
   "info": {
     "title": "Fluide HR API",
-    "description": "Employee records, contracts, leave, performance, OKRs, and HR insights. HR is the canonical employee source consumed by payroll and other suite services.",
+    "description": "Employee records, contracts, leave, performance, OKRs, and HR insights. HR is the canonical employee source consumed by payroll and other suite services. In the API playground, click Authorize and provide Bearer JWT (from token exchange), X-Fluide-Api-Key, and X-Fluide-Client-Id (fluide-developer).",
     "version": "1.0",
     "contact": {}
   },
@@ -3178,9 +3394,30 @@
   "components": {
     "securitySchemes": {
       "bearer": {
+        "type": "http",
         "scheme": "bearer",
         "bearerFormat": "JWT",
-        "type": "http"
+        "description": "Developer access token from POST /api/v1/developer-access/token. Paste the raw JWT; Mintlify adds the Bearer prefix."
+      },
+      "fluideApiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Fluide-Api-Key",
+        "description": "Developer API key (fl_dev_...). Required on every gateway call with a machine access token.",
+        "x-default": "fl_dev_your_key"
+      },
+      "fluideClientId": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Fluide-Client-Id",
+        "description": "First-party client audience. Must match the fluide_client_id claim on the JWT. Use fluide-developer for Connect.",
+        "x-default": "fluide-developer"
+      },
+      "fluideApiSecret": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Fluide-Api-Secret",
+        "description": "API secret — send only to POST /api/v1/developer-access/token. Never use on product routes."
       }
     },
     "schemas": {
@@ -4273,5 +4510,12 @@
   "x-mint": {
     "productOverview": "/hr/overview",
     "basePath": "/api/v1/hr"
-  }
+  },
+  "security": [
+    {
+      "bearer": [],
+      "fluideApiKey": [],
+      "fluideClientId": []
+    }
+  ]
 }

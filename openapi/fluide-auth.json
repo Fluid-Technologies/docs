@@ -2904,6 +2904,13 @@
         },
         "tags": [
           "DeveloperAccess"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -2918,6 +2925,13 @@
         },
         "tags": [
           "DeveloperAccess"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -5464,6 +5478,32 @@
         "bearerFormat": "JWT",
         "type": "http",
         "description": "Enter token as: Bearer <JWT>"
+      },
+      "bearer": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Developer access token from POST /api/v1/developer-access/token. Paste the raw JWT; Mintlify adds the Bearer prefix."
+      },
+      "fluideApiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Fluide-Api-Key",
+        "description": "Developer API key (fl_dev_...). Required on every gateway call with a machine access token.",
+        "x-default": "fl_dev_your_key"
+      },
+      "fluideClientId": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Fluide-Client-Id",
+        "description": "First-party client audience. Must match the fluide_client_id claim on the JWT. Use fluide-developer for Connect.",
+        "x-default": "fluide-developer"
+      },
+      "fluideApiSecret": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Fluide-Api-Secret",
+        "description": "API secret — send only to POST /api/v1/developer-access/token. Never use on product routes."
       }
     },
     "schemas": {

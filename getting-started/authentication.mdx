@@ -63,6 +63,37 @@ Response (abbreviated):
 Use the API secret only for token exchange. Never send it on product API routes.
 </Warning>
 
+## Test in the API playground
+
+Every product endpoint in [API reference](/api-reference) includes an interactive playground. The Tyk gateway rejects requests without the right headers — you will see `Authorization field missing` or `401` if any are omitted.
+
+<Steps>
+
+<Step title="Exchange a token first">
+Run the token exchange above (curl, Node.js, or the **Auth API** `POST /api/v1/developer-access/token` page when it appears in the reference). Copy the `accessToken` value.
+</Step>
+
+<Step title="Click Authorize on a product endpoint">
+Open any HR, Payroll, Pay, Books, or Utils endpoint and click **Authorize**. Fill in all three fields:
+
+| Playground field | Value |
+| --- | --- |
+| **Bearer** | Paste the raw JWT (`eyJ...`) — do not include the `Bearer` prefix |
+| **X-Fluide-Api-Key** | Your `fl_dev_...` key (pre-filled with a placeholder; replace it) |
+| **X-Fluide-Client-Id** | `fluide-developer` (pre-filled) |
+
+</Step>
+
+<Step title="Send the request">
+Click **Send**. Health checks such as `GET /api/v1/hr/health` use the same headers as business endpoints — there is no anonymous access through the gateway.
+</Step>
+
+</Steps>
+
+<Tip>
+Gateway middleware validates that `X-Fluide-Client-Id` matches the JWT `fluide_client_id` claim and that `X-Fluide-Api-Key` matches `dev_api_key` on machine tokens. See [Fluide Gateway hybrid RBAC contract](https://github.com/Fluid-Technologies/FluideGateway/blob/main/docs/hybrid-rbac-contract.md) for the full inbound identity contract.
+</Tip>
+
 ## Call Fluide APIs
 
 Send **both** the Bearer token and your API key on every product request.

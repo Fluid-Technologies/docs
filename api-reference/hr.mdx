@@ -11,7 +11,13 @@ The **HR API** (`fluide-hr`) is the canonical source for employee data in the Fl
 
 ## Authentication
 
-All endpoints require a developer JWT and API key. See [Authentication](/getting-started/authentication).
+All endpoints — including `GET /api/v1/hr/health` — require **three** gateway headers:
+
+- `Authorization: Bearer <accessToken>`
+- `X-Fluide-Api-Key: fl_dev_...`
+- `X-Fluide-Client-Id: fluide-developer`
+
+In the API playground, click **Authorize** and fill all three fields before **Send**. See [Authentication](/getting-started/authentication).
 
 ## Operations and monitoring
 

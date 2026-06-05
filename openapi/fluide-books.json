@@ -14,7 +14,14 @@
           "App"
         ],
         "summary": "Auth service root",
-        "description": "Returns a simple greeting confirming the auth service is reachable."
+        "description": "Returns a simple greeting confirming the auth service is reachable.",
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
+        ]
       }
     },
     "/api/v1/audit-logs": {
@@ -85,7 +92,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Immutable accounting audit trail (paginated)",
@@ -138,7 +147,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Paginated report export / download activity (REPORT_EXPORT rows)",
@@ -175,7 +186,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Export accounting audit log (XLSX or CSV)",
@@ -197,7 +210,14 @@
           "Prometheus"
         ],
         "summary": "Books Prometheus metrics",
-        "description": "Prometheus scrape target for accounting service metrics."
+        "description": "Prometheus scrape target for accounting service metrics.",
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
+        ]
       }
     },
     "/api/v1/chart-of-accounts/merge-standard-catalog": {
@@ -222,7 +242,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Merge IFRS or OHADA/SYSCOHADA standard catalog into the subsidiary chart",
@@ -252,7 +274,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Create a new account in the chart of accounts",
@@ -312,7 +336,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "List all accounts in the chart of accounts",
@@ -382,7 +408,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Export chart of accounts (XLSX or CSV), same filters as list",
@@ -411,7 +439,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Get a single account by ID",
@@ -448,7 +478,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Update an account",
@@ -475,7 +507,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Soft-delete an account",
@@ -505,7 +539,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Record income (debit cash/bank, credit revenue) — posted immediately",
@@ -535,7 +571,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Record expense (debit expense, credit cash/bank) — posted immediately",
@@ -582,7 +620,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Create a new journal entry with lines",
@@ -633,7 +673,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "List all journal entries",
@@ -694,7 +736,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Export journal lines as XLSX or CSV (flattened debit/credit lines)",
@@ -723,7 +767,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Get a journal entry by ID with its lines",
@@ -760,7 +806,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Update a draft journal entry",
@@ -787,7 +835,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Void a journal entry",
@@ -816,7 +866,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Post a draft journal entry",
@@ -846,7 +898,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Create a new invoice",
@@ -906,7 +960,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "List all invoices",
@@ -1026,7 +1082,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Export invoices (csv/xlsx/pdf) with optional status and date filters",
@@ -1055,7 +1113,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Get an invoice by ID",
@@ -1092,7 +1152,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Update an invoice",
@@ -1119,7 +1181,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Cancel an invoice",
@@ -1156,7 +1220,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Download invoice PDF bytes (generated via fluide-utils)",
@@ -1193,7 +1259,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Generate invoice PDF in fluide-utils and return a download URL",
@@ -1222,7 +1290,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Post invoice to the ledger (creates immutable journal entry)",
@@ -1261,7 +1331,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Record payment allocation against an invoice",
@@ -1300,7 +1372,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Link uploaded source documents to an invoice",
@@ -1337,7 +1411,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Send invoice to customer via email with pay link",
@@ -1374,7 +1450,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Resend invoice email to customer (rotates pay link)",
@@ -1403,7 +1481,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Duplicate invoice into a new draft",
@@ -1432,7 +1512,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Create a hosted payment link for an invoice (Stripe Checkout via FluidePay)",
@@ -1462,6 +1544,13 @@
         "summary": "View invoice by public token (no auth)",
         "tags": [
           "Public Invoices"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -1486,6 +1575,13 @@
         "summary": "List enabled payment channels for this invoice",
         "tags": [
           "Public Invoices"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -1520,6 +1616,13 @@
         "summary": "Start checkout for a payment channel",
         "tags": [
           "Public Invoices"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -1543,7 +1646,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Get invoice payment channel settings for a company",
@@ -1571,7 +1676,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Upsert invoice payment channel settings",
@@ -1601,7 +1708,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Create or update a daily FX rate",
@@ -1652,7 +1761,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "List rates",
@@ -1705,7 +1816,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Convert an amount using stored rates (direct or inverted)",
@@ -1735,7 +1848,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Fetch ECB daily rates from Frankfurter API into exchange_rates",
@@ -1806,7 +1921,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "List payroll → GL mappings for a subsidiary (company)",
@@ -1834,7 +1951,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Create or replace a mapping row for a subsidiary + component code",
@@ -1863,7 +1982,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Check required payroll mappings coverage by currency",
@@ -1924,7 +2045,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Append-only audit trail of mapping changes (compliance)",
@@ -1954,7 +2077,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Apply a statutory chart + mapping template (CM_STATUTORY / NG_STATUTORY) to one subsidiary",
@@ -1983,7 +2108,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Soft-delete a mapping (audit entry recorded)",
@@ -2069,7 +2196,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Get trial balance aggregated by account (posted journals only)",
@@ -2130,7 +2259,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "P&amp;L (revenue & expense) for a date range",
@@ -2176,7 +2307,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Balance sheet (assets, liabilities, equity) as of a date",
@@ -2205,7 +2338,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Cash and cash-equivalent account balances as of a date",
@@ -2266,7 +2401,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Simplified statement of cash flows for a period (indirect reconciliation vs cash-like accounts)",
@@ -2327,7 +2464,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Direct-method cash flow layout (shell; gross lines pending account classification)",
@@ -2356,7 +2495,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Reconcile journal for a specific payroll run (double-entry check)",
@@ -2385,7 +2526,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Full payroll reconciliation — all journal entries for a run with balance checks",
@@ -2415,7 +2558,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Create vendor bill (accounts payable)",
@@ -2466,7 +2611,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "List bills",
@@ -2578,7 +2725,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Export bills (csv/xlsx/pdf) with optional status and date filters",
@@ -2608,7 +2757,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Configure AP approval policy for the active company",
@@ -2637,7 +2788,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Get bill by id",
@@ -2674,7 +2827,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Update bill",
@@ -2701,7 +2856,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Void bill",
@@ -2738,7 +2895,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Download bill PDF bytes (generated via fluide-utils)",
@@ -2775,7 +2934,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Generate bill PDF in fluide-utils and return a download URL",
@@ -2804,7 +2965,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Post bill to the ledger (creates immutable journal entry)",
@@ -2833,7 +2996,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Approve bill (AP)",
@@ -2872,7 +3037,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Reject bill (AP)",
@@ -2911,7 +3078,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Schedule payment date for an approved bill",
@@ -2950,7 +3119,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Record payment allocation against a bill",
@@ -2979,7 +3150,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Disburse a scheduled/approved bill via FluidePay (settles the bill)",
@@ -3018,7 +3191,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Link uploaded source documents to a bill",
@@ -3048,7 +3223,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Register a bank account linked to GL",
@@ -3099,7 +3276,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "List bank accounts",
@@ -3138,7 +3317,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Import a bank statement line",
@@ -3197,7 +3378,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Paginated statement lines",
@@ -3236,7 +3419,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Reconcile statement line to a journal entry line",
@@ -3266,7 +3451,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Create budget with monthly lines per account",
@@ -3317,7 +3504,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "List budgets",
@@ -3346,7 +3535,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Export budgets with lines as XLSX or CSV",
@@ -3375,7 +3566,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Get budget detail",
@@ -3405,7 +3598,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Register a fixed asset (GL links)",
@@ -3456,7 +3651,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "List fixed assets",
@@ -3493,7 +3690,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Export fixed asset register (XLSX or CSV)",
@@ -3522,7 +3721,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Get asset",
@@ -3561,7 +3762,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Post one period straight-line depreciation to the GL (Dr expense / Cr accumulated depreciation). Idempotent per YYYY-MM.",
@@ -3614,7 +3817,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Financial dashboard: P&L for period + AR/AP-style counts + draft journals",
@@ -3643,7 +3848,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Monthly revenue, expenses, and net income for trend charts",
@@ -3680,7 +3887,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Cash on hand, average monthly expense, runway and balance-sheet ratio heuristics",
@@ -3725,7 +3934,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Top expense accounts as % of total expense for the period",
@@ -3745,7 +3956,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Rule-based financial highlights (extensible for ML later)",
@@ -3846,7 +4059,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Download full management pack: XLSX multi-sheet workbook, or ZIP of branded PDFs (income, balance sheet, cash flow, trial balance, chart of accounts via fluide-utils)",
@@ -3891,7 +4106,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Export posted GL lines for one account as XLSX (drill-down)",
@@ -3976,7 +4193,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "P&L + balance sheet + trial balance in one response (reporting / analytics)",
@@ -4021,7 +4240,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Posted journal lines for a single GL account (drill-down)",
@@ -4138,7 +4359,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Download financial PDFs (income statement, balance sheet, cash flow, trial balance, general ledger, chart of accounts)",
@@ -4255,7 +4478,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Download income statement, balance sheet, or cash flow as XLSX (generated in fluide-utils; requires Authorization and UTILS_BASE_URL)",
@@ -4308,7 +4533,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "List saved statement exports for the organization",
@@ -4346,7 +4573,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Create a statement export and optionally enqueue generation in fluide-utils",
@@ -4375,7 +4604,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Get one statement export",
@@ -4412,7 +4643,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Update statement export metadata",
@@ -4439,7 +4672,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Soft-delete a statement export",
@@ -4469,7 +4704,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Soft-delete many statement exports",
@@ -4509,7 +4746,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Attach fluide-utils file ids after external generation",
@@ -4546,7 +4785,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Refresh status from fluide-utils document job",
@@ -4599,7 +4840,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "List scheduled reports",
@@ -4627,7 +4870,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Create a scheduled report definition",
@@ -4656,7 +4901,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Get one scheduled report",
@@ -4693,7 +4940,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Update a scheduled report",
@@ -4720,7 +4969,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Soft-delete a scheduled report",
@@ -4758,7 +5009,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Run now: materialize a statement export from this schedule",
@@ -4820,7 +5073,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "List accounting projects (for journal line projectId)",
@@ -4848,7 +5103,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Create a project",
@@ -4877,7 +5134,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Get one project",
@@ -4914,7 +5173,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Update a project",
@@ -4941,7 +5202,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Soft-delete a project",
@@ -5003,7 +5266,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "List accounting clients / sub-ledgers (for journal line clientId)",
@@ -5031,7 +5296,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -5059,7 +5326,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -5095,7 +5364,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -5121,7 +5392,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -5149,7 +5422,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Get accounting settings for a subsidiary (company)",
@@ -5177,7 +5452,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Upsert accounting settings for a subsidiary (company)",
@@ -5223,7 +5500,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Search business partners (customers/vendors/etc)",
@@ -5251,7 +5530,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Quick-add a business partner",
@@ -5310,7 +5591,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Export business partners (up to 25k rows, XLSX or CSV)",
@@ -5339,7 +5622,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Download business partner import template (CSV or XLSX)",
@@ -5359,7 +5644,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Validate business partner import file (no persistence)",
@@ -5389,7 +5676,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Validate business partner import rows from JSON (no persistence)",
@@ -5419,7 +5708,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Commit bulk business partner import (partial success supported)",
@@ -5448,7 +5739,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Get business partner by id",
@@ -5485,7 +5778,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Update business partner",
@@ -5515,7 +5810,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Create recurring document template",
@@ -5533,7 +5830,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "List recurring templates",
@@ -5563,7 +5862,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Create recurring schedule",
@@ -5581,7 +5882,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "List recurring schedules",
@@ -5619,7 +5922,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Preview next N occurrence timestamps",
@@ -5648,7 +5953,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "List run history for schedule",
@@ -5677,7 +5984,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -5705,7 +6014,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "tags": [
@@ -5733,7 +6044,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Enqueue immediate run (manual)",
@@ -5762,7 +6075,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Retry a failed run (new idempotency key)",
@@ -5873,7 +6188,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Unified payments feed (invoice + bill allocations) for the active organization",
@@ -6006,7 +6323,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Export accounting transactions (csv/xlsx/pdf)",
@@ -6035,7 +6354,9 @@
         },
         "security": [
           {
-            "bearer": []
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
           }
         ],
         "summary": "Get accounting transaction (query compositeId=INVOICE:<uuid> or BILL:<uuid>)",
@@ -6056,6 +6377,13 @@
         "summary": "Reconcile invoice allocation from Stripe checkout.session.completed (internal)",
         "tags": [
           "Internal Payments"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     },
@@ -6071,13 +6399,20 @@
         "summary": "Reconcile invoice allocation from any online collection provider",
         "tags": [
           "Internal Payments"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
         ]
       }
     }
   },
   "info": {
     "title": "Fluide Books API",
-    "description": "Accounting: chart of accounts, journal entries, invoices, bills, banking, budgets, and payroll GL integration.",
+    "description": "Accounting: chart of accounts, journal entries, invoices, bills, banking, budgets, and payroll GL integration. In the API playground, click Authorize and provide Bearer JWT (from token exchange), X-Fluide-Api-Key, and X-Fluide-Client-Id (fluide-developer).",
     "version": "1.0",
     "contact": {}
   },
@@ -6177,9 +6512,30 @@
   "components": {
     "securitySchemes": {
       "bearer": {
+        "type": "http",
         "scheme": "bearer",
         "bearerFormat": "JWT",
-        "type": "http"
+        "description": "Developer access token from POST /api/v1/developer-access/token. Paste the raw JWT; Mintlify adds the Bearer prefix."
+      },
+      "fluideApiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Fluide-Api-Key",
+        "description": "Developer API key (fl_dev_...). Required on every gateway call with a machine access token.",
+        "x-default": "fl_dev_your_key"
+      },
+      "fluideClientId": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Fluide-Client-Id",
+        "description": "First-party client audience. Must match the fluide_client_id claim on the JWT. Use fluide-developer for Connect.",
+        "x-default": "fluide-developer"
+      },
+      "fluideApiSecret": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Fluide-Api-Secret",
+        "description": "API secret — send only to POST /api/v1/developer-access/token. Never use on product routes."
       }
     },
     "schemas": {
@@ -7951,5 +8307,12 @@
   "x-mint": {
     "productOverview": "/books/overview",
     "basePath": "/api/v1"
-  }
+  },
+  "security": [
+    {
+      "bearer": [],
+      "fluideApiKey": [],
+      "fluideClientId": []
+    }
+  ]
 }
