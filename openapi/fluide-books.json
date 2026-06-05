@@ -1,0 +1,7955 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/v1": {
+      "get": {
+        "operationId": "AppController_getHello",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "App"
+        ],
+        "summary": "Auth service root",
+        "description": "Returns a simple greeting confirming the auth service is reachable."
+      }
+    },
+    "/api/v1/audit-logs": {
+      "get": {
+        "operationId": "AuditController_findAll",
+        "parameters": [
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Free-text search (endpoint-specific)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number (1-indexed)",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "engagementId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "vmOrgId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "delegatedOnly",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Immutable accounting audit trail (paginated)",
+        "tags": [
+          "Audit"
+        ]
+      }
+    },
+    "/api/v1/audit-logs/report-exports": {
+      "get": {
+        "operationId": "AuditController_findReportExports",
+        "parameters": [
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Free-text search (endpoint-specific)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number (1-indexed)",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Paginated report export / download activity (REPORT_EXPORT rows)",
+        "tags": [
+          "Audit"
+        ]
+      }
+    },
+    "/api/v1/audit-logs/export": {
+      "get": {
+        "operationId": "AuditController_export",
+        "parameters": [
+          {
+            "name": "format",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Export accounting audit log (XLSX or CSV)",
+        "tags": [
+          "Audit"
+        ]
+      }
+    },
+    "/api/v1/metrics": {
+      "get": {
+        "operationId": "PrometheusController_index",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Prometheus"
+        ],
+        "summary": "Books Prometheus metrics",
+        "description": "Prometheus scrape target for accounting service metrics."
+      }
+    },
+    "/api/v1/chart-of-accounts/merge-standard-catalog": {
+      "post": {
+        "description": "Upserts catalog lines by semantic key, then by account code; updates company accounting settings (AR/AP defaults, template metadata). Safe to call repeatedly.",
+        "operationId": "ChartOfAccountsController_mergeStandardCatalog",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MergeStandardCatalogDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Merge completed; see template and accountsTouched"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Merge IFRS or OHADA/SYSCOHADA standard catalog into the subsidiary chart",
+        "tags": [
+          "Chart of Accounts"
+        ]
+      }
+    },
+    "/api/v1/chart-of-accounts": {
+      "post": {
+        "operationId": "ChartOfAccountsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateChartOfAccountDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Account created successfully"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create a new account in the chart of accounts",
+        "tags": [
+          "Chart of Accounts"
+        ]
+      },
+      "get": {
+        "operationId": "ChartOfAccountsController_findAll",
+        "parameters": [
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Free-text search (endpoint-specific)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number (1-indexed)",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "companyId",
+            "required": false,
+            "in": "query",
+            "description": "Filter to org-wide + this subsidiary’s accounts",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Accounts retrieved successfully"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List all accounts in the chart of accounts",
+        "tags": [
+          "Chart of Accounts"
+        ]
+      }
+    },
+    "/api/v1/chart-of-accounts/export": {
+      "get": {
+        "operationId": "ChartOfAccountsController_exportCoa",
+        "parameters": [
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Free-text search (endpoint-specific)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number (1-indexed)",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "companyId",
+            "required": false,
+            "in": "query",
+            "description": "Filter to org-wide + this subsidiary’s accounts",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "format",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Export chart of accounts (XLSX or CSV), same filters as list",
+        "tags": [
+          "Chart of Accounts"
+        ]
+      }
+    },
+    "/api/v1/chart-of-accounts/{id}": {
+      "get": {
+        "operationId": "ChartOfAccountsController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Account retrieved successfully"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get a single account by ID",
+        "tags": [
+          "Chart of Accounts"
+        ]
+      },
+      "patch": {
+        "operationId": "ChartOfAccountsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateChartOfAccountDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Account updated successfully"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update an account",
+        "tags": [
+          "Chart of Accounts"
+        ]
+      },
+      "delete": {
+        "operationId": "ChartOfAccountsController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Account deleted successfully"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Soft-delete an account",
+        "tags": [
+          "Chart of Accounts"
+        ]
+      }
+    },
+    "/api/v1/journal-entries/quick/income": {
+      "post": {
+        "operationId": "JournalEntriesController_recordIncome",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuickIncomeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Journal entry created and posted"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Record income (debit cash/bank, credit revenue) — posted immediately",
+        "tags": [
+          "Journal Entries"
+        ]
+      }
+    },
+    "/api/v1/journal-entries/quick/expense": {
+      "post": {
+        "operationId": "JournalEntriesController_recordExpense",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/QuickExpenseDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Journal entry created and posted"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Record expense (debit expense, credit cash/bank) — posted immediately",
+        "tags": [
+          "Journal Entries"
+        ]
+      }
+    },
+    "/api/v1/journal-entries": {
+      "post": {
+        "operationId": "JournalEntriesController_create",
+        "parameters": [
+          {
+            "name": "idempotency-key",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateJournalEntryDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Journal entry created successfully"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create a new journal entry with lines",
+        "tags": [
+          "Journal Entries"
+        ]
+      },
+      "get": {
+        "operationId": "JournalEntriesController_findAll",
+        "parameters": [
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Free-text search (endpoint-specific)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number (1-indexed)",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Journal entries retrieved successfully"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List all journal entries",
+        "tags": [
+          "Journal Entries"
+        ]
+      }
+    },
+    "/api/v1/journal-entries/export": {
+      "get": {
+        "operationId": "JournalEntriesController_export",
+        "parameters": [
+          {
+            "name": "format",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "status",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Export journal lines as XLSX or CSV (flattened debit/credit lines)",
+        "tags": [
+          "Journal Entries"
+        ]
+      }
+    },
+    "/api/v1/journal-entries/{id}": {
+      "get": {
+        "operationId": "JournalEntriesController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Journal entry retrieved successfully"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get a journal entry by ID with its lines",
+        "tags": [
+          "Journal Entries"
+        ]
+      },
+      "patch": {
+        "operationId": "JournalEntriesController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateJournalEntryDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Journal entry updated successfully"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update a draft journal entry",
+        "tags": [
+          "Journal Entries"
+        ]
+      },
+      "delete": {
+        "operationId": "JournalEntriesController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Journal entry voided successfully"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Void a journal entry",
+        "tags": [
+          "Journal Entries"
+        ]
+      }
+    },
+    "/api/v1/journal-entries/{id}/post": {
+      "patch": {
+        "operationId": "JournalEntriesController_post",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Journal entry posted successfully"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Post a draft journal entry",
+        "tags": [
+          "Journal Entries"
+        ]
+      }
+    },
+    "/api/v1/invoices": {
+      "post": {
+        "operationId": "InvoicesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateInvoiceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Invoice created successfully"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create a new invoice",
+        "tags": [
+          "Invoices"
+        ]
+      },
+      "get": {
+        "operationId": "InvoicesController_findAll",
+        "parameters": [
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Free-text search (endpoint-specific)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number (1-indexed)",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "companyId",
+            "required": false,
+            "in": "query",
+            "description": "Filter invoices for a specific company in the tenant",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Invoices retrieved successfully"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List all invoices",
+        "tags": [
+          "Invoices"
+        ]
+      }
+    },
+    "/api/v1/invoices/export": {
+      "get": {
+        "operationId": "InvoicesController_export",
+        "parameters": [
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Free-text search (endpoint-specific)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number (1-indexed)",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Max rows to export",
+            "schema": {
+              "minimum": 1,
+              "maximum": 10000,
+              "default": 5000,
+              "type": "number"
+            }
+          },
+          {
+            "name": "companyId",
+            "required": false,
+            "in": "query",
+            "description": "Filter invoices for a specific company in the tenant",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "format",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "csv",
+              "type": "string",
+              "enum": [
+                "csv",
+                "xlsx",
+                "pdf"
+              ]
+            }
+          },
+          {
+            "name": "statusFilter",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ALL",
+                "DRAFT",
+                "POSTED",
+                "SENT",
+                "PARTIALLY_PAID",
+                "PAID",
+                "OVERDUE",
+                "CANCELLED"
+              ]
+            }
+          },
+          {
+            "name": "startDate",
+            "required": false,
+            "in": "query",
+            "description": "Filter issueDate on/after (ISO date)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "endDate",
+            "required": false,
+            "in": "query",
+            "description": "Filter issueDate on/before (ISO date)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "authorization",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Export invoices (csv/xlsx/pdf) with optional status and date filters",
+        "tags": [
+          "Invoices"
+        ]
+      }
+    },
+    "/api/v1/invoices/{id}": {
+      "get": {
+        "operationId": "InvoicesController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Invoice retrieved successfully"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get an invoice by ID",
+        "tags": [
+          "Invoices"
+        ]
+      },
+      "patch": {
+        "operationId": "InvoicesController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateInvoiceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Invoice updated successfully"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update an invoice",
+        "tags": [
+          "Invoices"
+        ]
+      },
+      "delete": {
+        "operationId": "InvoicesController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Invoice cancelled successfully"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Cancel an invoice",
+        "tags": [
+          "Invoices"
+        ]
+      }
+    },
+    "/api/v1/invoices/{id}/pdf/file": {
+      "get": {
+        "operationId": "InvoicesController_pdfFile",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "authorization",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Download invoice PDF bytes (generated via fluide-utils)",
+        "tags": [
+          "Invoices"
+        ]
+      }
+    },
+    "/api/v1/invoices/{id}/pdf": {
+      "get": {
+        "operationId": "InvoicesController_pdf",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "authorization",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Generate invoice PDF in fluide-utils and return a download URL",
+        "tags": [
+          "Invoices"
+        ]
+      }
+    },
+    "/api/v1/invoices/{id}/post": {
+      "post": {
+        "operationId": "InvoicesController_postInvoice",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Invoice posted successfully"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Post invoice to the ledger (creates immutable journal entry)",
+        "tags": [
+          "Invoices"
+        ]
+      }
+    },
+    "/api/v1/invoices/{id}/payments": {
+      "post": {
+        "operationId": "InvoicesController_recordPayment",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecordInvoicePaymentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Payment allocation recorded"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Record payment allocation against an invoice",
+        "tags": [
+          "Invoices"
+        ]
+      }
+    },
+    "/api/v1/invoices/{id}/documents": {
+      "post": {
+        "operationId": "InvoicesController_linkDocuments",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LinkDocumentsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Link uploaded source documents to an invoice",
+        "tags": [
+          "Invoices"
+        ]
+      }
+    },
+    "/api/v1/invoices/{id}/send": {
+      "post": {
+        "operationId": "InvoicesController_send",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "authorization",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Send invoice to customer via email with pay link",
+        "tags": [
+          "Invoices"
+        ]
+      }
+    },
+    "/api/v1/invoices/{id}/resend": {
+      "post": {
+        "operationId": "InvoicesController_resend",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "authorization",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Resend invoice email to customer (rotates pay link)",
+        "tags": [
+          "Invoices"
+        ]
+      }
+    },
+    "/api/v1/invoices/{id}/duplicate": {
+      "post": {
+        "operationId": "InvoicesController_duplicate",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Duplicate invoice into a new draft",
+        "tags": [
+          "Invoices"
+        ]
+      }
+    },
+    "/api/v1/invoices/{id}/payment-link": {
+      "post": {
+        "operationId": "InvoicesController_createPaymentLink",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create a hosted payment link for an invoice (Stripe Checkout via FluidePay)",
+        "tags": [
+          "Invoices"
+        ]
+      }
+    },
+    "/api/v1/public/invoices/{token}": {
+      "get": {
+        "operationId": "PublicInvoicesController_getByToken",
+        "parameters": [
+          {
+            "name": "token",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "View invoice by public token (no auth)",
+        "tags": [
+          "Public Invoices"
+        ]
+      }
+    },
+    "/api/v1/public/invoices/{token}/payment-options": {
+      "get": {
+        "operationId": "PublicInvoicesController_paymentOptions",
+        "parameters": [
+          {
+            "name": "token",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "List enabled payment channels for this invoice",
+        "tags": [
+          "Public Invoices"
+        ]
+      }
+    },
+    "/api/v1/public/invoices/{token}/checkout": {
+      "post": {
+        "operationId": "PublicInvoicesController_checkout",
+        "parameters": [
+          {
+            "name": "token",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PublicInvoiceCheckoutDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Start checkout for a payment channel",
+        "tags": [
+          "Public Invoices"
+        ]
+      }
+    },
+    "/api/v1/invoice-collection-settings": {
+      "get": {
+        "operationId": "InvoiceCollectionSettingsController_get",
+        "parameters": [
+          {
+            "name": "companyId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get invoice payment channel settings for a company",
+        "tags": [
+          "Invoice collection settings"
+        ]
+      },
+      "put": {
+        "operationId": "InvoiceCollectionSettingsController_upsert",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpsertInvoiceCollectionSettingsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Upsert invoice payment channel settings",
+        "tags": [
+          "Invoice collection settings"
+        ]
+      }
+    },
+    "/api/v1/exchange-rates": {
+      "post": {
+        "operationId": "ExchangeRatesController_upsert",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateExchangeRateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create or update a daily FX rate",
+        "tags": [
+          "Exchange rates"
+        ]
+      },
+      "get": {
+        "operationId": "ExchangeRatesController_findAll",
+        "parameters": [
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Free-text search (endpoint-specific)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number (1-indexed)",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List rates",
+        "tags": [
+          "Exchange rates"
+        ]
+      }
+    },
+    "/api/v1/exchange-rates/convert": {
+      "get": {
+        "operationId": "ExchangeRatesController_convert",
+        "parameters": [
+          {
+            "name": "amount",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "rateDate",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Convert an amount using stored rates (direct or inverted)",
+        "tags": [
+          "Exchange rates"
+        ]
+      }
+    },
+    "/api/v1/exchange-rates/sync/frankfurter": {
+      "post": {
+        "operationId": "ExchangeRatesController_syncFrankfurter",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SyncFrankfurterDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Fetch ECB daily rates from Frankfurter API into exchange_rates",
+        "tags": [
+          "Exchange rates"
+        ]
+      }
+    },
+    "/api/v1/payroll-account-mappings": {
+      "get": {
+        "operationId": "PayrollAccountMappingsController_list",
+        "parameters": [
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Free-text search (endpoint-specific)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number (1-indexed)",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "companyId",
+            "required": true,
+            "in": "query",
+            "description": "Subsidiary (company) whose GL mappings are listed",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "currency",
+            "required": false,
+            "in": "query",
+            "description": "Optional ISO 4217 currency filter (exact match)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List payroll → GL mappings for a subsidiary (company)",
+        "tags": [
+          "Payroll GL mappings"
+        ]
+      },
+      "put": {
+        "operationId": "PayrollAccountMappingsController_upsert",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpsertPayrollAccountMappingDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create or replace a mapping row for a subsidiary + component code",
+        "tags": [
+          "Payroll GL mappings"
+        ]
+      }
+    },
+    "/api/v1/payroll-account-mappings/coverage": {
+      "get": {
+        "operationId": "PayrollAccountMappingsController_coverage",
+        "parameters": [
+          {
+            "name": "companyId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Check required payroll mappings coverage by currency",
+        "tags": [
+          "Payroll GL mappings"
+        ]
+      }
+    },
+    "/api/v1/payroll-account-mappings/audit-logs": {
+      "get": {
+        "operationId": "PayrollAccountMappingsController_listAudit",
+        "parameters": [
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Free-text search (endpoint-specific)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number (1-indexed)",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "companyId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Append-only audit trail of mapping changes (compliance)",
+        "tags": [
+          "Payroll GL mappings"
+        ]
+      }
+    },
+    "/api/v1/payroll-account-mappings/apply-template": {
+      "post": {
+        "operationId": "PayrollAccountMappingsController_applyTemplate",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplyPayrollMappingTemplateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Apply a statutory chart + mapping template (CM_STATUTORY / NG_STATUTORY) to one subsidiary",
+        "tags": [
+          "Payroll GL mappings"
+        ]
+      }
+    },
+    "/api/v1/payroll-account-mappings/{id}": {
+      "delete": {
+        "operationId": "PayrollAccountMappingsController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Soft-delete a mapping (audit entry recorded)",
+        "tags": [
+          "Payroll GL mappings"
+        ]
+      }
+    },
+    "/api/v1/ledger/trial-balance": {
+      "get": {
+        "description": "Optional basis=cash restricts to journal entries that touch cash-like GL accounts.",
+        "operationId": "LedgerController_trialBalance",
+        "parameters": [
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "compareFrom",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "compareTo",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "reportFramework",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "basis",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "projectId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "clientId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get trial balance aggregated by account (posted journals only)",
+        "tags": [
+          "Ledger"
+        ]
+      }
+    },
+    "/api/v1/ledger/profit-and-loss": {
+      "get": {
+        "operationId": "LedgerController_profitAndLoss",
+        "parameters": [
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "basis",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "projectId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "clientId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "P&amp;L (revenue & expense) for a date range",
+        "tags": [
+          "Ledger"
+        ]
+      }
+    },
+    "/api/v1/ledger/balance-sheet": {
+      "get": {
+        "description": "Supports projectId/clientId line filters; basis is ignored (accrual snapshot).",
+        "operationId": "LedgerController_balanceSheet",
+        "parameters": [
+          {
+            "name": "asOf",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "projectId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "clientId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Balance sheet (assets, liabilities, equity) as of a date",
+        "tags": [
+          "Ledger"
+        ]
+      }
+    },
+    "/api/v1/ledger/cash-balances": {
+      "get": {
+        "operationId": "LedgerController_cashBalances",
+        "parameters": [
+          {
+            "name": "asOf",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Cash and cash-equivalent account balances as of a date",
+        "tags": [
+          "Ledger"
+        ]
+      }
+    },
+    "/api/v1/ledger/cash-flow-statement": {
+      "get": {
+        "operationId": "LedgerController_cashFlowStatement",
+        "parameters": [
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "basis",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "projectId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "clientId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Simplified statement of cash flows for a period (indirect reconciliation vs cash-like accounts)",
+        "tags": [
+          "Ledger"
+        ]
+      }
+    },
+    "/api/v1/ledger/cash-flow-statement-direct": {
+      "get": {
+        "operationId": "LedgerController_cashFlowStatementDirect",
+        "parameters": [
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "basis",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "projectId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "clientId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Direct-method cash flow layout (shell; gross lines pending account classification)",
+        "tags": [
+          "Ledger"
+        ]
+      }
+    },
+    "/api/v1/reconciliation/payroll": {
+      "get": {
+        "operationId": "ReconciliationController_payroll",
+        "parameters": [
+          {
+            "name": "payrollRunId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Reconcile journal for a specific payroll run (double-entry check)",
+        "tags": [
+          "Reconciliation"
+        ]
+      }
+    },
+    "/api/v1/reconciliation/payroll/{payrollRunId}/full": {
+      "get": {
+        "operationId": "ReconciliationController_payrollFull",
+        "parameters": [
+          {
+            "name": "payrollRunId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Full payroll reconciliation — all journal entries for a run with balance checks",
+        "tags": [
+          "Reconciliation"
+        ]
+      }
+    },
+    "/api/v1/bills": {
+      "post": {
+        "operationId": "BillsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBillDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create vendor bill (accounts payable)",
+        "tags": [
+          "Bills"
+        ]
+      },
+      "get": {
+        "operationId": "BillsController_findAll",
+        "parameters": [
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Free-text search (endpoint-specific)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number (1-indexed)",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List bills",
+        "tags": [
+          "Bills"
+        ]
+      }
+    },
+    "/api/v1/bills/export": {
+      "get": {
+        "operationId": "BillsController_export",
+        "parameters": [
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Free-text search (endpoint-specific)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number (1-indexed)",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Max rows to export",
+            "schema": {
+              "minimum": 1,
+              "maximum": 10000,
+              "default": 5000,
+              "type": "number"
+            }
+          },
+          {
+            "name": "format",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": "csv",
+              "type": "string",
+              "enum": [
+                "csv",
+                "xlsx",
+                "pdf"
+              ]
+            }
+          },
+          {
+            "name": "statusFilter",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "ALL",
+                "DRAFT",
+                "POSTED",
+                "APPROVED",
+                "SCHEDULED",
+                "PARTIALLY_PAID",
+                "PAID",
+                "OVERDUE",
+                "VOID"
+              ]
+            }
+          },
+          {
+            "name": "startDate",
+            "required": false,
+            "in": "query",
+            "description": "Filter issueDate on/after (ISO date)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "endDate",
+            "required": false,
+            "in": "query",
+            "description": "Filter issueDate on/before (ISO date)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "authorization",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Export bills (csv/xlsx/pdf) with optional status and date filters",
+        "tags": [
+          "Bills"
+        ]
+      }
+    },
+    "/api/v1/bills/approval-policy": {
+      "post": {
+        "operationId": "BillsController_upsertApprovalPolicy",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpsertBillApprovalPolicyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Configure AP approval policy for the active company",
+        "tags": [
+          "Bills"
+        ]
+      }
+    },
+    "/api/v1/bills/{id}": {
+      "get": {
+        "operationId": "BillsController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get bill by id",
+        "tags": [
+          "Bills"
+        ]
+      },
+      "patch": {
+        "operationId": "BillsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBillDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update bill",
+        "tags": [
+          "Bills"
+        ]
+      },
+      "delete": {
+        "operationId": "BillsController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Void bill",
+        "tags": [
+          "Bills"
+        ]
+      }
+    },
+    "/api/v1/bills/{id}/pdf/file": {
+      "get": {
+        "operationId": "BillsController_pdfFile",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "authorization",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Download bill PDF bytes (generated via fluide-utils)",
+        "tags": [
+          "Bills"
+        ]
+      }
+    },
+    "/api/v1/bills/{id}/pdf": {
+      "get": {
+        "operationId": "BillsController_pdf",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "authorization",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Generate bill PDF in fluide-utils and return a download URL",
+        "tags": [
+          "Bills"
+        ]
+      }
+    },
+    "/api/v1/bills/{id}/post": {
+      "post": {
+        "operationId": "BillsController_postBill",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Post bill to the ledger (creates immutable journal entry)",
+        "tags": [
+          "Bills"
+        ]
+      }
+    },
+    "/api/v1/bills/{id}/approve": {
+      "post": {
+        "operationId": "BillsController_approve",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Approve bill (AP)",
+        "tags": [
+          "Bills"
+        ]
+      }
+    },
+    "/api/v1/bills/{id}/reject": {
+      "post": {
+        "operationId": "BillsController_reject",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RejectBillDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Reject bill (AP)",
+        "tags": [
+          "Bills"
+        ]
+      }
+    },
+    "/api/v1/bills/{id}/schedule-payment": {
+      "post": {
+        "operationId": "BillsController_schedulePayment",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ScheduleBillPaymentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Schedule payment date for an approved bill",
+        "tags": [
+          "Bills"
+        ]
+      }
+    },
+    "/api/v1/bills/{id}/payments": {
+      "post": {
+        "operationId": "BillsController_recordPayment",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecordBillPaymentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Record payment allocation against a bill",
+        "tags": [
+          "Bills"
+        ]
+      }
+    },
+    "/api/v1/bills/{id}/disburse": {
+      "post": {
+        "operationId": "BillsController_disburse",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Disburse a scheduled/approved bill via FluidePay (settles the bill)",
+        "tags": [
+          "Bills"
+        ]
+      }
+    },
+    "/api/v1/bills/{id}/documents": {
+      "post": {
+        "operationId": "BillsController_linkDocuments",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LinkDocumentsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Link uploaded source documents to a bill",
+        "tags": [
+          "Bills"
+        ]
+      }
+    },
+    "/api/v1/banking/accounts": {
+      "post": {
+        "operationId": "BankingController_createAccount",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBankAccountDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Register a bank account linked to GL",
+        "tags": [
+          "Banking"
+        ]
+      },
+      "get": {
+        "operationId": "BankingController_listAccounts",
+        "parameters": [
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Free-text search (endpoint-specific)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number (1-indexed)",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List bank accounts",
+        "tags": [
+          "Banking"
+        ]
+      }
+    },
+    "/api/v1/banking/accounts/{bankAccountId}/statement-lines": {
+      "post": {
+        "operationId": "BankingController_addStatementLine",
+        "parameters": [
+          {
+            "name": "bankAccountId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBankStatementLineDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Import a bank statement line",
+        "tags": [
+          "Banking"
+        ]
+      },
+      "get": {
+        "operationId": "BankingController_listStatementLines",
+        "parameters": [
+          {
+            "name": "bankAccountId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Free-text search (endpoint-specific)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number (1-indexed)",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Paginated statement lines",
+        "tags": [
+          "Banking"
+        ]
+      }
+    },
+    "/api/v1/banking/statement-lines/{statementLineId}/match": {
+      "post": {
+        "operationId": "BankingController_match",
+        "parameters": [
+          {
+            "name": "statementLineId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MatchBankLineDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Reconcile statement line to a journal entry line",
+        "tags": [
+          "Banking"
+        ]
+      }
+    },
+    "/api/v1/budgets": {
+      "post": {
+        "operationId": "BudgetsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBudgetDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create budget with monthly lines per account",
+        "tags": [
+          "Budgets"
+        ]
+      },
+      "get": {
+        "operationId": "BudgetsController_findAll",
+        "parameters": [
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Free-text search (endpoint-specific)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number (1-indexed)",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List budgets",
+        "tags": [
+          "Budgets"
+        ]
+      }
+    },
+    "/api/v1/budgets/export": {
+      "get": {
+        "operationId": "BudgetsController_export",
+        "parameters": [
+          {
+            "name": "format",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Export budgets with lines as XLSX or CSV",
+        "tags": [
+          "Budgets"
+        ]
+      }
+    },
+    "/api/v1/budgets/{id}": {
+      "get": {
+        "operationId": "BudgetsController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get budget detail",
+        "tags": [
+          "Budgets"
+        ]
+      }
+    },
+    "/api/v1/fixed-assets": {
+      "post": {
+        "operationId": "FixedAssetsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateFixedAssetDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Register a fixed asset (GL links)",
+        "tags": [
+          "Fixed assets"
+        ]
+      },
+      "get": {
+        "operationId": "FixedAssetsController_findAll",
+        "parameters": [
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Free-text search (endpoint-specific)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number (1-indexed)",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List fixed assets",
+        "tags": [
+          "Fixed assets"
+        ]
+      }
+    },
+    "/api/v1/fixed-assets/export": {
+      "get": {
+        "operationId": "FixedAssetsController_export",
+        "parameters": [
+          {
+            "name": "format",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "q",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Export fixed asset register (XLSX or CSV)",
+        "tags": [
+          "Fixed assets"
+        ]
+      }
+    },
+    "/api/v1/fixed-assets/{id}": {
+      "get": {
+        "operationId": "FixedAssetsController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get asset",
+        "tags": [
+          "Fixed assets"
+        ]
+      }
+    },
+    "/api/v1/fixed-assets/{id}/run-depreciation": {
+      "post": {
+        "operationId": "FixedAssetsController_runDepreciation",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RunDepreciationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Post one period straight-line depreciation to the GL (Dr expense / Cr accumulated depreciation). Idempotent per YYYY-MM.",
+        "tags": [
+          "Fixed assets"
+        ]
+      }
+    },
+    "/api/v1/dashboard/financial-summary": {
+      "get": {
+        "operationId": "DashboardController_financialSummary",
+        "parameters": [
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "compareFrom",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "compareTo",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Financial dashboard: P&L for period + AR/AP-style counts + draft journals",
+        "tags": [
+          "Dashboard"
+        ]
+      }
+    },
+    "/api/v1/dashboard/financial-timeseries": {
+      "get": {
+        "operationId": "DashboardController_financialTimeseries",
+        "parameters": [
+          {
+            "name": "months",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Monthly revenue, expenses, and net income for trend charts",
+        "tags": [
+          "Dashboard"
+        ]
+      }
+    },
+    "/api/v1/dashboard/liquidity": {
+      "get": {
+        "operationId": "DashboardController_liquidity",
+        "parameters": [
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Cash on hand, average monthly expense, runway and balance-sheet ratio heuristics",
+        "tags": [
+          "Dashboard"
+        ]
+      }
+    },
+    "/api/v1/dashboard/expense-breakdown": {
+      "get": {
+        "operationId": "DashboardController_expenseBreakdown",
+        "parameters": [
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "top",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Top expense accounts as % of total expense for the period",
+        "tags": [
+          "Dashboard"
+        ]
+      }
+    },
+    "/api/v1/dashboard/financial-insights": {
+      "get": {
+        "operationId": "DashboardController_financialInsights",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Rule-based financial highlights (extensible for ML later)",
+        "tags": [
+          "Dashboard"
+        ]
+      }
+    },
+    "/api/v1/reports/management-pack-file": {
+      "get": {
+        "operationId": "ReportsController_managementPackFile",
+        "parameters": [
+          {
+            "name": "format",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "plFrom",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "plTo",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "balanceSheetAsOf",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "trialFrom",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "trialTo",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "basis",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "projectId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "clientId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "authorization",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Download full management pack: XLSX multi-sheet workbook, or ZIP of branded PDFs (income, balance sheet, cash flow, trial balance, chart of accounts via fluide-utils)",
+        "tags": [
+          "Reports"
+        ]
+      }
+    },
+    "/api/v1/reports/account-activity-export": {
+      "get": {
+        "operationId": "ReportsController_accountActivityExport",
+        "parameters": [
+          {
+            "name": "accountId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Export posted GL lines for one account as XLSX (drill-down)",
+        "tags": [
+          "Reports"
+        ]
+      }
+    },
+    "/api/v1/reports/financial-pack": {
+      "get": {
+        "operationId": "ReportsController_financialPack",
+        "parameters": [
+          {
+            "name": "plFrom",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "plTo",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "balanceSheetAsOf",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "trialFrom",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "trialTo",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "basis",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "projectId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "clientId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "P&L + balance sheet + trial balance in one response (reporting / analytics)",
+        "tags": [
+          "Reports"
+        ]
+      }
+    },
+    "/api/v1/reports/account-activity": {
+      "get": {
+        "operationId": "ReportsController_accountActivity",
+        "parameters": [
+          {
+            "name": "accountId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Posted journal lines for a single GL account (drill-down)",
+        "tags": [
+          "Reports"
+        ]
+      }
+    },
+    "/api/v1/reports/financial-pdf": {
+      "get": {
+        "operationId": "ReportsController_financialPdf",
+        "parameters": [
+          {
+            "name": "kind",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "asOf",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "accountId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "basis",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "projectId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "clientId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "compareFrom",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "compareTo",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "reportFramework",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "authorization",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Download financial PDFs (income statement, balance sheet, cash flow, trial balance, general ledger, chart of accounts)",
+        "tags": [
+          "Reports"
+        ]
+      }
+    },
+    "/api/v1/reports/financial-statement-xlsx": {
+      "get": {
+        "operationId": "ReportsController_financialStatementXlsx",
+        "parameters": [
+          {
+            "name": "kind",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "asOf",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "accountId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "basis",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "projectId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "clientId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "compareFrom",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "compareTo",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "reportFramework",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "authorization",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Download income statement, balance sheet, or cash flow as XLSX (generated in fluide-utils; requires Authorization and UTILS_BASE_URL)",
+        "tags": [
+          "Reports"
+        ]
+      }
+    },
+    "/api/v1/statement-exports": {
+      "get": {
+        "operationId": "StatementExportsController_list",
+        "parameters": [
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "PENDING",
+                "GENERATING",
+                "READY",
+                "FAILED"
+              ]
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 20,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List saved statement exports for the organization",
+        "tags": [
+          "StatementExports"
+        ]
+      },
+      "post": {
+        "description": "When UTILS_BASE_URL and Authorization are present, enqueues a document job (stub manifest today).",
+        "operationId": "StatementExportsController_create",
+        "parameters": [
+          {
+            "name": "authorization",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateStatementExportDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create a statement export and optionally enqueue generation in fluide-utils",
+        "tags": [
+          "StatementExports"
+        ]
+      }
+    },
+    "/api/v1/statement-exports/{id}": {
+      "get": {
+        "operationId": "StatementExportsController_getOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get one statement export",
+        "tags": [
+          "StatementExports"
+        ]
+      },
+      "patch": {
+        "operationId": "StatementExportsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateStatementExportDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update statement export metadata",
+        "tags": [
+          "StatementExports"
+        ]
+      },
+      "delete": {
+        "operationId": "StatementExportsController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Soft-delete a statement export",
+        "tags": [
+          "StatementExports"
+        ]
+      }
+    },
+    "/api/v1/statement-exports/bulk-delete": {
+      "post": {
+        "operationId": "StatementExportsController_bulkRemove",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkDeleteStatementExportsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Soft-delete many statement exports",
+        "tags": [
+          "StatementExports"
+        ]
+      }
+    },
+    "/api/v1/statement-exports/{id}/attach-outputs": {
+      "post": {
+        "description": "Use when a worker uploads PDF/XLSX to file management and returns file UUIDs.",
+        "operationId": "StatementExportsController_attach",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AttachStatementExportOutputsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Attach fluide-utils file ids after external generation",
+        "tags": [
+          "StatementExports"
+        ]
+      }
+    },
+    "/api/v1/statement-exports/{id}/sync-from-utils": {
+      "post": {
+        "operationId": "StatementExportsController_sync",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "authorization",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Refresh status from fluide-utils document job",
+        "tags": [
+          "StatementExports"
+        ]
+      }
+    },
+    "/api/v1/scheduled-reports": {
+      "get": {
+        "operationId": "ScheduledReportsController_list",
+        "parameters": [
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Free-text search (endpoint-specific)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number (1-indexed)",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List scheduled reports",
+        "tags": [
+          "ScheduledReports"
+        ]
+      },
+      "post": {
+        "operationId": "ScheduledReportsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateScheduledReportDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create a scheduled report definition",
+        "tags": [
+          "ScheduledReports"
+        ]
+      }
+    },
+    "/api/v1/scheduled-reports/{id}": {
+      "get": {
+        "operationId": "ScheduledReportsController_getOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get one scheduled report",
+        "tags": [
+          "ScheduledReports"
+        ]
+      },
+      "patch": {
+        "operationId": "ScheduledReportsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateScheduledReportDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update a scheduled report",
+        "tags": [
+          "ScheduledReports"
+        ]
+      },
+      "delete": {
+        "operationId": "ScheduledReportsController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Soft-delete a scheduled report",
+        "tags": [
+          "ScheduledReports"
+        ]
+      }
+    },
+    "/api/v1/scheduled-reports/{id}/run": {
+      "post": {
+        "description": "Distributed cron execution is not part of fluide-books yet; this endpoint is the integration seam.",
+        "operationId": "ScheduledReportsController_run",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "authorization",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Run now: materialize a statement export from this schedule",
+        "tags": [
+          "ScheduledReports"
+        ]
+      }
+    },
+    "/api/v1/accounting-projects": {
+      "get": {
+        "operationId": "ProjectsController_list",
+        "parameters": [
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Free-text search (endpoint-specific)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number (1-indexed)",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "companyId",
+            "required": false,
+            "in": "query",
+            "description": "Company scope; defaults to primary company when omitted",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List accounting projects (for journal line projectId)",
+        "tags": [
+          "Projects"
+        ]
+      },
+      "post": {
+        "operationId": "ProjectsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateProjectDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create a project",
+        "tags": [
+          "Projects"
+        ]
+      }
+    },
+    "/api/v1/accounting-projects/{id}": {
+      "get": {
+        "operationId": "ProjectsController_getOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get one project",
+        "tags": [
+          "Projects"
+        ]
+      },
+      "patch": {
+        "operationId": "ProjectsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProjectDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update a project",
+        "tags": [
+          "Projects"
+        ]
+      },
+      "delete": {
+        "operationId": "ProjectsController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Soft-delete a project",
+        "tags": [
+          "Projects"
+        ]
+      }
+    },
+    "/api/v1/accounting-clients": {
+      "get": {
+        "operationId": "AccountingClientsController_list",
+        "parameters": [
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Free-text search (endpoint-specific)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number (1-indexed)",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "companyId",
+            "required": false,
+            "in": "query",
+            "description": "Company scope; defaults to primary company when omitted",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List accounting clients / sub-ledgers (for journal line clientId)",
+        "tags": [
+          "AccountingClients"
+        ]
+      },
+      "post": {
+        "operationId": "AccountingClientsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAccountingClientDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "AccountingClients"
+        ]
+      }
+    },
+    "/api/v1/accounting-clients/{id}": {
+      "get": {
+        "operationId": "AccountingClientsController_getOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "AccountingClients"
+        ]
+      },
+      "patch": {
+        "operationId": "AccountingClientsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAccountingClientDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "AccountingClients"
+        ]
+      },
+      "delete": {
+        "operationId": "AccountingClientsController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "AccountingClients"
+        ]
+      }
+    },
+    "/api/v1/company-accounting-settings": {
+      "get": {
+        "operationId": "CompanyAccountingSettingsController_get",
+        "parameters": [
+          {
+            "name": "companyId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get accounting settings for a subsidiary (company)",
+        "tags": [
+          "Company accounting settings"
+        ]
+      },
+      "put": {
+        "operationId": "CompanyAccountingSettingsController_upsert",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpsertCompanyAccountingSettingsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Upsert accounting settings for a subsidiary (company)",
+        "tags": [
+          "Company accounting settings"
+        ]
+      }
+    },
+    "/api/v1/business-partners": {
+      "get": {
+        "operationId": "BusinessPartnersController_search",
+        "parameters": [
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Search term (name/email/phone/tax id)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "CUSTOMER",
+                "VENDOR",
+                "PARTNER",
+                "MERCHANT",
+                "SERVICE_PROVIDER",
+                "OTHER"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Business partners list"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Search business partners (customers/vendors/etc)",
+        "tags": [
+          "Business Partners"
+        ]
+      },
+      "post": {
+        "operationId": "BusinessPartnersController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateBusinessPartnerDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Business partner created"
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Quick-add a business partner",
+        "tags": [
+          "Business Partners"
+        ]
+      }
+    },
+    "/api/v1/business-partners/export": {
+      "get": {
+        "operationId": "BusinessPartnersController_exportPartners",
+        "parameters": [
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Search term (name/email/phone/tax id)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "CUSTOMER",
+                "VENDOR",
+                "PARTNER",
+                "MERCHANT",
+                "SERVICE_PROVIDER",
+                "OTHER"
+              ]
+            }
+          },
+          {
+            "name": "format",
+            "required": false,
+            "in": "query",
+            "description": "Export format",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "xlsx",
+                "csv"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Export business partners (up to 25k rows, XLSX or CSV)",
+        "tags": [
+          "Business Partners"
+        ]
+      }
+    },
+    "/api/v1/business-partners/bulk/template": {
+      "get": {
+        "operationId": "BusinessPartnersController_importTemplate",
+        "parameters": [
+          {
+            "name": "format",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Download business partner import template (CSV or XLSX)",
+        "tags": [
+          "Business Partners"
+        ]
+      }
+    },
+    "/api/v1/business-partners/bulk/validate": {
+      "post": {
+        "operationId": "BusinessPartnersController_validateBulkFile",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Validate business partner import file (no persistence)",
+        "tags": [
+          "Business Partners"
+        ]
+      }
+    },
+    "/api/v1/business-partners/bulk/validate-rows": {
+      "post": {
+        "operationId": "BusinessPartnersController_validateBulkRows",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BusinessPartnerBulkValidateJsonDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Validate business partner import rows from JSON (no persistence)",
+        "tags": [
+          "Business Partners"
+        ]
+      }
+    },
+    "/api/v1/business-partners/bulk/commit": {
+      "post": {
+        "operationId": "BusinessPartnersController_commitBulk",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BusinessPartnerBulkCommitDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Commit bulk business partner import (partial success supported)",
+        "tags": [
+          "Business Partners"
+        ]
+      }
+    },
+    "/api/v1/business-partners/{id}": {
+      "get": {
+        "operationId": "BusinessPartnersController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get business partner by id",
+        "tags": [
+          "Business Partners"
+        ]
+      },
+      "patch": {
+        "operationId": "BusinessPartnersController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateBusinessPartnerDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update business partner",
+        "tags": [
+          "Business Partners"
+        ]
+      }
+    },
+    "/api/v1/recurring/templates": {
+      "post": {
+        "operationId": "RecurringController_createTemplate",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRecurringTemplateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create recurring document template",
+        "tags": [
+          "Recurring"
+        ]
+      },
+      "get": {
+        "operationId": "RecurringController_listTemplates",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List recurring templates",
+        "tags": [
+          "Recurring"
+        ]
+      }
+    },
+    "/api/v1/recurring/schedules": {
+      "post": {
+        "operationId": "RecurringController_createSchedule",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRecurringScheduleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create recurring schedule",
+        "tags": [
+          "Recurring"
+        ]
+      },
+      "get": {
+        "operationId": "RecurringController_listSchedules",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List recurring schedules",
+        "tags": [
+          "Recurring"
+        ]
+      }
+    },
+    "/api/v1/recurring/schedules/{id}/preview": {
+      "get": {
+        "operationId": "RecurringController_preview",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "n",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 12,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Preview next N occurrence timestamps",
+        "tags": [
+          "Recurring"
+        ]
+      }
+    },
+    "/api/v1/recurring/schedules/{id}/runs": {
+      "get": {
+        "operationId": "RecurringController_listRuns",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List run history for schedule",
+        "tags": [
+          "Recurring"
+        ]
+      }
+    },
+    "/api/v1/recurring/schedules/{id}/pause": {
+      "post": {
+        "operationId": "RecurringController_pause",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Recurring"
+        ]
+      }
+    },
+    "/api/v1/recurring/schedules/{id}/resume": {
+      "post": {
+        "operationId": "RecurringController_resume",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Recurring"
+        ]
+      }
+    },
+    "/api/v1/recurring/schedules/{id}/run-now": {
+      "post": {
+        "operationId": "RecurringController_runNow",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Enqueue immediate run (manual)",
+        "tags": [
+          "Recurring"
+        ]
+      }
+    },
+    "/api/v1/recurring/runs/{runId}/retry": {
+      "post": {
+        "operationId": "RecurringController_retryRun",
+        "parameters": [
+          {
+            "name": "runId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Retry a failed run (new idempotency key)",
+        "tags": [
+          "Recurring"
+        ]
+      }
+    },
+    "/api/v1/transactions": {
+      "get": {
+        "operationId": "AccountingTransactionsController_list",
+        "parameters": [
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Free-text search (endpoint-specific)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number (1-indexed)",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "sort",
+            "required": false,
+            "in": "query",
+            "description": "Sort in the format field:direction (allocatedAt:desc)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "startDate",
+            "required": false,
+            "in": "query",
+            "description": "Filter allocatedAt on/after this date (ISO)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "endDate",
+            "required": false,
+            "in": "query",
+            "description": "Filter allocatedAt on/before this date (ISO)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "documentType",
+            "required": false,
+            "in": "query",
+            "description": "Document type filter",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "INVOICE",
+                "BILL"
+              ]
+            }
+          },
+          {
+            "name": "paymentSource",
+            "required": false,
+            "in": "query",
+            "description": "Payment source filter",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "currency",
+            "required": false,
+            "in": "query",
+            "description": "Currency filter (ISO)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Unified payments feed (invoice + bill allocations) for the active organization",
+        "tags": [
+          "Transactions"
+        ]
+      }
+    },
+    "/api/v1/transactions/export": {
+      "get": {
+        "operationId": "AccountingTransactionsController_export",
+        "parameters": [
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Free-text search (endpoint-specific)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number (1-indexed)",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Max rows to export (server-capped)",
+            "schema": {
+              "minimum": 1,
+              "maximum": 10000,
+              "default": 5000,
+              "type": "number"
+            }
+          },
+          {
+            "name": "sort",
+            "required": false,
+            "in": "query",
+            "description": "Sort in the format field:direction (allocatedAt:desc)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "startDate",
+            "required": false,
+            "in": "query",
+            "description": "Filter allocatedAt on/after this date (ISO)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "endDate",
+            "required": false,
+            "in": "query",
+            "description": "Filter allocatedAt on/before this date (ISO)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "documentType",
+            "required": false,
+            "in": "query",
+            "description": "Document type filter",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "INVOICE",
+                "BILL"
+              ]
+            }
+          },
+          {
+            "name": "paymentSource",
+            "required": false,
+            "in": "query",
+            "description": "Payment source filter",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "currency",
+            "required": false,
+            "in": "query",
+            "description": "Currency filter (ISO)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "format",
+            "required": false,
+            "in": "query",
+            "description": "Export format",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "csv",
+                "xlsx",
+                "pdf"
+              ]
+            }
+          },
+          {
+            "name": "authorization",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Export accounting transactions (csv/xlsx/pdf)",
+        "tags": [
+          "Transactions"
+        ]
+      }
+    },
+    "/api/v1/transactions/detail": {
+      "get": {
+        "operationId": "AccountingTransactionsController_findOneDetail",
+        "parameters": [
+          {
+            "name": "compositeId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get accounting transaction (query compositeId=INVOICE:<uuid> or BILL:<uuid>)",
+        "tags": [
+          "Transactions"
+        ]
+      }
+    },
+    "/api/v1/internal/payments/stripe/checkout-session-completed": {
+      "post": {
+        "operationId": "InternalPaymentsController_stripeCheckoutCompleted",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Reconcile invoice allocation from Stripe checkout.session.completed (internal)",
+        "tags": [
+          "Internal Payments"
+        ]
+      }
+    },
+    "/api/v1/internal/payments/collection/completed": {
+      "post": {
+        "operationId": "InternalPaymentsController_collectionCompleted",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Reconcile invoice allocation from any online collection provider",
+        "tags": [
+          "Internal Payments"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Fluide Books API",
+    "description": "Accounting: chart of accounts, journal entries, invoices, bills, banking, budgets, and payroll GL integration.",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [
+    {
+      "name": "App",
+      "description": "Service root and build metadata. Use for quick connectivity checks.",
+      "x-group": "Operations"
+    },
+    {
+      "name": "Audit"
+    },
+    {
+      "name": "Prometheus",
+      "description": "Prometheus scrape endpoint in text exposition format. Configure your metrics collector to poll this path on each service.",
+      "x-group": "Operations"
+    },
+    {
+      "name": "Chart of Accounts"
+    },
+    {
+      "name": "Journal Entries"
+    },
+    {
+      "name": "Invoices"
+    },
+    {
+      "name": "Public Invoices"
+    },
+    {
+      "name": "Invoice collection settings"
+    },
+    {
+      "name": "Exchange rates"
+    },
+    {
+      "name": "Payroll GL mappings"
+    },
+    {
+      "name": "Ledger"
+    },
+    {
+      "name": "Reconciliation"
+    },
+    {
+      "name": "Bills"
+    },
+    {
+      "name": "Banking"
+    },
+    {
+      "name": "Budgets"
+    },
+    {
+      "name": "Fixed assets"
+    },
+    {
+      "name": "Dashboard"
+    },
+    {
+      "name": "Reports"
+    },
+    {
+      "name": "StatementExports"
+    },
+    {
+      "name": "ScheduledReports"
+    },
+    {
+      "name": "Projects"
+    },
+    {
+      "name": "AccountingClients"
+    },
+    {
+      "name": "Company accounting settings"
+    },
+    {
+      "name": "Business Partners"
+    },
+    {
+      "name": "Recurring"
+    },
+    {
+      "name": "Transactions"
+    },
+    {
+      "name": "Internal Payments"
+    }
+  ],
+  "servers": [
+    {
+      "url": "https://staging.api.fluidehr.com",
+      "description": "Beta (staging)"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearer": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      }
+    },
+    "schemas": {
+      "MergeStandardCatalogDto": {
+        "type": "object",
+        "properties": {
+          "companyId": {
+            "type": "string",
+            "description": "Subsidiary to merge into; defaults to primary company in tenant."
+          },
+          "template": {
+            "type": "string",
+            "enum": [
+              "AUTO",
+              "IFRS_GENERAL",
+              "OHADA_SYSCOHADA"
+            ],
+            "description": "AUTO resolves from company country (and onboarding macro-region when present)."
+          }
+        }
+      },
+      "CreateChartOfAccountDto": {
+        "type": "object",
+        "properties": {
+          "companyId": {
+            "type": "string",
+            "description": "Subsidiary (company) scope; omit only when intentionally creating an org-wide account row."
+          },
+          "accountCode": {
+            "type": "string",
+            "description": "Account code (e.g., 1000, 2100)",
+            "example": "1000"
+          },
+          "accountName": {
+            "type": "string",
+            "description": "Account name",
+            "example": "Cash and Cash Equivalents"
+          },
+          "accountType": {
+            "type": "string",
+            "description": "Account type",
+            "enum": [
+              "ASSET",
+              "LIABILITY",
+              "EQUITY",
+              "REVENUE",
+              "EXPENSE"
+            ],
+            "example": "ASSET"
+          },
+          "parentAccountId": {
+            "type": "string",
+            "description": "Parent account ID for sub-accounts"
+          },
+          "defaultCurrency": {
+            "type": "string",
+            "description": "Default currency (ISO 4217) for UI display only. Accounts are multi-currency; postings record currency on journal lines.",
+            "example": "USD"
+          },
+          "isMultiCurrency": {
+            "type": "boolean",
+            "description": "Whether this account supports multiple currencies (default true).",
+            "example": true
+          },
+          "description": {
+            "type": "string",
+            "description": "Account description"
+          }
+        },
+        "required": [
+          "accountCode",
+          "accountName",
+          "accountType"
+        ]
+      },
+      "UpdateChartOfAccountDto": {
+        "type": "object",
+        "properties": {
+          "accountName": {
+            "type": "string",
+            "description": "Account name",
+            "example": "Cash and Cash Equivalents"
+          },
+          "parentAccountId": {
+            "type": "string",
+            "description": "Parent account ID for sub-accounts"
+          },
+          "defaultCurrency": {
+            "type": "string",
+            "description": "Default currency (ISO 4217) for UI display only.",
+            "example": "USD"
+          },
+          "isMultiCurrency": {
+            "type": "boolean",
+            "description": "Whether this account supports multiple currencies",
+            "example": true
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Whether the account is active",
+            "example": true
+          },
+          "isCashAccount": {
+            "type": "boolean",
+            "description": "Marks this ASSET account as a cash/bank/mobile-money float account for liquidity reporting and payment journals.",
+            "example": true
+          },
+          "description": {
+            "type": "string",
+            "description": "Account description"
+          }
+        }
+      },
+      "QuickIncomeDto": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "description": "Entry date",
+            "example": "2026-03-15"
+          },
+          "amount": {
+            "type": "number",
+            "description": "Amount in functional currency",
+            "example": 250
+          },
+          "revenueAccountId": {
+            "type": "string",
+            "description": "Revenue account (REVENUE type)"
+          },
+          "offsetAccountId": {
+            "type": "string",
+            "description": "Debit offset account — usually cash/bank (ASSET)"
+          },
+          "description": {
+            "type": "string",
+            "description": "Narrative"
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "clientId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "date",
+          "amount",
+          "revenueAccountId",
+          "offsetAccountId"
+        ]
+      },
+      "QuickExpenseDto": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "description": "Entry date",
+            "example": "2026-03-15"
+          },
+          "amount": {
+            "type": "number",
+            "description": "Amount in functional currency",
+            "example": 120.5
+          },
+          "expenseAccountId": {
+            "type": "string",
+            "description": "Expense account (EXPENSE type)"
+          },
+          "offsetAccountId": {
+            "type": "string",
+            "description": "Credit offset — usually cash/bank (ASSET)"
+          },
+          "description": {
+            "type": "string",
+            "description": "Narrative"
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "projectId": {
+            "type": "string"
+          },
+          "clientId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "date",
+          "amount",
+          "expenseAccountId",
+          "offsetAccountId"
+        ]
+      },
+      "CreateJournalEntryLineDto": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": "string",
+            "description": "Account ID to debit or credit"
+          },
+          "debit": {
+            "type": "number",
+            "description": "Debit amount",
+            "example": 1000
+          },
+          "credit": {
+            "type": "number",
+            "description": "Credit amount",
+            "example": 0
+          },
+          "description": {
+            "type": "string",
+            "description": "Line description"
+          },
+          "projectId": {
+            "type": "string",
+            "description": "Project id for project accounting"
+          },
+          "clientId": {
+            "type": "string",
+            "description": "Client / sub-ledger id"
+          },
+          "lineCurrency": {
+            "type": "string",
+            "description": "ISO 4217 line currency when different from functional"
+          },
+          "exchangeRateToFunctional": {
+            "type": "number",
+            "description": "FX rate to functional currency",
+            "default": 1
+          }
+        },
+        "required": [
+          "accountId",
+          "debit",
+          "credit"
+        ]
+      },
+      "CreateJournalEntryDto": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "description": "Entry date",
+            "example": "2026-03-15"
+          },
+          "description": {
+            "type": "string",
+            "description": "Entry description"
+          },
+          "idempotencyKey": {
+            "type": "string",
+            "description": "Idempotent create key (duplicate requests return the same journal entry)",
+            "maxLength": 128
+          },
+          "lines": {
+            "description": "Journal entry lines (debits and credits)",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreateJournalEntryLineDto"
+            }
+          }
+        },
+        "required": [
+          "date",
+          "lines"
+        ]
+      },
+      "UpdateJournalEntryDto": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "description": "Entry date",
+            "example": "2026-03-15"
+          },
+          "description": {
+            "type": "string",
+            "description": "Entry description"
+          },
+          "lines": {
+            "description": "Updated journal entry lines",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CreateJournalEntryLineDto"
+            }
+          }
+        }
+      },
+      "InvoiceLineItemDto": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "description": "Line description",
+            "example": "Q2 Brand Strategy & Identity Systems"
+          },
+          "quantity": {
+            "type": "number",
+            "description": "Quantity",
+            "example": 1
+          },
+          "unitPrice": {
+            "type": "number",
+            "description": "Unit price",
+            "example": 12500
+          },
+          "discountMode": {
+            "type": "string",
+            "enum": [
+              "PERCENT",
+              "AMOUNT"
+            ],
+            "example": "AMOUNT"
+          },
+          "discountValue": {
+            "type": "number",
+            "description": "Discount: percent (0–100) or fixed currency amount",
+            "example": 0
+          },
+          "taxMode": {
+            "type": "string",
+            "enum": [
+              "PERCENT",
+              "AMOUNT"
+            ],
+            "example": "PERCENT"
+          },
+          "taxValue": {
+            "type": "number",
+            "description": "Tax: percent of pre-tax line or fixed currency amount",
+            "example": 0
+          },
+          "glAccountId": {
+            "type": "string",
+            "description": "Resolved GL account id for this line"
+          },
+          "taxCodeId": {
+            "type": "string",
+            "description": "Tax code id for this line"
+          }
+        },
+        "required": [
+          "description",
+          "unitPrice",
+          "discountMode",
+          "discountValue",
+          "taxMode",
+          "taxValue"
+        ]
+      },
+      "CreateInvoiceDto": {
+        "type": "object",
+        "properties": {
+          "companyId": {
+            "type": "string",
+            "description": "Company (subsidiary) that owns this AR document. Defaults to the user’s primary company."
+          },
+          "kind": {
+            "type": "string",
+            "description": "Invoice document kind (global ERP-style)",
+            "enum": [
+              "STANDARD",
+              "PROFORMA",
+              "CREDIT_NOTE",
+              "DEBIT_NOTE",
+              "DOWN_PAYMENT"
+            ],
+            "example": "STANDARD",
+            "default": "STANDARD"
+          },
+          "customerId": {
+            "type": "string",
+            "description": "Customer ID (AR invoice)"
+          },
+          "issueDate": {
+            "type": "string",
+            "description": "Issue date",
+            "example": "2026-03-15"
+          },
+          "dueDate": {
+            "type": "string",
+            "description": "Due date",
+            "example": "2026-04-15"
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency code (ISO 4217)",
+            "example": "USD",
+            "default": "USD"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Additional notes"
+          },
+          "lineItems": {
+            "description": "Line items (required). Header subtotal/tax/total are derived server-side.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InvoiceLineItemDto"
+            }
+          }
+        },
+        "required": [
+          "customerId",
+          "issueDate",
+          "dueDate",
+          "lineItems"
+        ]
+      },
+      "UpdateInvoiceDto": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "description": "Invoice document kind",
+            "enum": [
+              "STANDARD",
+              "PROFORMA",
+              "CREDIT_NOTE",
+              "DEBIT_NOTE",
+              "DOWN_PAYMENT"
+            ]
+          },
+          "dueDate": {
+            "type": "string",
+            "description": "Due date",
+            "example": "2026-04-15"
+          },
+          "notes": {
+            "type": "string",
+            "description": "Additional notes"
+          },
+          "lineItems": {
+            "description": "Full replacement line items (draft-only). Totals are re-derived.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/InvoiceLineItemDto"
+            }
+          }
+        },
+        "required": [
+          "lineItems"
+        ]
+      },
+      "RecordInvoicePaymentDto": {
+        "type": "object",
+        "properties": {
+          "paymentSource": {
+            "type": "string",
+            "description": "Payment source",
+            "enum": [
+              "FLUIDEPAY",
+              "MANUAL",
+              "BANK_TRANSFER",
+              "CASH",
+              "CHEQUE"
+            ],
+            "default": "FLUIDEPAY"
+          },
+          "fluidePayTransactionId": {
+            "type": "string",
+            "description": "FluidePay transaction id (required when paymentSource=FLUIDEPAY)",
+            "example": "TXN-90821-XP"
+          },
+          "externalReference": {
+            "type": "string",
+            "description": "External reference (bank transfer reference, cash receipt #, cheque #, etc.)"
+          },
+          "allocatedAmount": {
+            "type": "number",
+            "description": "Allocated amount to this invoice",
+            "example": 12450
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency code",
+            "example": "USD"
+          },
+          "memo": {
+            "type": "string",
+            "description": "Reference / memo",
+            "example": "REF-992834-XQ"
+          },
+          "evidenceDocumentIds": {
+            "description": "Evidence file upload ids (PDF receipts, bank slips, etc.)",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "cashAccountId": {
+            "type": "string",
+            "description": "Cash/bank GL account to debit for non-FluidePay payments (required when paymentSource != FLUIDEPAY). Must be a cash-like ASSET account."
+          }
+        },
+        "required": [
+          "allocatedAmount"
+        ]
+      },
+      "LinkDocumentsDto": {
+        "type": "object",
+        "properties": {
+          "fileIds": {
+            "description": "File upload ids from fluide-utils file-management",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "fileIds"
+        ]
+      },
+      "PublicInvoiceCheckoutDto": {
+        "type": "object",
+        "properties": {
+          "channel": {
+            "type": "string",
+            "enum": [
+              "STRIPE_CARD",
+              "FLUTTERWAVE_CARD",
+              "FLUTTERWAVE_MOBILE_MONEY",
+              "FLUTTERWAVE_USSD",
+              "FLUTTERWAVE_OPAY",
+              "BANK_TRANSFER"
+            ]
+          },
+          "email": {
+            "type": "string",
+            "description": "Customer email for Flutterwave customer creation"
+          },
+          "momoCountryCode": {
+            "type": "string",
+            "description": "MoMo country calling code (digits)"
+          },
+          "momoNetwork": {
+            "type": "string",
+            "description": "MoMo network e.g. MTN"
+          },
+          "momoPhoneNumber": {
+            "type": "string",
+            "description": "MoMo phone (digits)"
+          },
+          "ussdBankCode": {
+            "type": "string",
+            "description": "USSD bank code (NG)"
+          },
+          "cardNumber": {
+            "type": "string",
+            "description": "Plain card number (Flutterwave card collect)"
+          },
+          "cardExpiryMonth": {
+            "type": "string"
+          },
+          "cardExpiryYear": {
+            "type": "string"
+          },
+          "cardCvv": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "channel"
+        ]
+      },
+      "BankTransferInstructionsDto": {
+        "type": "object",
+        "properties": {
+          "bankName": {
+            "type": "string"
+          },
+          "accountName": {
+            "type": "string"
+          },
+          "accountNumber": {
+            "type": "string"
+          },
+          "iban": {
+            "type": "string"
+          },
+          "swift": {
+            "type": "string"
+          },
+          "referenceHint": {
+            "type": "string"
+          },
+          "additionalNotes": {
+            "type": "string"
+          }
+        }
+      },
+      "UpsertInvoiceCollectionSettingsDto": {
+        "type": "object",
+        "properties": {
+          "companyId": {
+            "type": "string"
+          },
+          "enabledChannels": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "STRIPE_CARD",
+                "FLUTTERWAVE_CARD",
+                "FLUTTERWAVE_MOBILE_MONEY",
+                "FLUTTERWAVE_USSD",
+                "FLUTTERWAVE_OPAY",
+                "BANK_TRANSFER"
+              ]
+            }
+          },
+          "bankTransferInstructions": {
+            "$ref": "#/components/schemas/BankTransferInstructionsDto"
+          },
+          "primaryBankAccountId": {
+            "type": "string"
+          },
+          "paymentNotificationEmail": {
+            "type": "string",
+            "description": "Email notified when invoice payments are received"
+          }
+        },
+        "required": [
+          "companyId"
+        ]
+      },
+      "CreateExchangeRateDto": {
+        "type": "object",
+        "properties": {
+          "rateDate": {
+            "type": "string"
+          },
+          "baseCurrency": {
+            "type": "string",
+            "example": "USD"
+          },
+          "quoteCurrency": {
+            "type": "string",
+            "example": "XAF"
+          },
+          "rate": {
+            "type": "number",
+            "description": "Quote units per 1 base"
+          },
+          "source": {
+            "type": "string"
+          },
+          "providerCode": {
+            "type": "string"
+          },
+          "providerFetchedAt": {
+            "type": "string",
+            "description": "ISO timestamp when provider returned this rate"
+          }
+        },
+        "required": [
+          "rateDate",
+          "baseCurrency",
+          "quoteCurrency",
+          "rate"
+        ]
+      },
+      "SyncFrankfurterDto": {
+        "type": "object",
+        "properties": {
+          "rateDate": {
+            "type": "string",
+            "description": "YYYY-MM-DD (ECB publication date)"
+          },
+          "baseCurrency": {
+            "type": "string",
+            "description": "Frankfurter `from` base (default EUR or FX_FRANKFURTER_BASE)",
+            "example": "EUR"
+          }
+        },
+        "required": [
+          "rateDate"
+        ]
+      },
+      "UpsertPayrollAccountMappingDto": {
+        "type": "object",
+        "properties": {
+          "companyId": {
+            "type": "string",
+            "description": "Subsidiary this mapping applies to (must match payroll run companyId)"
+          },
+          "currency": {
+            "type": "string",
+            "description": "ISO 4217 currency this mapping applies to",
+            "example": "XAF"
+          },
+          "countryCode": {
+            "type": "string",
+            "description": "ISO 3166-1 alpha-2; defaults to the company’s registered country from auth context"
+          },
+          "componentCode": {
+            "type": "string",
+            "example": "SALARY_EXPENSE"
+          },
+          "debitAccountId": {
+            "type": "string"
+          },
+          "creditAccountId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "companyId",
+          "currency",
+          "componentCode"
+        ]
+      },
+      "ApplyPayrollMappingTemplateDto": {
+        "type": "object",
+        "properties": {
+          "companyId": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string",
+            "description": "ISO 4217 currency to create accounts/mappings for",
+            "example": "XAF"
+          },
+          "templateCode": {
+            "type": "string",
+            "enum": [
+              "CM_STATUTORY",
+              "NG_STATUTORY",
+              "KE_STATUTORY"
+            ]
+          }
+        },
+        "required": [
+          "companyId",
+          "currency",
+          "templateCode"
+        ]
+      },
+      "BillLineItemDto": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "description": "Line description",
+            "example": "Cloud Maintenance Add-on"
+          },
+          "quantity": {
+            "type": "number",
+            "description": "Quantity",
+            "example": 1
+          },
+          "unitPrice": {
+            "type": "number",
+            "description": "Unit price",
+            "example": 4250
+          },
+          "discountMode": {
+            "type": "string",
+            "enum": [
+              "PERCENT",
+              "AMOUNT"
+            ],
+            "example": "AMOUNT"
+          },
+          "discountValue": {
+            "type": "number",
+            "description": "Discount: percent (0–100) or fixed currency amount",
+            "example": 0
+          },
+          "taxMode": {
+            "type": "string",
+            "enum": [
+              "PERCENT",
+              "AMOUNT"
+            ],
+            "example": "PERCENT"
+          },
+          "taxValue": {
+            "type": "number",
+            "description": "Tax: percent of pre-tax line or fixed currency amount",
+            "example": 0
+          },
+          "glAccountId": {
+            "type": "string",
+            "description": "Resolved GL account id for this line"
+          },
+          "taxCodeId": {
+            "type": "string",
+            "description": "Tax code id for this line"
+          }
+        },
+        "required": [
+          "description",
+          "unitPrice",
+          "discountMode",
+          "discountValue",
+          "taxMode",
+          "taxValue"
+        ]
+      },
+      "CreateBillDto": {
+        "type": "object",
+        "properties": {
+          "vendorId": {
+            "type": "string",
+            "description": "Vendor / supplier id"
+          },
+          "issueDate": {
+            "type": "string",
+            "description": "Issue date",
+            "example": "2026-03-15"
+          },
+          "dueDate": {
+            "type": "string",
+            "description": "Due date",
+            "example": "2026-04-15"
+          },
+          "currency": {
+            "type": "string",
+            "description": "ISO 4217 currency"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "lineItems": {
+            "description": "Line items (required). Header subtotal/tax/total are derived server-side.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BillLineItemDto"
+            }
+          }
+        },
+        "required": [
+          "vendorId",
+          "issueDate",
+          "dueDate",
+          "lineItems"
+        ]
+      },
+      "UpsertBillApprovalPolicyDto": {
+        "type": "object",
+        "properties": {
+          "approverUserIds": {
+            "description": "Approver user ids",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "requiredPercent": {
+            "type": "number",
+            "description": "Required approval percent (1-100)",
+            "default": 100
+          }
+        },
+        "required": [
+          "approverUserIds"
+        ]
+      },
+      "UpdateBillDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "RECEIVED",
+              "UNDER_REVIEW",
+              "APPROVED",
+              "REJECTED",
+              "SCHEDULED",
+              "PENDING_PAYMENT",
+              "PAID",
+              "VOID"
+            ]
+          },
+          "dueDate": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "lineItems": {
+            "description": "Full replacement line items (draft-only). Totals are re-derived.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BillLineItemDto"
+            }
+          }
+        },
+        "required": [
+          "lineItems"
+        ]
+      },
+      "RejectBillDto": {
+        "type": "object",
+        "properties": {
+          "reason": {
+            "type": "string",
+            "description": "Reason for rejection (audit)"
+          }
+        }
+      },
+      "ScheduleBillPaymentDto": {
+        "type": "object",
+        "properties": {
+          "paymentDate": {
+            "type": "string",
+            "description": "Scheduled payment date",
+            "example": "2026-04-15"
+          }
+        },
+        "required": [
+          "paymentDate"
+        ]
+      },
+      "RecordBillPaymentDto": {
+        "type": "object",
+        "properties": {
+          "paymentSource": {
+            "type": "string",
+            "description": "Payment source",
+            "enum": [
+              "FLUIDEPAY",
+              "MANUAL",
+              "BANK_TRANSFER",
+              "CASH",
+              "CHEQUE"
+            ],
+            "default": "FLUIDEPAY"
+          },
+          "fluidePayTransactionId": {
+            "type": "string",
+            "description": "FluidePay transaction id (required when paymentSource=FLUIDEPAY)",
+            "example": "TXN-98234-B"
+          },
+          "externalReference": {
+            "type": "string",
+            "description": "External reference (bank transfer reference, cash receipt #, cheque #, etc.)"
+          },
+          "allocatedAmount": {
+            "type": "number",
+            "description": "Allocated amount to this bill",
+            "example": 12450
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency code",
+            "example": "USD"
+          },
+          "memo": {
+            "type": "string",
+            "description": "Reference / memo"
+          },
+          "evidenceDocumentIds": {
+            "description": "Evidence file upload ids (PDF receipts, bank slips, etc.)",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "cashAccountId": {
+            "type": "string",
+            "description": "Cash/bank GL account to credit for non-FluidePay payments (required when paymentSource != FLUIDEPAY). Must be a cash-like ASSET account."
+          }
+        },
+        "required": [
+          "allocatedAmount"
+        ]
+      },
+      "CreateBankAccountDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string",
+            "description": "ISO 4217"
+          },
+          "glAccountId": {
+            "type": "string",
+            "description": "Chart of accounts id for this bank / cash ledger"
+          }
+        },
+        "required": [
+          "name",
+          "glAccountId"
+        ]
+      },
+      "CreateBankStatementLineDto": {
+        "type": "object",
+        "properties": {
+          "lineDate": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number",
+            "description": "Positive = inflow, negative = outflow"
+          },
+          "memo": {
+            "type": "string"
+          },
+          "externalReference": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "lineDate",
+          "amount"
+        ]
+      },
+      "MatchBankLineDto": {
+        "type": "object",
+        "properties": {
+          "journalEntryLineId": {
+            "type": "string",
+            "description": "Journal entry line to reconcile against"
+          }
+        },
+        "required": [
+          "journalEntryLineId"
+        ]
+      },
+      "BudgetLineInputDto": {
+        "type": "object",
+        "properties": {
+          "accountId": {
+            "type": "string"
+          },
+          "periodMonth": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 12
+          },
+          "amount": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "accountId",
+          "periodMonth",
+          "amount"
+        ]
+      },
+      "CreateBudgetDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "fiscalYear": {
+            "type": "number",
+            "example": 2026
+          },
+          "currency": {
+            "type": "string"
+          },
+          "lines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BudgetLineInputDto"
+            }
+          }
+        },
+        "required": [
+          "name",
+          "fiscalYear",
+          "lines"
+        ]
+      },
+      "CreateFixedAssetDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "acquisitionDate": {
+            "type": "string"
+          },
+          "cost": {
+            "type": "number"
+          },
+          "salvageValue": {
+            "type": "number"
+          },
+          "usefulLifeMonths": {
+            "type": "number"
+          },
+          "assetGlAccountId": {
+            "type": "string",
+            "description": "PP&E / asset account"
+          },
+          "depreciationExpenseGlAccountId": {
+            "type": "string",
+            "description": "Depreciation expense account"
+          },
+          "accumulatedDepreciationGlAccountId": {
+            "type": "string",
+            "description": "Accumulated depreciation contra-asset account"
+          }
+        },
+        "required": [
+          "name",
+          "acquisitionDate",
+          "cost",
+          "usefulLifeMonths",
+          "assetGlAccountId",
+          "depreciationExpenseGlAccountId",
+          "accumulatedDepreciationGlAccountId"
+        ]
+      },
+      "RunDepreciationDto": {
+        "type": "object",
+        "properties": {
+          "period": {
+            "type": "string",
+            "description": "YYYY-MM (defaults to current UTC month). Idempotent per asset + month.",
+            "example": "2026-04"
+          }
+        }
+      },
+      "CreateStatementExportDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "statementKinds": {
+            "example": [
+              "income",
+              "balance-sheet",
+              "cash-flow"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "formats": {
+            "example": [
+              "pdf",
+              "xlsx"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "periodFrom": {
+            "type": "string"
+          },
+          "periodTo": {
+            "type": "string"
+          },
+          "balanceSheetAsOf": {
+            "type": "string"
+          },
+          "companyId": {
+            "type": "string",
+            "description": "Override primary company when user has several"
+          }
+        },
+        "required": [
+          "title",
+          "statementKinds",
+          "formats"
+        ]
+      },
+      "UpdateStatementExportDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          }
+        }
+      },
+      "BulkDeleteStatementExportsDto": {
+        "type": "object",
+        "properties": {
+          "ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "ids"
+        ]
+      },
+      "AttachStatementExportOutputsDto": {
+        "type": "object",
+        "properties": {
+          "utilsFileIds": {
+            "description": "File ids returned by fluide-utils file management after generation",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "utilsFileIds"
+        ]
+      },
+      "ScheduledReportTemplateDto": {
+        "type": "object",
+        "properties": {
+          "statementKinds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "formats": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "periodPreset": {
+            "type": "string",
+            "enum": [
+              "last_month",
+              "ytd",
+              "custom"
+            ]
+          },
+          "periodFrom": {
+            "type": "string"
+          },
+          "periodTo": {
+            "type": "string"
+          },
+          "balanceSheetAsOf": {
+            "type": "string"
+          }
+        }
+      },
+      "CreateScheduledReportDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "cronExpression": {
+            "type": "string",
+            "example": "0 6 1 * *"
+          },
+          "timezone": {
+            "type": "string",
+            "default": "UTC"
+          },
+          "enabled": {
+            "type": "boolean",
+            "default": true
+          },
+          "template": {
+            "$ref": "#/components/schemas/ScheduledReportTemplateDto"
+          },
+          "companyId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "cronExpression"
+        ]
+      },
+      "UpdateScheduledReportDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "cronExpression": {
+            "type": "string"
+          },
+          "timezone": {
+            "type": "string"
+          },
+          "enabled": {
+            "type": "boolean"
+          },
+          "template": {
+            "$ref": "#/components/schemas/ScheduledReportTemplateDto"
+          }
+        }
+      },
+      "CreateProjectDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "isActive": {
+            "type": "boolean",
+            "default": true
+          },
+          "companyId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "UpdateProjectDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "isActive": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CreateAccountingClientDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "isActive": {
+            "type": "boolean",
+            "default": true
+          },
+          "companyId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "UpdateAccountingClientDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "code": {
+            "type": "string"
+          },
+          "isActive": {
+            "type": "boolean"
+          }
+        }
+      },
+      "UpsertCompanyAccountingSettingsDto": {
+        "type": "object",
+        "properties": {
+          "companyId": {
+            "type": "string"
+          },
+          "functionalCurrency": {
+            "type": "string",
+            "description": "Functional/reporting currency (ISO 4217)",
+            "example": "XAF"
+          },
+          "vatEnabled": {
+            "type": "boolean",
+            "description": "Enable VAT/tax by default in document editors",
+            "default": true
+          },
+          "vatDefaultRate": {
+            "type": "number",
+            "description": "Default VAT percent rate (e.g. 19.25)",
+            "example": 19.25
+          }
+        },
+        "required": [
+          "companyId",
+          "functionalCurrency"
+        ]
+      },
+      "BusinessPartnerBulkRowDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "CUSTOMER",
+              "VENDOR",
+              "PARTNER",
+              "MERCHANT",
+              "SERVICE_PROVIDER",
+              "OTHER"
+            ]
+          },
+          "displayName": {
+            "type": "string",
+            "example": "Acme Ltd"
+          },
+          "legalName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "taxId": {
+            "type": "string"
+          },
+          "defaultCurrency": {
+            "type": "string",
+            "example": "USD"
+          },
+          "addressLine1": {
+            "type": "string"
+          },
+          "addressLine2": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "postalCode": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "type",
+          "displayName"
+        ]
+      },
+      "BusinessPartnerBulkValidateJsonDto": {
+        "type": "object",
+        "properties": {
+          "rows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BusinessPartnerBulkRowDto"
+            }
+          }
+        },
+        "required": [
+          "rows"
+        ]
+      },
+      "BusinessPartnerBulkCommitDto": {
+        "type": "object",
+        "properties": {
+          "rows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BusinessPartnerBulkRowDto"
+            }
+          }
+        },
+        "required": [
+          "rows"
+        ]
+      },
+      "BusinessPartnerAddressDto": {
+        "type": "object",
+        "properties": {
+          "line1": {
+            "type": "string"
+          },
+          "line2": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "state": {
+            "type": "string"
+          },
+          "postalCode": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          }
+        }
+      },
+      "CreateBusinessPartnerDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "CUSTOMER",
+              "VENDOR",
+              "PARTNER",
+              "MERCHANT",
+              "SERVICE_PROVIDER",
+              "OTHER"
+            ]
+          },
+          "displayName": {
+            "type": "string",
+            "example": "Acme Ltd"
+          },
+          "legalName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "taxId": {
+            "type": "string"
+          },
+          "defaultCurrency": {
+            "type": "string",
+            "example": "USD"
+          },
+          "address": {
+            "$ref": "#/components/schemas/BusinessPartnerAddressDto"
+          },
+          "payoutDetails": {
+            "type": "object",
+            "description": "Optional payout details for AP disbursement"
+          },
+          "metadata": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "type",
+          "displayName"
+        ]
+      },
+      "UpdateBusinessPartnerDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "CUSTOMER",
+              "VENDOR",
+              "PARTNER",
+              "MERCHANT",
+              "SERVICE_PROVIDER",
+              "OTHER"
+            ]
+          },
+          "displayName": {
+            "type": "string",
+            "example": "Acme Ltd"
+          },
+          "legalName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "taxId": {
+            "type": "string"
+          },
+          "defaultCurrency": {
+            "type": "string",
+            "example": "USD"
+          },
+          "address": {
+            "$ref": "#/components/schemas/BusinessPartnerAddressDto"
+          },
+          "payoutDetails": {
+            "type": "object",
+            "description": "Optional payout details for AP disbursement"
+          },
+          "metadata": {
+            "type": "object"
+          }
+        }
+      },
+      "RecurringLineTemplateDto": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "number"
+          },
+          "unitPrice": {
+            "type": "number"
+          },
+          "discountMode": {
+            "type": "string",
+            "enum": [
+              "PERCENT",
+              "AMOUNT"
+            ]
+          },
+          "discountValue": {
+            "type": "number"
+          },
+          "taxMode": {
+            "type": "string",
+            "enum": [
+              "PERCENT",
+              "AMOUNT"
+            ]
+          },
+          "taxValue": {
+            "type": "number"
+          },
+          "glAccountId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "description",
+          "unitPrice",
+          "discountMode",
+          "discountValue",
+          "taxMode",
+          "taxValue"
+        ]
+      },
+      "RecurringTemplatePayloadDto": {
+        "type": "object",
+        "properties": {
+          "currency": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "issueDateOffsetDays": {
+            "type": "number",
+            "default": 0
+          },
+          "dueDateOffsetDays": {
+            "type": "number",
+            "default": 0
+          },
+          "invoiceKind": {
+            "type": "string"
+          },
+          "customerId": {
+            "type": "string"
+          },
+          "vendorId": {
+            "type": "string"
+          },
+          "lines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RecurringLineTemplateDto"
+            }
+          }
+        },
+        "required": [
+          "currency",
+          "issueDateOffsetDays",
+          "dueDateOffsetDays",
+          "lines"
+        ]
+      },
+      "CreateRecurringTemplateDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "documentType": {
+            "type": "string",
+            "enum": [
+              "INVOICE",
+              "BILL"
+            ]
+          },
+          "payload": {
+            "$ref": "#/components/schemas/RecurringTemplatePayloadDto"
+          }
+        },
+        "required": [
+          "name",
+          "documentType",
+          "payload"
+        ]
+      },
+      "CreateRecurringScheduleDto": {
+        "type": "object",
+        "properties": {
+          "templateId": {
+            "type": "string"
+          },
+          "generateMode": {
+            "type": "string",
+            "enum": [
+              "DRAFT",
+              "AUTO_POST"
+            ]
+          },
+          "frequency": {
+            "type": "string",
+            "enum": [
+              "DAILY",
+              "WEEKLY",
+              "MONTHLY"
+            ]
+          },
+          "interval": {
+            "type": "number",
+            "minimum": 1
+          },
+          "dayOfMonth": {
+            "type": "number"
+          },
+          "dayOfWeek": {
+            "type": "number",
+            "description": "0=Sunday … 6=Saturday"
+          },
+          "startDate": {
+            "type": "string",
+            "description": "ISO date (YYYY-MM-DD)"
+          },
+          "endDate": {
+            "type": "string"
+          },
+          "timezone": {
+            "type": "string",
+            "default": "UTC"
+          }
+        },
+        "required": [
+          "templateId",
+          "generateMode",
+          "frequency",
+          "interval",
+          "startDate"
+        ]
+      }
+    }
+  },
+  "x-mint": {
+    "productOverview": "/books/overview",
+    "basePath": "/api/v1"
+  }
+}

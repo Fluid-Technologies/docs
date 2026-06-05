@@ -1,0 +1,38 @@
+---
+title: HR API
+description: Employee records, leave, performance, and HR operations for the Fluide Suite.
+---
+
+The **HR API** (`fluide-hr`) is the canonical source for employee data in the Fluide Suite. Payroll, utils document generation, and admin dashboards consume HR records.
+
+## Base path
+
+`/api/v1/hr`
+
+## Authentication
+
+All endpoints require a developer JWT and API key. See [Authentication](/getting-started/authentication).
+
+## Operations and monitoring
+
+| Endpoint | Purpose |
+| --- | --- |
+| `GET /api/v1/hr/health` | Liveness and dependency health |
+| `GET /api/v1/hr/metrics` | Prometheus scrape target |
+
+Use health endpoints in deployment pipelines. Point your metrics collector at the Prometheus path for request rates and latency.
+
+## Typical integration flow
+
+1. Create or sync employees via `POST /api/v1/hr/employees`
+2. Configure leave, contracts, or performance modules as needed
+3. Trigger payroll runs that reference HR employee IDs
+
+<CardGroup cols={2}>
+  <Card title="HR product guide" icon="users" href="/hr/overview">
+    Modules, permissions, and payroll handoff.
+  </Card>
+  <Card title="First request" icon="rocket" href="/getting-started/first-request">
+    End-to-end token exchange and API call.
+  </Card>
+</CardGroup>

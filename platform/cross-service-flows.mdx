@@ -1,0 +1,59 @@
+---
+title: Cross-service flows
+description: HR to payroll mirroring and payroll to accounting journal integration.
+---
+
+# Cross-service flows
+
+## HR → Payroll (employee mirror)
+
+**Source of truth for employees:** `fluide-hr` (`/api/v1/hr/employees`).
+
+Payroll keeps a **read-only mirror** updated by internal endpoints:
+
+- `POST /api/v1/payroll/internal/employees/mirror-from-hr`
+- `POST /api/v1/payroll/internal/contracts/upsert-from-hr`
+- `POST /api/v1/payroll/internal/employees/provision-wallet`
+
+<Steps>
+  <Step title="HR creates or updates an employee">
+    Canonical UUID is stored in HR as `employees.id`.
+  </Step>
+  <Step title="HR calls payroll internal API">
+    Request includes header `x-internal-api-key` matching `PAYROLL_INTERNAL_API_KEY` on both sides.
+  </Step>
+  <Step title="Payroll upserts mirror row">
+  `mirrorFromHr` is **idempotent**: payroll `employees.id` equals HR `hrEmployeeId`.
+  </Step>
+</Steps>
+
+<Tip>
+Set `PAYROLL_BASE_URL` to the origin only (for example `http://payroll:5051`), not a path suffix.
+</Tip>
+
+Details: [Payroll HR mirror](/payroll/hr-mirror) and [HR payroll integration](/hr/payroll-integration).
+
+## Payroll → Books (GL posting)
+
+When a payroll run completes, **FluidePayroll** publishes `PAYROLL_RUN_COMPLETED` on topic `payroll.events`.
+
+**FluideBooks** consumes the event and posts a **posted** double-entry journal entry using subsidiary-scoped mappings in `payroll_account_mappings`.
+
+Required mapping codes per subsidiary include at minimum:
+
+| `componentCode` | Debit | Credit |
+| --- | --- | --- |
+| `SALARY_EXPENSE` | Required | — |
+| `EMPLOYER_CONTRIBUTION_EXPENSE` | Required | — |
+| `NET_SALARY_PAYABLE` | — | Required |
+| `PAYROLL_CASH` | — | Required |
+
+Configure mappings via HTTP APIs (audited) rather than raw SQL. See [Books payroll GL](/books/payroll-gl).
+
+## Auth → all services
+
+- JWT issuance and JWKS for gateway validation
+- `GET /api/validate-session` for inter-service session checks
+- Organization and app-level permissions in validate-session payload
+
+See [Auth overview](/auth/overview).

@@ -1,0 +1,40 @@
+---
+title: Utils API
+description: Notifications, files, document generation, and shared platform utilities.
+---
+
+The **Utils API** (`fluide-utils`) provides cross-cutting platform services used by HR, Payroll, Pay, and Books: notifications, file storage, PDF and spreadsheet generation, and document jobs.
+
+## Base path
+
+`/api/v1/app`
+
+## Authentication
+
+Developer JWT + API key on every request. See [Authentication](/getting-started/authentication).
+
+## Operations and monitoring
+
+| Endpoint | Purpose |
+| --- | --- |
+| `GET /api/v1/app` | Service root |
+| `GET /api/v1/app/metrics` | Prometheus scrape target |
+
+## Module overview
+
+| Module | What it does |
+| --- | --- |
+| **Notifications** | Send and list in-app notifications; engagement templates |
+| **File Management** | Upload, download, and delete organization-scoped files |
+| **Documents** | Generate payslips, invoices, financial PDFs, and exports |
+| **Document Jobs** | Queue long-running generation with status polling |
+
+## Typical integration flow
+
+1. Complete the upstream action (e.g. payroll run, invoice creation)
+2. Call a Documents endpoint to generate a PDF or spreadsheet artifact
+3. Store or deliver the returned URL to your end users
+
+<Card title="Utils product guide" icon="wrench" href="/utils/overview">
+  Modules, scopes, and suite integration points.
+</Card>

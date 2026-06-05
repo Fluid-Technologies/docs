@@ -1,0 +1,36 @@
+---
+title: Payroll quickstart
+description: Run FluidePayroll locally.
+---
+
+# Payroll quickstart
+
+<Steps>
+  <Step title="Install">
+    ```bash
+    cd FluidePayroll
+    npm install
+    cp .env.example .env
+    ```
+  </Step>
+  <Step title="Configure">
+    Set PostgreSQL (`DB_*`), Redis, Kafka brokers, and `PAYROLL_INTERNAL_API_KEY` for HR mirror calls.
+  </Step>
+  <Step title="Start">
+    ```bash
+    npm run start:dev
+    ```
+  </Step>
+  <Step title="Swagger">
+    `http://localhost:5051/api/docs`
+  </Step>
+</Steps>
+
+## Public vs internal APIs
+
+| Audience | Path | Notes |
+| --- | --- | --- |
+| Tenants | `/api/v1/payroll/payroll/*`, `/payslips/*` | JWT via gateway |
+| HR / platform | `/api/v1/payroll/internal/*` | `x-internal-api-key` |
+
+Do **not** expose employee CRUD on public routes—use `fluide-hr` `/api/v1/hr/employees`.

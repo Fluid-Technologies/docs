@@ -1,0 +1,31 @@
+---
+title: Pay quickstart
+description: Run FluidePay locally.
+---
+
+# Pay quickstart
+
+<Steps>
+  <Step title="Install">
+    ```bash
+    cd FluidePay
+    npm install
+    cp .env.example .env
+    ```
+  </Step>
+  <Step title="Configure providers">
+    Set database, Redis, Kafka, and provider credentials (Ecobank, mobile money) per `.env.example`.
+  </Step>
+  <Step title="Start">
+    ```bash
+    npm run start:dev
+    ```
+  </Step>
+  <Step title="Swagger">
+    `http://localhost:5058/api/docs`
+  </Step>
+</Steps>
+
+## Gateway webhooks
+
+Dedicated Tyk apps proxy provider webhooks (for example Stripe, Flutterwave) without the standard JWT flow. See `FluideGateway/apps/payments-*-webhook.json`.

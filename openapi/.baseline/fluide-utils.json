@@ -1,0 +1,2290 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/v1/app": {
+      "get": {
+        "operationId": "AppController_getHello",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "App"
+        ],
+        "summary": "Utils service root",
+        "description": "Returns a simple greeting confirming the utils service is reachable."
+      }
+    },
+    "/api/v1/app/i18n-error": {
+      "get": {
+        "operationId": "AppController_i18nErrorDemo",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "App"
+        ]
+      }
+    },
+    "/api/v1/app/i18n-validate": {
+      "post": {
+        "operationId": "AppController_i18nValidateDemo",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/I18nValidateDemoDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "App"
+        ]
+      }
+    },
+    "/api/v1/app/metrics": {
+      "get": {
+        "operationId": "PrometheusController_index",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Prometheus"
+        ],
+        "summary": "Utils Prometheus metrics",
+        "description": "Prometheus scrape target for shared utilities service metrics."
+      }
+    },
+    "/api/v1/app/notifications": {
+      "post": {
+        "operationId": "NotificationsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateNotificationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Send a notification",
+        "tags": [
+          "Notifications"
+        ]
+      },
+      "get": {
+        "operationId": "NotificationsController_findAll",
+        "parameters": [
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Free-text search (endpoint-specific)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number (1-indexed)",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "channel",
+            "required": false,
+            "in": "query",
+            "description": "Filter by notification channel",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "EMAIL",
+                "SMS",
+                "PUSH",
+                "WHATSAPP",
+                "IN_APP"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List notifications for the current user",
+        "tags": [
+          "Notifications"
+        ]
+      }
+    },
+    "/api/v1/app/notifications/engagement-template": {
+      "post": {
+        "operationId": "NotificationsController_createEngagementTemplate",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEngagementNotificationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create engagement lifecycle notification from template",
+        "tags": [
+          "Notifications"
+        ]
+      }
+    },
+    "/api/v1/app/notifications/{id}/dismiss": {
+      "patch": {
+        "operationId": "NotificationsController_dismiss",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Dismiss an in-app notification",
+        "tags": [
+          "Notifications"
+        ]
+      }
+    },
+    "/api/v1/app/notifications/{id}": {
+      "get": {
+        "operationId": "NotificationsController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get notification by ID",
+        "tags": [
+          "Notifications"
+        ]
+      }
+    },
+    "/api/v1/app/files": {
+      "post": {
+        "operationId": "FileManagementController_upload",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  },
+                  "isPublic": {
+                    "type": "string",
+                    "enum": [
+                      "true",
+                      "false"
+                    ],
+                    "default": "false"
+                  }
+                },
+                "required": [
+                  "file"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Upload a file",
+        "tags": [
+          "File Management"
+        ]
+      },
+      "get": {
+        "operationId": "FileManagementController_findAll",
+        "parameters": [
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Free-text search (endpoint-specific)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number (1-indexed)",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List uploaded files",
+        "tags": [
+          "File Management"
+        ]
+      }
+    },
+    "/api/v1/app/files/{id}": {
+      "get": {
+        "operationId": "FileManagementController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get file info by ID",
+        "tags": [
+          "File Management"
+        ]
+      },
+      "delete": {
+        "operationId": "FileManagementController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Delete a file by ID",
+        "tags": [
+          "File Management"
+        ]
+      }
+    },
+    "/api/v1/app/files/{id}/download": {
+      "get": {
+        "operationId": "FileManagementController_download",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Download a file by ID",
+        "tags": [
+          "File Management"
+        ]
+      }
+    },
+    "/api/v1/app/internal/files/buffer": {
+      "post": {
+        "description": "Used by fluide-capital-core and similar services. Requires FLUIDE_INTERNAL_FILE_TOKEN on caller and callee.",
+        "operationId": "InternalFileController_saveBuffer",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InternalSaveBufferDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Persist a buffer as a managed file (service-to-service)",
+        "tags": [
+          "Internal Files"
+        ]
+      }
+    },
+    "/api/v1/app/internal/files/{id}/content": {
+      "get": {
+        "operationId": "InternalFileController_streamContent",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "organizationId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Stream file bytes for an organization (service-to-service)",
+        "tags": [
+          "Internal Files"
+        ]
+      }
+    },
+    "/api/v1/app/documents/payslips": {
+      "post": {
+        "description": "Idempotent per organization + payslipId when payload hash matches. Pass force=true to overwrite after payroll corrections.",
+        "operationId": "DocumentsController_generatePayslip",
+        "parameters": [
+          {
+            "name": "force",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GeneratePayslipDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Generate payslip PDF, store on disk, return public URL",
+        "tags": [
+          "Documents"
+        ]
+      }
+    },
+    "/api/v1/app/documents/invoices": {
+      "post": {
+        "description": "Idempotent per organization + invoice id (correlationId) when payload hash matches.",
+        "operationId": "DocumentsController_generateInvoicePdf",
+        "parameters": [
+          {
+            "name": "force",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateAccountingDocumentPdfDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Generate invoice PDF, store on disk, return public URL",
+        "tags": [
+          "Documents"
+        ]
+      }
+    },
+    "/api/v1/app/documents/bills": {
+      "post": {
+        "description": "Idempotent per organization + bill id (correlationId) when payload hash matches.",
+        "operationId": "DocumentsController_generateBillPdf",
+        "parameters": [
+          {
+            "name": "force",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateAccountingDocumentPdfDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Generate bill PDF, store on disk, return public URL",
+        "tags": [
+          "Documents"
+        ]
+      }
+    },
+    "/api/v1/app/documents/offer-letters": {
+      "post": {
+        "description": "Idempotent per organization + correlationId (offer letter id).",
+        "operationId": "DocumentsController_generateOfferLetterPdf",
+        "parameters": [
+          {
+            "name": "force",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateOfferLetterPdfDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Generate offer letter PDF for ATS (fluide-jobs)",
+        "tags": [
+          "Documents"
+        ]
+      }
+    },
+    "/api/v1/app/documents/financial/balance-sheet": {
+      "post": {
+        "operationId": "DocumentsController_generateFinancialBalanceSheet",
+        "parameters": [
+          {
+            "name": "force",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateBalanceSheetPdfDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Generate balance sheet PDF (IFRS-style management report)",
+        "tags": [
+          "Documents"
+        ]
+      }
+    },
+    "/api/v1/app/documents/financial/income-statement": {
+      "post": {
+        "operationId": "DocumentsController_generateFinancialIncomeStatement",
+        "parameters": [
+          {
+            "name": "force",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateIncomeStatementPdfDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Generate income statement / P&L PDF",
+        "tags": [
+          "Documents"
+        ]
+      }
+    },
+    "/api/v1/app/documents/financial/cash-flow": {
+      "post": {
+        "operationId": "DocumentsController_generateFinancialCashFlow",
+        "parameters": [
+          {
+            "name": "force",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateCashFlowPdfDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Generate statement of cash flows PDF",
+        "tags": [
+          "Documents"
+        ]
+      }
+    },
+    "/api/v1/app/documents/financial/trial-balance": {
+      "post": {
+        "operationId": "DocumentsController_generateFinancialTrialBalance",
+        "parameters": [
+          {
+            "name": "force",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateTrialBalancePdfDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Generate trial balance PDF",
+        "tags": [
+          "Documents"
+        ]
+      }
+    },
+    "/api/v1/app/documents/financial/general-ledger": {
+      "post": {
+        "operationId": "DocumentsController_generateFinancialGeneralLedger",
+        "parameters": [
+          {
+            "name": "force",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateGeneralLedgerPdfDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Generate general ledger PDF (posted lines by account)",
+        "tags": [
+          "Documents"
+        ]
+      }
+    },
+    "/api/v1/app/documents/financial/chart-of-accounts": {
+      "post": {
+        "operationId": "DocumentsController_generateFinancialCoa",
+        "parameters": [
+          {
+            "name": "force",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateChartOfAccountsPdfDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Generate chart of accounts listing PDF",
+        "tags": [
+          "Documents"
+        ]
+      }
+    },
+    "/api/v1/app/documents/financial/balance-sheet.xlsx": {
+      "post": {
+        "operationId": "DocumentsController_generateFinancialBalanceSheetXlsx",
+        "parameters": [
+          {
+            "name": "force",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateBalanceSheetPdfDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Generate balance sheet Excel workbook",
+        "tags": [
+          "Documents"
+        ]
+      }
+    },
+    "/api/v1/app/documents/financial/income-statement.xlsx": {
+      "post": {
+        "operationId": "DocumentsController_generateFinancialIncomeStatementXlsx",
+        "parameters": [
+          {
+            "name": "force",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateIncomeStatementPdfDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Generate income statement Excel workbook",
+        "tags": [
+          "Documents"
+        ]
+      }
+    },
+    "/api/v1/app/documents/financial/cash-flow.xlsx": {
+      "post": {
+        "operationId": "DocumentsController_generateFinancialCashFlowXlsx",
+        "parameters": [
+          {
+            "name": "force",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateCashFlowPdfDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Generate statement of cash flows Excel workbook",
+        "tags": [
+          "Documents"
+        ]
+      }
+    },
+    "/api/v1/app/documents/financial/trial-balance.xlsx": {
+      "post": {
+        "operationId": "DocumentsController_generateFinancialTrialBalanceXlsx",
+        "parameters": [
+          {
+            "name": "force",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateTrialBalancePdfDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Generate trial balance Excel workbook",
+        "tags": [
+          "Documents"
+        ]
+      }
+    },
+    "/api/v1/app/documents/financial/general-ledger.xlsx": {
+      "post": {
+        "operationId": "DocumentsController_generateFinancialGeneralLedgerXlsx",
+        "parameters": [
+          {
+            "name": "force",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateGeneralLedgerPdfDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Generate general ledger Excel workbook",
+        "tags": [
+          "Documents"
+        ]
+      }
+    },
+    "/api/v1/app/documents/financial/chart-of-accounts.xlsx": {
+      "post": {
+        "operationId": "DocumentsController_generateFinancialCoaXlsx",
+        "parameters": [
+          {
+            "name": "force",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateChartOfAccountsPdfDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Generate chart of accounts Excel workbook",
+        "tags": [
+          "Documents"
+        ]
+      }
+    },
+    "/api/v1/app/documents/exports/accounting-transactions.xlsx": {
+      "post": {
+        "operationId": "DocumentsController_generateAccountingTransactionsXlsx",
+        "parameters": [
+          {
+            "name": "force",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateTransactionsSpreadsheetDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Generate accounting transactions listing as XLSX",
+        "tags": [
+          "Documents"
+        ]
+      }
+    },
+    "/api/v1/app/documents/exports/invoices.xlsx": {
+      "post": {
+        "operationId": "DocumentsController_generateInvoiceListXlsx",
+        "parameters": [
+          {
+            "name": "force",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateDocumentListExportDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Generate filtered invoice listing as XLSX",
+        "tags": [
+          "Documents"
+        ]
+      }
+    },
+    "/api/v1/app/documents/exports/invoices.pdf": {
+      "post": {
+        "operationId": "DocumentsController_generateInvoiceListPdf",
+        "parameters": [
+          {
+            "name": "force",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateDocumentListExportDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Generate filtered invoice listing as PDF",
+        "tags": [
+          "Documents"
+        ]
+      }
+    },
+    "/api/v1/app/documents/exports/bills.xlsx": {
+      "post": {
+        "operationId": "DocumentsController_generateBillListXlsx",
+        "parameters": [
+          {
+            "name": "force",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateDocumentListExportDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Generate filtered bill listing as XLSX",
+        "tags": [
+          "Documents"
+        ]
+      }
+    },
+    "/api/v1/app/documents/exports/bills.pdf": {
+      "post": {
+        "operationId": "DocumentsController_generateBillListPdf",
+        "parameters": [
+          {
+            "name": "force",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateDocumentListExportDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Generate filtered bill listing as PDF",
+        "tags": [
+          "Documents"
+        ]
+      }
+    },
+    "/api/v1/app/public/artifacts/{publicToken}": {
+      "get": {
+        "operationId": "PublicArtifactsController_download",
+        "parameters": [
+          {
+            "name": "publicToken",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Download generated artifact by public token (no JWT)",
+        "tags": [
+          "Public artifacts"
+        ]
+      }
+    },
+    "/api/v1/app/internal/documents/payment-receipt": {
+      "post": {
+        "description": "Idempotent per organization + allocation id (correlationId).",
+        "operationId": "InternalDocumentsController_generatePaymentReceipt",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "force",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "boolean"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GeneratePaymentReceiptPdfDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Generate invoice payment receipt PDF (service-to-service from fluide-books)",
+        "tags": [
+          "Internal Documents"
+        ]
+      }
+    },
+    "/api/v1/app/document-jobs": {
+      "post": {
+        "description": "Produces a stub JSON manifest today; extend with real renderers. Use correlationId = producer row id for idempotency.",
+        "operationId": "DocumentJobsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDocumentJobDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Enqueue a document generation job",
+        "tags": [
+          "Document jobs"
+        ]
+      },
+      "get": {
+        "operationId": "DocumentJobsController_list",
+        "parameters": [
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Free-text search (endpoint-specific)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number (1-indexed)",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List document jobs for the active organization",
+        "tags": [
+          "Document jobs"
+        ]
+      }
+    },
+    "/api/v1/app/document-jobs/{id}": {
+      "get": {
+        "operationId": "DocumentJobsController_getOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get one document job",
+        "tags": [
+          "Document jobs"
+        ]
+      },
+      "delete": {
+        "operationId": "DocumentJobsController_cancel",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Cancel a pending or processing job (soft delete on job row TBD)",
+        "tags": [
+          "Document jobs"
+        ]
+      }
+    },
+    "/api/v1/app/document-jobs/{id}/retry": {
+      "post": {
+        "operationId": "DocumentJobsController_retry",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Retry a failed or cancelled job",
+        "tags": [
+          "Document jobs"
+        ]
+      }
+    },
+    "/api/v1/app/documents/registry": {
+      "get": {
+        "operationId": "DocumentManagementController_list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List enterprise document registry records (stub)",
+        "tags": [
+          "Document management"
+        ]
+      },
+      "post": {
+        "operationId": "DocumentManagementController_register",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterDocumentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Document management"
+        ]
+      }
+    },
+    "/api/v1/app/documents/registry/{id}": {
+      "patch": {
+        "operationId": "DocumentManagementController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateDocumentRegistryDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Document management"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Fluide Utils API",
+    "description": "Shared platform utilities: notifications, file storage, document generation (PDFs, spreadsheets), and document jobs used across the suite.",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [
+    {
+      "name": "App",
+      "description": "Service root and build metadata. Use for quick connectivity checks.",
+      "x-group": "Operations"
+    },
+    {
+      "name": "Prometheus",
+      "description": "Prometheus scrape endpoint in text exposition format. Configure your metrics collector to poll this path on each service.",
+      "x-group": "Operations"
+    },
+    {
+      "name": "Notifications",
+      "description": "In-app and multi-channel notifications for suite products."
+    },
+    {
+      "name": "File Management",
+      "description": "Upload, download, and manage files scoped to your organization."
+    },
+    {
+      "name": "Internal Files"
+    },
+    {
+      "name": "Documents",
+      "description": "Generate payslips, invoices, financial reports, and other PDF or spreadsheet artifacts."
+    },
+    {
+      "name": "Public artifacts"
+    },
+    {
+      "name": "Internal Documents"
+    },
+    {
+      "name": "Document jobs"
+    },
+    {
+      "name": "Document management"
+    }
+  ],
+  "servers": [
+    {
+      "url": "https://staging.api.fluidehr.com",
+      "description": "Beta (staging)"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearer": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      }
+    },
+    "schemas": {
+      "I18nValidateDemoDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "CreateNotificationDto": {
+        "type": "object",
+        "properties": {
+          "recipientId": {
+            "type": "string",
+            "description": "Recipient user ID"
+          },
+          "channel": {
+            "type": "string",
+            "description": "Notification channel",
+            "enum": [
+              "EMAIL",
+              "SMS",
+              "PUSH",
+              "WHATSAPP",
+              "IN_APP"
+            ]
+          },
+          "subject": {
+            "type": "string",
+            "description": "Notification subject (for email)"
+          },
+          "body": {
+            "type": "string",
+            "description": "Notification body/content"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Additional metadata (e.g., template data)"
+          }
+        },
+        "required": [
+          "recipientId",
+          "channel",
+          "body"
+        ]
+      },
+      "CreateEngagementNotificationDto": {
+        "type": "object",
+        "properties": {
+          "recipientId": {
+            "type": "string",
+            "description": "Recipient user ID"
+          },
+          "event": {
+            "type": "string",
+            "enum": [
+              "ENGAGEMENT_INVITED",
+              "ENGAGEMENT_ACCEPTED",
+              "ENGAGEMENT_TERMINATED",
+              "ALL_MODULES_OUTSOURCED"
+            ]
+          },
+          "engagementId": {
+            "type": "string",
+            "description": "Engagement id"
+          },
+          "businessOrgName": {
+            "type": "string",
+            "description": "Business organization name"
+          },
+          "vmOrgName": {
+            "type": "string",
+            "description": "Virtual manager organization name"
+          },
+          "companyName": {
+            "type": "string",
+            "description": "Target company name"
+          },
+          "engagementType": {
+            "type": "string",
+            "description": "Engagement module type (HR | PAYROLL | BOOKS | PAY)"
+          },
+          "reason": {
+            "type": "string",
+            "description": "Reason/comment (terminate/cancel)"
+          }
+        },
+        "required": [
+          "recipientId",
+          "event",
+          "engagementId"
+        ]
+      },
+      "InternalSaveBufferDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "PayslipBrandingDto": {
+        "type": "object",
+        "properties": {
+          "employerLegalName": {
+            "type": "string",
+            "example": "Acme Holdings Ltd"
+          },
+          "employerAddressLines": {
+            "example": [
+              "1 Enterprise Rd",
+              "Lagos",
+              "Nigeria"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "employerTaxId": {
+            "type": "string"
+          },
+          "employerCompanyReg": {
+            "type": "string"
+          },
+          "platformName": {
+            "type": "string",
+            "default": "Fluide"
+          },
+          "footerAttribution": {
+            "type": "string",
+            "example": "Generated by Sovereign Ledger Systems"
+          },
+          "signatoryName": {
+            "type": "string",
+            "example": "Fluide Payroll Admin"
+          },
+          "verificationPortalUrl": {
+            "type": "string",
+            "description": "Optional URL shown in verification footer"
+          }
+        },
+        "required": [
+          "employerLegalName",
+          "employerAddressLines"
+        ]
+      },
+      "PayslipLineItemDto": {
+        "type": "object",
+        "properties": {
+          "label": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "label",
+          "amount"
+        ]
+      },
+      "GeneratePayslipDto": {
+        "type": "object",
+        "properties": {
+          "payslipId": {
+            "type": "string",
+            "description": "Payslip id from payroll service (idempotency key)"
+          },
+          "branding": {
+            "$ref": "#/components/schemas/PayslipBrandingDto"
+          },
+          "employeeName": {
+            "type": "string"
+          },
+          "employeeCode": {
+            "type": "string"
+          },
+          "department": {
+            "type": "string"
+          },
+          "designation": {
+            "type": "string"
+          },
+          "periodLabel": {
+            "type": "string",
+            "example": "March 2026"
+          },
+          "payDate": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string",
+            "example": "NGN"
+          },
+          "basicSalary": {
+            "type": "number"
+          },
+          "allowances": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PayslipLineItemDto"
+            }
+          },
+          "deductions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PayslipLineItemDto"
+            }
+          },
+          "grossPay": {
+            "type": "number"
+          },
+          "netPay": {
+            "type": "number"
+          },
+          "payoutMethodSummary": {
+            "type": "string"
+          },
+          "disbursementReference": {
+            "type": "string"
+          },
+          "documentRef": {
+            "type": "string",
+            "example": "SL/PAY/2024/10-8842"
+          },
+          "issueDateLabel": {
+            "type": "string",
+            "example": "October 28, 2024"
+          },
+          "payCycleLabel": {
+            "type": "string",
+            "example": "Standard Monthly"
+          },
+          "bankDisplayName": {
+            "type": "string",
+            "example": "Standard Chartered Bank"
+          },
+          "maskedBankAccount": {
+            "type": "string",
+            "example": "**** 4421"
+          }
+        },
+        "required": [
+          "payslipId",
+          "branding",
+          "employeeName",
+          "employeeCode",
+          "periodLabel",
+          "currency",
+          "basicSalary",
+          "allowances",
+          "deductions",
+          "grossPay",
+          "netPay"
+        ]
+      },
+      "PartnerDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "displayName": {
+            "type": "string"
+          },
+          "legalName": {
+            "type": "string"
+          },
+          "taxId": {
+            "type": "string"
+          },
+          "address": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "id",
+          "displayName"
+        ]
+      },
+      "AccountingLineDto": {
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string"
+          },
+          "quantity": {
+            "type": "number",
+            "default": 1
+          },
+          "unitPrice": {
+            "type": "number"
+          },
+          "discountMode": {
+            "type": "string",
+            "enum": [
+              "PERCENT",
+              "AMOUNT"
+            ]
+          },
+          "discountValue": {
+            "type": "number"
+          },
+          "taxMode": {
+            "type": "string",
+            "enum": [
+              "PERCENT",
+              "AMOUNT"
+            ]
+          },
+          "taxValue": {
+            "type": "number"
+          },
+          "discountAmount": {
+            "type": "number"
+          },
+          "taxAmount": {
+            "type": "number"
+          },
+          "lineTotal": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "description",
+          "quantity",
+          "unitPrice",
+          "discountMode",
+          "discountValue",
+          "taxMode",
+          "taxValue",
+          "discountAmount",
+          "taxAmount",
+          "lineTotal"
+        ]
+      },
+      "GenerateAccountingDocumentPdfDto": {
+        "type": "object",
+        "properties": {
+          "documentType": {
+            "type": "string",
+            "enum": [
+              "INVOICE",
+              "BILL"
+            ]
+          },
+          "correlationId": {
+            "type": "string"
+          },
+          "documentNumber": {
+            "type": "string"
+          },
+          "issueDate": {
+            "type": "string"
+          },
+          "dueDate": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "partner": {
+            "$ref": "#/components/schemas/PartnerDto"
+          },
+          "lines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AccountingLineDto"
+            }
+          },
+          "subtotal": {
+            "type": "number"
+          },
+          "discountTotal": {
+            "type": "number"
+          },
+          "taxTotal": {
+            "type": "number"
+          },
+          "total": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "documentType",
+          "correlationId",
+          "documentNumber",
+          "issueDate",
+          "dueDate",
+          "currency",
+          "partner",
+          "lines",
+          "subtotal",
+          "discountTotal",
+          "taxTotal",
+          "total"
+        ]
+      },
+      "GenerateOfferLetterPdfDto": {
+        "type": "object",
+        "properties": {
+          "correlationId": {
+            "type": "string"
+          },
+          "organizationName": {
+            "type": "string"
+          },
+          "candidateName": {
+            "type": "string"
+          },
+          "jobTitle": {
+            "type": "string"
+          },
+          "startDate": {
+            "type": "string"
+          },
+          "compensationSummary": {
+            "type": "string"
+          },
+          "bodyParagraphs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "correlationId",
+          "organizationName",
+          "candidateName",
+          "jobTitle"
+        ]
+      },
+      "GenerateBalanceSheetPdfDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "GenerateIncomeStatementPdfDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "GenerateCashFlowPdfDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "GenerateTrialBalancePdfDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "GenerateGeneralLedgerPdfDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "GenerateChartOfAccountsPdfDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "GenerateTransactionsSpreadsheetDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "GenerateDocumentListExportDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "GeneratePaymentReceiptPdfDto": {
+        "type": "object",
+        "properties": {
+          "correlationId": {
+            "type": "string",
+            "description": "Allocation id (idempotency key)"
+          },
+          "receiptNumber": {
+            "type": "string"
+          },
+          "invoiceNumber": {
+            "type": "string"
+          },
+          "companyName": {
+            "type": "string"
+          },
+          "customerName": {
+            "type": "string"
+          },
+          "amountPaid": {
+            "type": "number"
+          },
+          "totalPaid": {
+            "type": "number"
+          },
+          "balanceDue": {
+            "type": "number"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "paymentDate": {
+            "type": "string"
+          },
+          "paymentMethod": {
+            "type": "string"
+          },
+          "transactionReference": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "correlationId",
+          "receiptNumber",
+          "invoiceNumber",
+          "companyName",
+          "customerName",
+          "amountPaid",
+          "totalPaid",
+          "balanceDue",
+          "currency",
+          "paymentDate",
+          "paymentMethod",
+          "transactionReference"
+        ]
+      },
+      "CreateDocumentJobDto": {
+        "type": "object",
+        "properties": {
+          "sourceService": {
+            "type": "string",
+            "example": "fluide-books"
+          },
+          "jobKind": {
+            "type": "string",
+            "example": "STATEMENT_EXPORT_BUNDLE"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "Producer-owned idempotency key (UUID recommended)"
+          },
+          "requestPayload": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "required": [
+          "sourceService",
+          "jobKind",
+          "correlationId"
+        ]
+      },
+      "RegisterDocumentDto": {
+        "type": "object",
+        "properties": {
+          "documentKey": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "category": {
+            "type": "string",
+            "default": "GENERAL"
+          },
+          "fileUploadId": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "documentKey",
+          "title"
+        ]
+      },
+      "UpdateDocumentRegistryDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object"
+          }
+        }
+      }
+    }
+  },
+  "x-mint": {
+    "productOverview": "/utils/overview",
+    "basePath": "/api/v1/app"
+  }
+}

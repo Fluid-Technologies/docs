@@ -1,7 +1,13 @@
-# Mintlify automatically ignores these files and directories:
-# .git, .github, .claude, .agents, .idea, node_modules,
-# README.md, LICENSE.md, CHANGELOG.md, CONTRIBUTING.md
-
-# Draft content
-drafts/
-*.draft.mdx
+# Next.js app (not published to Fluid-Technologies/docs)
+app/
+components/
+lib/
+.next/
+node_modules/
+proxy.ts
+next.config.ts
+tsconfig.json
+package.json
+package-lock.json
+scripts/dev-with-docs.mjs
+.env*

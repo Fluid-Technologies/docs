@@ -1,0 +1,39 @@
+---
+title: Payroll integration
+description: How fluide-hr mirrors employees and contracts into FluidePayroll.
+---
+
+# Payroll integration
+
+HR owns employee and contract records. **FluidePayroll** stores a mirror for payroll processing and wallet provisioning.
+
+## When HR syncs
+
+After creating or updating employees (and contracts), HR calls payroll internal APIs with:
+
+- Header: `x-internal-api-key: <PAYROLL_INTERNAL_API_KEY>`
+- Base URL: `PAYROLL_BASE_URL` (origin only, e.g. `http://payroll:5051`)
+
+## Internal endpoints (payroll)
+
+| Endpoint | Purpose |
+| --- | --- |
+| `POST /api/v1/payroll/internal/employees/mirror-from-hr` | Upsert employee mirror |
+| `POST /api/v1/payroll/internal/contracts/upsert-from-hr` | Sync employment contract |
+| `POST /api/v1/payroll/internal/employees/provision-wallet` | Trigger wallet provisioning |
+
+## Idempotency
+
+Payroll `employees.id` equals the canonical **HR employee UUID** (`hrEmployeeId`). Replays update the same row.
+
+Contract rows may use the same UUID as `hr_employment_contract.id` when HR sends `contract.id`.
+
+## Troubleshooting
+
+If HR logs mirror failures but payroll has no row:
+
+1. Verify network from HR container to `PAYROLL_BASE_URL`
+2. Confirm `PAYROLL_INTERNAL_API_KEY` matches on both services
+3. Re-trigger mirror from HR or run reconciliation
+
+See [Payroll HR mirror](/payroll/hr-mirror) for the payroll-side view.

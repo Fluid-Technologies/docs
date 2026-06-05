@@ -1,0 +1,45 @@
+---
+title: RBAC
+description: App-wide and organization roles and permissions in fluide-auth.
+---
+
+# RBAC
+
+## App-wide roles
+
+Built-in roles: `super_admin`, `admin`, `user`.
+
+Use `@RequireAppRoles(AppRole.Admin)` (or `SuperAdmin`) with `AppRoleGuard` on admin routes.
+
+Bootstrap super admin:
+
+```bash
+EMAIL=admin@example.com pnpm run bootstrap:super-admin
+```
+
+## Organization roles
+
+Built-in org roles: `owner`, `admin`, `member`, `viewer`.
+
+Organizations may define **custom roles** in `organization_role` with permission strings (for example `org:view`, `billing:read`). Assign via `member.role` using the custom role name.
+
+## Validate-session payload
+
+`GET /api/validate-session` returns:
+
+- `user`, `session`, `orgMemberRole`
+- `permissions` — app-level from `user.role`
+- `orgPermissions` — org-level for the active org (custom role or built-in defaults)
+
+Use these arrays for fine-grained UI and API checks in SPAs and services.
+
+## Cache services
+
+| Service | Use |
+| --- | --- |
+| `RateLimitCacheService` | Login and OTP rate limits |
+| `OtpCooldownCacheService` | OTP send cooldown |
+| `SessionCacheService` | Session lookup / invalidation |
+| `ChallengeTokenCacheService` | One-time challenge tokens |
+
+All keys are prefixed (for example `fluide-auth:rate:login:ip`).

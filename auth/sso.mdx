@@ -1,0 +1,43 @@
+---
+title: Enterprise SSO
+description: Configure OIDC SSO providers for fluide-admin and fluide-capital-admin.
+---
+
+# Enterprise SSO
+
+## Operator checklist
+
+<Steps>
+  <Step title="Database">
+    Apply migrations including `ssoProvider` (`0050_sso_provider.sql`).
+  </Step>
+  <Step title="Redirect URI">
+    Set `FLUIDE_AUTH_SSO_OIDC_REDIRECT_URI` to the public callback URL, for example:
+
+    `https://auth.yourdomain.com/api/v1/auth/sso/callback`
+
+    Register the **same** URI in your IdP (Okta, Entra, Auth0).
+  </Step>
+  <Step title="Trusted origins">
+    Add IdP issuer origins to `BETTER_AUTH_SSO_TRUSTED_ORIGINS` (comma-separated).
+  </Step>
+  <Step title="Providers JSON">
+    Set `FLUIDE_SSO_PROVIDERS_JSON` to an array of:
+
+    `providerId`, `issuer`, `domain`, `clientId`, `clientSecret`, optional `pkce`, `scopes`, `mapping`, `allowedFluideClientId` (`fluide-admin` or `fluide-capital-admin`).
+  </Step>
+  <Step title="SPAs">
+    Set `NEXT_PUBLIC_FLUIDE_SSO_PROVIDER_ID` to match `providerId`. OAuth fragments are consumed on `/post-auth`.
+  </Step>
+</Steps>
+
+## Endpoints
+
+- `POST /api/v1/auth/sso/authorize`
+- `GET /api/v1/auth/sso/callback`
+
+JWT issuance uses the same fragment contract as social OAuth via `JwtIssuerService`.
+
+## Gateway
+
+Tyk `FluideGateway/apps/auth.json` already proxies `/api/v1/auth/*`; no extra SSO path rules are required.

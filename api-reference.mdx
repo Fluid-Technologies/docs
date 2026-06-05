@@ -1,0 +1,35 @@
+---
+title: API reference
+description: Browse and try Fluide API endpoints in Connect.
+---
+
+# API reference
+
+Each product has an **overview page** with context, monitoring endpoints, and integration flows — then generated endpoint pages from OpenAPI below it in the sidebar.
+
+| Product | Overview | Base path |
+| --- | --- | --- |
+| Auth | [Auth API](/api-reference/auth) | `/api/v1` |
+| HR | [HR API](/api-reference/hr) | `/api/v1/hr` |
+| Payroll | [Payroll API](/api-reference/payroll) | `/api/v1/payroll` |
+| Pay | [Pay API](/api-reference/pay) | `/api/v1/payments` |
+| Books | [Books API](/api-reference/books) | `/api/v1` |
+| Utils | [Utils API](/api-reference/utils) | `/api/v1/app` |
+
+Open any endpoint to see parameters, request bodies, responses, and try the **interactive playground** with **cURL** and **Node.js** examples.
+
+## Operations endpoints
+
+Every service exposes operational routes under the **Operations** tag group where applicable:
+
+- **App** — service root (`GET`)
+- **Health** — liveness and dependency checks
+- **Prometheus** — metrics scrape target (`/metrics` or product-prefixed path)
+
+## Keep specs up to date
+
+```bash
+node export-openapi.mjs
+```
+
+See [Documentation pipeline](/platform/documentation-pipeline) for the full generation strategy, CI setup, and enrichment layer.

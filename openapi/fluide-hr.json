@@ -1,0 +1,4277 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/v1/hr/health": {
+      "get": {
+        "operationId": "AppController_health",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Liveness",
+        "tags": [
+          "Health"
+        ],
+        "description": "Liveness probe for the HR service and its dependencies."
+      }
+    },
+    "/api/v1/hr/metrics": {
+      "get": {
+        "operationId": "PrometheusController_index",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Prometheus"
+        ],
+        "summary": "HR Prometheus metrics",
+        "description": "Prometheus exposition format for HR request counters, latency histograms, and process metrics."
+      }
+    },
+    "/api/v1/hr/employees": {
+      "post": {
+        "operationId": "EmployeesController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEmployeeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create HR employee record",
+        "tags": [
+          "HR Employees"
+        ]
+      },
+      "get": {
+        "operationId": "EmployeesController_findAll",
+        "parameters": [
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Free-text search (endpoint-specific)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "employment",
+            "required": false,
+            "in": "query",
+            "description": "Directory scope: active = ACTIVE+ON_LEAVE (default), workforce = ACTIVE+ON_LEAVE+PENDING, all, terminated, pending, inactive",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "active",
+                "workforce",
+                "all",
+                "terminated",
+                "pending",
+                "inactive"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List employees",
+        "tags": [
+          "HR Employees"
+        ]
+      }
+    },
+    "/api/v1/hr/employees/onboard-with-staff": {
+      "post": {
+        "description": "Runs HR create then internal staff provisioning. Rolls back the HR row if provisioning fails.",
+        "operationId": "EmployeesController_onboardWithStaff",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OnboardEmployeeWithStaffDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create employee and provision FluideAuth staff seat (single request)",
+        "tags": [
+          "HR Employees"
+        ]
+      }
+    },
+    "/api/v1/hr/employees/import-template": {
+      "get": {
+        "operationId": "EmployeesController_importTemplate",
+        "parameters": [
+          {
+            "name": "format",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Download branded employee import template (CSV or XLSX)",
+        "tags": [
+          "HR Employees"
+        ]
+      }
+    },
+    "/api/v1/hr/employees/export": {
+      "get": {
+        "operationId": "EmployeesController_exportEmployees",
+        "parameters": [
+          {
+            "name": "format",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Export employees for the active company (CSV or XLSX)",
+        "tags": [
+          "HR Employees"
+        ]
+      }
+    },
+    "/api/v1/hr/employees/bulk/validate": {
+      "post": {
+        "operationId": "EmployeesController_validateBulkFile",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Validate employee import file (no persistence)",
+        "tags": [
+          "HR Employees"
+        ]
+      }
+    },
+    "/api/v1/hr/employees/bulk/validate-rows": {
+      "post": {
+        "operationId": "EmployeesController_validateBulkRows",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkValidateJsonDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Validate employee import rows from JSON (no persistence)",
+        "tags": [
+          "HR Employees"
+        ]
+      }
+    },
+    "/api/v1/hr/employees/bulk/commit": {
+      "post": {
+        "operationId": "EmployeesController_commitBulk",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkCommitDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Commit bulk employee import (partial success supported)",
+        "tags": [
+          "HR Employees"
+        ]
+      }
+    },
+    "/api/v1/hr/employees/payout-import-template": {
+      "get": {
+        "operationId": "EmployeesController_payoutImportTemplate",
+        "parameters": [
+          {
+            "name": "format",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Download payment rails import template (separate from core HR employee import)",
+        "tags": [
+          "HR Employees"
+        ]
+      }
+    },
+    "/api/v1/hr/employees/bulk/payout/validate": {
+      "post": {
+        "operationId": "EmployeesController_validatePayoutBulkFile",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Validate payment rails import file (no persistence)",
+        "tags": [
+          "HR Employees"
+        ]
+      }
+    },
+    "/api/v1/hr/employees/bulk/payout/validate-rows": {
+      "post": {
+        "operationId": "EmployeesController_validatePayoutBulkRows",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PayoutBulkValidateJsonDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Validate payment rails rows from JSON (no persistence)",
+        "tags": [
+          "HR Employees"
+        ]
+      }
+    },
+    "/api/v1/hr/employees/bulk/payout/commit": {
+      "post": {
+        "operationId": "EmployeesController_commitPayoutBulk",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PayoutBulkCommitDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Commit payment rails bulk import (updates existing employees only)",
+        "tags": [
+          "HR Employees"
+        ]
+      }
+    },
+    "/api/v1/hr/employees/me": {
+      "get": {
+        "operationId": "EmployeesController_findMe",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Current user's HR employee in the active organization",
+        "tags": [
+          "HR Employees"
+        ]
+      }
+    },
+    "/api/v1/hr/employees/manager-team/learning": {
+      "get": {
+        "description": "Company scope (max 200 employees) when caller has hr:employees:read; otherwise direct reports when hr:attendance:read or hr:ld:team:read. Requires ACADEMY_* env on fluide-hr.",
+        "operationId": "EmployeesController_managerTeamLearning",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Team L&D rollup (enrollments + skills from fluide-academy-core)",
+        "tags": [
+          "HR Employees"
+        ]
+      }
+    },
+    "/api/v1/hr/employees/employment-invite-drafts": {
+      "post": {
+        "operationId": "EmployeesController_createEmploymentInviteDraft",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEmploymentInviteDraftDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create employment invite draft (invite-first org flow before user accepts invite)",
+        "tags": [
+          "HR Employees"
+        ]
+      }
+    },
+    "/api/v1/hr/employees/staff-provision-auth": {
+      "post": {
+        "operationId": "EmployeesController_provisionStaffAuth",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StaffProvisionAuthDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Provision FluideAuth user + staff org seat for HR employees (not an elevated team invite)",
+        "tags": [
+          "HR Employees"
+        ]
+      }
+    },
+    "/api/v1/hr/employees/{id}/cv": {
+      "get": {
+        "operationId": "EmployeesController_downloadCv",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "format",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Download consolidated employee CV (PDF or DOCX)",
+        "tags": [
+          "HR Employees"
+        ]
+      }
+    },
+    "/api/v1/hr/employees/{id}": {
+      "get": {
+        "operationId": "EmployeesController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "HR Employees"
+        ]
+      },
+      "patch": {
+        "operationId": "EmployeesController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateEmployeeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "HR Employees"
+        ]
+      },
+      "delete": {
+        "operationId": "EmployeesController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "HR Employees"
+        ]
+      }
+    },
+    "/api/v1/hr/employees/{id}/provision-wallet": {
+      "post": {
+        "operationId": "EmployeesController_provisionWallet",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Request default FluidePay wallet for the employee user (via payroll internal API)",
+        "tags": [
+          "HR Employees"
+        ]
+      }
+    },
+    "/api/v1/hr/employees/{id}/history": {
+      "get": {
+        "operationId": "EmployeesController_history",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "HR Employees"
+        ]
+      },
+      "post": {
+        "operationId": "EmployeesController_addHistory",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEmploymentHistoryDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "HR Employees"
+        ]
+      }
+    },
+    "/api/v1/hr/employees/{id}/job-change": {
+      "post": {
+        "description": "Updates department and/or designation on the employee row and appends a matching employment_history snapshot in one transaction.",
+        "operationId": "EmployeesController_recordJobChange",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RecordJobChangeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Record promotion or transfer",
+        "tags": [
+          "HR Employees"
+        ]
+      }
+    },
+    "/api/v1/hr/employees/{id}/documents": {
+      "get": {
+        "operationId": "EmployeesController_documents",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "HR Employees"
+        ]
+      },
+      "post": {
+        "operationId": "EmployeesController_addDocument",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEmployeeDocumentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "HR Employees"
+        ]
+      }
+    },
+    "/api/v1/hr/employees/{id}/onboarding": {
+      "get": {
+        "operationId": "EmployeesController_onboarding",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "HR Employees"
+        ]
+      },
+      "post": {
+        "operationId": "EmployeesController_upsertOnboarding",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpsertOnboardingItemDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "HR Employees"
+        ]
+      }
+    },
+    "/api/v1/hr/employees/{id}/academy-enrollments": {
+      "get": {
+        "description": "Requires `ACADEMY_BASE_URL` and `ACADEMY_INTERNAL_API_KEY` on fluide-hr matching fluide-academy-core.",
+        "operationId": "EmployeesController_academyEnrollments",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Academy / L&D enrollments (fluide-academy-core proxy)",
+        "tags": [
+          "HR Employees"
+        ]
+      }
+    },
+    "/api/v1/hr/employees/{id}/academy-skills": {
+      "get": {
+        "description": "Requires `ACADEMY_BASE_URL` and `ACADEMY_INTERNAL_API_KEY` on fluide-hr matching fluide-academy-core.",
+        "operationId": "EmployeesController_academySkills",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Academy / L&D skill declarations (fluide-academy-core proxy)",
+        "tags": [
+          "HR Employees"
+        ]
+      }
+    },
+    "/api/v1/hr/employees/{id}/emergency-contacts": {
+      "get": {
+        "description": "Reads validated `profileExtensions.emergencyContacts` (max 5 entries).",
+        "operationId": "EmployeesController_getEmergencyContacts",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Emergency contacts",
+        "tags": [
+          "HR Employees"
+        ]
+      },
+      "put": {
+        "description": "Replaces the full emergency contact list (PUT semantics). Max 5 contacts.",
+        "operationId": "EmployeesController_putEmergencyContacts",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReplaceEmergencyContactsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Replace emergency contacts",
+        "tags": [
+          "HR Employees"
+        ]
+      }
+    },
+    "/api/v1/hr/employees/{id}/reporting-manager": {
+      "get": {
+        "description": "Reads `profileExtensions.reportingManagerUserId` used by leave approver hints.",
+        "operationId": "EmployeesController_getReportingManager",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Reporting manager (auth user id)",
+        "tags": [
+          "HR Employees"
+        ]
+      },
+      "put": {
+        "description": "Requires full HR write. Stores UUID of the manager’s FluideAuth user on `profileExtensions.reportingManagerUserId`.",
+        "operationId": "EmployeesController_putReportingManager",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReplaceReportingManagerDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Set or clear reporting manager",
+        "tags": [
+          "HR Employees"
+        ]
+      }
+    },
+    "/api/v1/hr/employees/{id}/dependents": {
+      "get": {
+        "description": "Reads `profileExtensions.dependents` (max 15). Used for benefits and HR records.",
+        "operationId": "EmployeesController_getDependents",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Employee dependents",
+        "tags": [
+          "HR Employees"
+        ]
+      },
+      "put": {
+        "description": "PUT replaces the full list. HR or the linked employee (self-service) may update.",
+        "operationId": "EmployeesController_putDependents",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReplaceDependentsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Replace dependents list",
+        "tags": [
+          "HR Employees"
+        ]
+      }
+    },
+    "/api/v1/hr/contracts": {
+      "post": {
+        "operationId": "EmploymentContractsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateEmploymentContractDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create employment contract",
+        "tags": [
+          "HR Employment contracts"
+        ]
+      },
+      "get": {
+        "operationId": "EmploymentContractsController_findAll",
+        "parameters": [
+          {
+            "name": "employeeId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "asOf",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List contracts for the active company",
+        "tags": [
+          "HR Employment contracts"
+        ]
+      }
+    },
+    "/api/v1/hr/contracts/{id}/pdf": {
+      "get": {
+        "operationId": "EmploymentContractsController_downloadPdf",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Download employment contract PDF (integrity metadata on headers)",
+        "tags": [
+          "HR Employment contracts"
+        ]
+      }
+    },
+    "/api/v1/hr/contracts/{id}": {
+      "get": {
+        "operationId": "EmploymentContractsController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "HR Employment contracts"
+        ]
+      },
+      "patch": {
+        "operationId": "EmploymentContractsController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateEmploymentContractDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "HR Employment contracts"
+        ]
+      },
+      "delete": {
+        "operationId": "EmploymentContractsController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "HR Employment contracts"
+        ]
+      }
+    },
+    "/api/v1/hr/leave/types": {
+      "post": {
+        "operationId": "LeaveController_createType",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateLeaveTypeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create leave type",
+        "tags": [
+          "Leave"
+        ]
+      },
+      "get": {
+        "operationId": "LeaveController_listTypes",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Leave"
+        ]
+      }
+    },
+    "/api/v1/hr/leave/balances/{employeeId}/{leaveTypeId}/{year}": {
+      "post": {
+        "operationId": "LeaveController_setBalance",
+        "parameters": [
+          {
+            "name": "employeeId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "leaveTypeId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "year",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Leave"
+        ]
+      }
+    },
+    "/api/v1/hr/leave/balances/{employeeId}/projection": {
+      "get": {
+        "operationId": "LeaveController_projectBalance",
+        "parameters": [
+          {
+            "name": "employeeId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "leaveTypeId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "targetDate",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Rough projected balance by target date (linear accrual from maxDaysPerYear)",
+        "tags": [
+          "Leave"
+        ]
+      }
+    },
+    "/api/v1/hr/leave/balances/{employeeId}": {
+      "get": {
+        "operationId": "LeaveController_listBalances",
+        "parameters": [
+          {
+            "name": "employeeId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Leave"
+        ]
+      }
+    },
+    "/api/v1/hr/leave/requests": {
+      "post": {
+        "operationId": "LeaveController_createRequest",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateLeaveRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Leave"
+        ]
+      },
+      "get": {
+        "operationId": "LeaveController_listRequests",
+        "parameters": [
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Free-text search (endpoint-specific)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "employment",
+            "required": false,
+            "in": "query",
+            "description": "Directory scope: active = ACTIVE+ON_LEAVE (default), workforce = ACTIVE+ON_LEAVE+PENDING, all, terminated, pending, inactive",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "active",
+                "workforce",
+                "all",
+                "terminated",
+                "pending",
+                "inactive"
+              ]
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "PENDING",
+                "APPROVED",
+                "REJECTED",
+                "CANCELLED"
+              ]
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Case-insensitive search on reason, diagnosis tag, or request id prefix",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "rangeFrom",
+            "required": false,
+            "in": "query",
+            "description": "Only requests overlapping this range (inclusive ISO dates)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "rangeTo",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "hrEmployeeId",
+            "required": false,
+            "in": "query",
+            "description": "Filter to a single employee",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Leave"
+        ]
+      }
+    },
+    "/api/v1/hr/leave/working-days": {
+      "post": {
+        "operationId": "LeaveController_workingDays",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WorkingDaysQueryDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Count working days between dates (excludes weekends and company holidays)",
+        "tags": [
+          "Leave"
+        ]
+      }
+    },
+    "/api/v1/hr/leave/team-absences": {
+      "get": {
+        "operationId": "LeaveController_teamAbsences",
+        "parameters": [
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "excludeEmployeeId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Leave overlapping a range for calendar / team views",
+        "tags": [
+          "Leave"
+        ]
+      }
+    },
+    "/api/v1/hr/leave/activity/{employeeId}": {
+      "get": {
+        "operationId": "LeaveController_leaveActivity",
+        "parameters": [
+          {
+            "name": "employeeId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Recent leave activity for an employee (request-centric)",
+        "tags": [
+          "Leave"
+        ]
+      }
+    },
+    "/api/v1/hr/leave/employees/{employeeId}/suggested-approver": {
+      "get": {
+        "operationId": "LeaveController_suggestedApprover",
+        "parameters": [
+          {
+            "name": "employeeId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Reporting manager hint from employee profileExtensions",
+        "tags": [
+          "Leave"
+        ]
+      }
+    },
+    "/api/v1/hr/leave/leave-queries": {
+      "post": {
+        "operationId": "LeaveController_submitLeaveQuery",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitLeaveQueryDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Submit an HR support message (audited)",
+        "tags": [
+          "Leave"
+        ]
+      }
+    },
+    "/api/v1/hr/leave/holidays": {
+      "get": {
+        "operationId": "LeaveController_listHolidays",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Leave"
+        ]
+      },
+      "post": {
+        "operationId": "LeaveController_createHoliday",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCompanyHolidayDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Leave"
+        ]
+      }
+    },
+    "/api/v1/hr/leave/policy/documents": {
+      "get": {
+        "operationId": "LeaveController_listPolicyDocuments",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Leave"
+        ]
+      },
+      "post": {
+        "operationId": "LeaveController_createPolicyDocument",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateLeavePolicyDocumentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Leave"
+        ]
+      }
+    },
+    "/api/v1/hr/leave/policy/faqs": {
+      "get": {
+        "operationId": "LeaveController_listPolicyFaqs",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Leave"
+        ]
+      },
+      "post": {
+        "operationId": "LeaveController_createPolicyFaq",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateLeavePolicyFaqDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Leave"
+        ]
+      }
+    },
+    "/api/v1/hr/leave/policy/announcements": {
+      "get": {
+        "operationId": "LeaveController_listPolicyAnnouncements",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Leave"
+        ]
+      },
+      "post": {
+        "operationId": "LeaveController_createPolicyAnnouncement",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateLeavePolicyAnnouncementDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Leave"
+        ]
+      }
+    },
+    "/api/v1/hr/leave/requests/{id}/approve": {
+      "post": {
+        "operationId": "LeaveController_approve",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Leave"
+        ]
+      }
+    },
+    "/api/v1/hr/leave/requests/{id}/reject": {
+      "post": {
+        "operationId": "LeaveController_reject",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Leave"
+        ]
+      }
+    },
+    "/api/v1/hr/performance/cycles": {
+      "post": {
+        "operationId": "PerformanceController_createCycle",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Performance"
+        ]
+      },
+      "get": {
+        "operationId": "PerformanceController_listCycles",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Performance"
+        ]
+      }
+    },
+    "/api/v1/hr/performance/templates": {
+      "post": {
+        "operationId": "PerformanceController_createTemplate",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Performance"
+        ]
+      },
+      "get": {
+        "operationId": "PerformanceController_listTemplates",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Performance"
+        ]
+      }
+    },
+    "/api/v1/hr/performance/reviews": {
+      "post": {
+        "operationId": "PerformanceController_startReview",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Performance"
+        ]
+      }
+    },
+    "/api/v1/hr/performance/reviews/{id}": {
+      "patch": {
+        "operationId": "PerformanceController_updateReview",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Performance"
+        ]
+      }
+    },
+    "/api/v1/hr/performance/cycles/{cycleId}/reviews": {
+      "get": {
+        "operationId": "PerformanceController_listReviews",
+        "parameters": [
+          {
+            "name": "cycleId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Performance"
+        ]
+      }
+    },
+    "/api/v1/hr/performance/me/reviews": {
+      "get": {
+        "operationId": "PerformanceController_listMyReviews",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Performance"
+        ]
+      }
+    },
+    "/api/v1/hr/okr/company": {
+      "post": {
+        "operationId": "OkrController_createCycle",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "OKR"
+        ]
+      },
+      "get": {
+        "operationId": "OkrController_list",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "OKR"
+        ]
+      }
+    },
+    "/api/v1/hr/okr/company/{companyOkrId}/objectives": {
+      "post": {
+        "operationId": "OkrController_addObjective",
+        "parameters": [
+          {
+            "name": "companyOkrId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "OKR"
+        ]
+      },
+      "get": {
+        "operationId": "OkrController_listObjectives",
+        "parameters": [
+          {
+            "name": "companyOkrId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "OKR"
+        ]
+      }
+    },
+    "/api/v1/hr/okr/objectives/{objectiveId}/key-results": {
+      "post": {
+        "operationId": "OkrController_addKr",
+        "parameters": [
+          {
+            "name": "objectiveId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "OKR"
+        ]
+      }
+    },
+    "/api/v1/hr/okr/key-results/{id}/progress": {
+      "patch": {
+        "operationId": "OkrController_patchKr",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "OKR"
+        ]
+      }
+    },
+    "/api/v1/hr/ccs/versions": {
+      "get": {
+        "operationId": "CcsController_list",
+        "parameters": [
+          {
+            "name": "country",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List CCS versions (optional country filter)",
+        "tags": [
+          "Country configuration (CCS)"
+        ]
+      },
+      "post": {
+        "operationId": "CcsController_publish",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Publish new CCS version (superadmin workflow — protect in gateway)",
+        "tags": [
+          "Country configuration (CCS)"
+        ]
+      }
+    },
+    "/api/v1/hr/ccs/effective": {
+      "get": {
+        "operationId": "CcsController_effective",
+        "parameters": [
+          {
+            "name": "country",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Country configuration (CCS)"
+        ]
+      }
+    },
+    "/api/v1/hr/compliance/evaluate/{employeeId}": {
+      "post": {
+        "operationId": "ComplianceController_evaluate",
+        "parameters": [
+          {
+            "name": "employeeId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Compliance"
+        ]
+      }
+    },
+    "/api/v1/hr/compliance/onboarding-flow/{employeeId}/terminate": {
+      "post": {
+        "operationId": "ComplianceController_terminateOnboardingFlow",
+        "parameters": [
+          {
+            "name": "employeeId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TerminateOnboardingFlowDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Compliance"
+        ]
+      }
+    },
+    "/api/v1/hr/compliance/offboarding/{employeeId}": {
+      "post": {
+        "operationId": "ComplianceController_startOffboarding",
+        "parameters": [
+          {
+            "name": "employeeId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Compliance"
+        ]
+      }
+    },
+    "/api/v1/hr/compliance/offboarding": {
+      "get": {
+        "operationId": "ComplianceController_listOffboarding",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Compliance"
+        ]
+      }
+    },
+    "/api/v1/hr/compliance/offboarding/{id}": {
+      "patch": {
+        "operationId": "ComplianceController_patchOffboarding",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchOffboardingDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Compliance"
+        ]
+      }
+    },
+    "/api/v1/hr/insights/recompute": {
+      "post": {
+        "operationId": "InsightsController_recompute",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Insights"
+        ]
+      }
+    },
+    "/api/v1/hr/insights/executive/export": {
+      "get": {
+        "operationId": "InsightsController_exportExecutive",
+        "parameters": [
+          {
+            "name": "format",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Insights"
+        ]
+      }
+    },
+    "/api/v1/hr/insights/executive": {
+      "get": {
+        "operationId": "InsightsController_executive",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Insights"
+        ]
+      }
+    },
+    "/api/v1/hr/dashboard/home-summary": {
+      "get": {
+        "description": "Headcount, compliance heuristics, engagement (insight snapshots or leave-activity proxy).",
+        "operationId": "DashboardController_homeSummary",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Company HR metrics for the admin home dashboard",
+        "tags": [
+          "Dashboard"
+        ]
+      }
+    },
+    "/api/v1/hr/dashboard/me-summary": {
+      "get": {
+        "description": "Attendance week, leave balances, direct reports count, and recent performance reviews.",
+        "operationId": "DashboardController_meSummary",
+        "parameters": [
+          {
+            "name": "timeZone",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Personal dashboard metrics for the logged-in employee",
+        "tags": [
+          "Dashboard"
+        ]
+      }
+    },
+    "/api/v1/hr/dashboard/recruiting-summary": {
+      "get": {
+        "operationId": "DashboardController_recruitingSummary",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Recruiting dashboard metrics (fluide-jobs when `JOBS_*` env is configured)",
+        "tags": [
+          "Dashboard"
+        ]
+      }
+    },
+    "/api/v1/hr/attendance/clock": {
+      "post": {
+        "operationId": "AttendanceController_clock",
+        "parameters": [
+          {
+            "name": "idempotency-key",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ClockAttendanceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Record a clock-in or clock-out punch. Optional idempotency via `clientRequestId` or `Idempotency-Key` header.",
+        "tags": [
+          "Attendance"
+        ]
+      }
+    },
+    "/api/v1/hr/attendance/events": {
+      "get": {
+        "operationId": "AttendanceController_listEvents",
+        "parameters": [
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "description": "Start calendar date (YYYY-MM-DD)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "description": "End calendar date (YYYY-MM-DD), inclusive",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "timeZone",
+            "required": false,
+            "in": "query",
+            "description": "IANA time zone (e.g. Africa/Douala). When set, `from`/`to` are interpreted as calendar days in this zone; otherwise UTC.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "hrEmployeeId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 100,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List clock events in a date range. Optional IANA `timeZone` interprets `from`/`to` as local calendar days. Without `hr:attendance:write`, scope is self-only (`hr:attendance:self:write` only), direct reports (`hr:attendance:read`), or full reporting subtree (`hr:attendance:read` + `hr:attendance:team:read`).",
+        "tags": [
+          "Attendance"
+        ]
+      }
+    },
+    "/api/v1/hr/attendance/daily-summary/export": {
+      "get": {
+        "operationId": "AttendanceController_exportDailySummary",
+        "parameters": [
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "timeZone",
+            "required": false,
+            "in": "query",
+            "description": "IANA time zone for calendar-day bucketing (see attendance/events)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "format",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "csv",
+                "xlsx"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Export daily attendance summary (CSV or XLSX)",
+        "tags": [
+          "Attendance"
+        ]
+      }
+    },
+    "/api/v1/hr/attendance/daily-summary": {
+      "get": {
+        "operationId": "AttendanceController_dailySummary",
+        "parameters": [
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "timeZone",
+            "required": false,
+            "in": "query",
+            "description": "IANA time zone for calendar-day bucketing (see attendance/events)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Per-day distinct clock-ins; expected = active headcount in scope. Optional `timeZone` for local-day bucketing.",
+        "tags": [
+          "Attendance"
+        ]
+      }
+    },
+    "/api/v1/hr/attendance/shifts": {
+      "post": {
+        "operationId": "AttendanceController_createShift",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateWorkShiftDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create a planned work shift",
+        "tags": [
+          "Attendance"
+        ]
+      },
+      "get": {
+        "operationId": "AttendanceController_listShifts",
+        "parameters": [
+          {
+            "name": "from",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "to",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "timeZone",
+            "required": false,
+            "in": "query",
+            "description": "IANA time zone for calendar range (see attendance/events)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "hrEmployeeId",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List shifts overlapping a date range",
+        "tags": [
+          "Attendance"
+        ]
+      }
+    },
+    "/api/v1/hr/attendance/shifts/{id}": {
+      "patch": {
+        "operationId": "AttendanceController_updateShift",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateWorkShiftDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update or cancel a work shift (status, times, label, notes)",
+        "tags": [
+          "Attendance"
+        ]
+      }
+    },
+    "/api/v1/hr/recruitment/applications": {
+      "get": {
+        "description": "Requires fluide-hr env `JOBS_BASE_URL` and `JOBS_INTERNAL_API_KEY` matching fluide-jobs.",
+        "operationId": "RecruitmentController_listApplications",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List job applications (fluide-jobs proxy)",
+        "tags": [
+          "Recruitment"
+        ]
+      }
+    },
+    "/api/v1/hr/recruitment/applications/{jobApplicationId}/hire-ready": {
+      "post": {
+        "operationId": "RecruitmentController_hireReady",
+        "parameters": [
+          {
+            "name": "jobApplicationId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Mark application hire-ready (fluide-jobs → fluide-hr onboarding seed)",
+        "tags": [
+          "Recruitment"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Fluide HR API",
+    "description": "Employee records, contracts, leave, performance, OKRs, and HR insights. HR is the canonical employee source consumed by payroll and other suite services.",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [
+    {
+      "name": "Health",
+      "description": "Liveness and readiness probes. Returns dependency status (database, Redis, etc.) for orchestrators and uptime monitors.",
+      "x-group": "Operations"
+    },
+    {
+      "name": "Prometheus",
+      "description": "Prometheus scrape endpoint in text exposition format. Configure your metrics collector to poll this path on each service.",
+      "x-group": "Operations"
+    },
+    {
+      "name": "HR Employees",
+      "description": "Create and manage employee records tied to your organization."
+    },
+    {
+      "name": "HR Employment contracts"
+    },
+    {
+      "name": "Leave"
+    },
+    {
+      "name": "Performance"
+    },
+    {
+      "name": "OKR"
+    },
+    {
+      "name": "Country configuration (CCS)"
+    },
+    {
+      "name": "Compliance"
+    },
+    {
+      "name": "Insights"
+    },
+    {
+      "name": "Dashboard"
+    },
+    {
+      "name": "Attendance"
+    },
+    {
+      "name": "Recruitment"
+    }
+  ],
+  "servers": [
+    {
+      "url": "https://staging.api.fluidehr.com",
+      "description": "Beta (staging)"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearer": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      }
+    },
+    "schemas": {
+      "CreateEmployeeDto": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "employeeCode": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "department": {
+            "type": "string"
+          },
+          "designation": {
+            "type": "string"
+          },
+          "employmentType": {
+            "type": "string",
+            "enum": [
+              "FULL_TIME",
+              "PART_TIME",
+              "CONTRACT",
+              "INTERN"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "ACTIVE",
+              "INACTIVE",
+              "TERMINATED",
+              "ON_LEAVE"
+            ]
+          },
+          "salary": {
+            "type": "number"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "socialSecurity": {
+            "type": "object"
+          },
+          "complianceFlags": {
+            "type": "object"
+          },
+          "profileExtensions": {
+            "type": "object"
+          },
+          "hireDate": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "employeeCode",
+          "firstName",
+          "lastName",
+          "email"
+        ]
+      },
+      "OnboardEmployeeWithStaffDto": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "employeeCode": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "department": {
+            "type": "string"
+          },
+          "designation": {
+            "type": "string"
+          },
+          "employmentType": {
+            "type": "string",
+            "enum": [
+              "FULL_TIME",
+              "PART_TIME",
+              "CONTRACT",
+              "INTERN"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "ACTIVE",
+              "INACTIVE",
+              "TERMINATED",
+              "ON_LEAVE"
+            ]
+          },
+          "salary": {
+            "type": "number"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "socialSecurity": {
+            "type": "object"
+          },
+          "complianceFlags": {
+            "type": "object"
+          },
+          "profileExtensions": {
+            "type": "object"
+          },
+          "hireDate": {
+            "type": "string"
+          },
+          "sendStaffSetupEmail": {
+            "type": "boolean",
+            "description": "Send staff-first-access email when outbound mail is configured"
+          },
+          "correlationId": {
+            "type": "string",
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "employeeCode",
+          "firstName",
+          "lastName",
+          "email",
+          "sendStaffSetupEmail"
+        ]
+      },
+      "EmployeeBulkRowDto": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "role": {
+            "type": "string"
+          },
+          "department": {
+            "type": "string"
+          },
+          "jobTitle": {
+            "type": "string",
+            "description": "Job title → designation"
+          },
+          "salary": {
+            "type": "number"
+          },
+          "hireDate": {
+            "type": "string"
+          },
+          "employmentType": {
+            "type": "string"
+          },
+          "employeeCode": {
+            "type": "string",
+            "description": "Leave blank to auto-generate on commit"
+          },
+          "currency": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "firstName",
+          "lastName",
+          "email",
+          "hireDate"
+        ]
+      },
+      "BulkValidateJsonDto": {
+        "type": "object",
+        "properties": {
+          "rows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EmployeeBulkRowDto"
+            }
+          }
+        },
+        "required": [
+          "rows"
+        ]
+      },
+      "BulkCommitDto": {
+        "type": "object",
+        "properties": {
+          "mode": {
+            "type": "string",
+            "enum": [
+              "CREATE_ACTIVATE",
+              "SEND_INVITE"
+            ]
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EmployeeBulkRowDto"
+            }
+          }
+        },
+        "required": [
+          "mode",
+          "rows"
+        ]
+      },
+      "EmployeePayoutBulkRowDto": {
+        "type": "object",
+        "properties": {
+          "employeeCode": {
+            "type": "string",
+            "description": "Employee code (preferred for payroll ops)"
+          },
+          "email": {
+            "type": "string",
+            "description": "Work email (alternative lookup)"
+          },
+          "payoutMethod": {
+            "type": "string",
+            "description": "BANK_TRANSFER | MOBILE_MONEY | WALLET_TRANSFER",
+            "example": "MOBILE_MONEY"
+          },
+          "bankName": {
+            "type": "string"
+          },
+          "bankAccountNumber": {
+            "type": "string"
+          },
+          "mobileMoneyMsisdn": {
+            "type": "string"
+          },
+          "mobileMoneyProvider": {
+            "type": "string",
+            "description": "e.g. MTN_MOMO"
+          },
+          "payoutWalletUserId": {
+            "type": "string",
+            "description": "UUID of user wallet for WALLET_TRANSFER"
+          }
+        },
+        "required": [
+          "payoutMethod"
+        ]
+      },
+      "PayoutBulkValidateJsonDto": {
+        "type": "object",
+        "properties": {
+          "rows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EmployeePayoutBulkRowDto"
+            }
+          }
+        },
+        "required": [
+          "rows"
+        ]
+      },
+      "PayoutBulkCommitDto": {
+        "type": "object",
+        "properties": {
+          "rows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EmployeePayoutBulkRowDto"
+            }
+          }
+        },
+        "required": [
+          "rows"
+        ]
+      },
+      "CreateEmploymentInviteDraftDto": {
+        "type": "object",
+        "properties": {
+          "employeeCode": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "department": {
+            "type": "string"
+          },
+          "designation": {
+            "type": "string"
+          },
+          "employmentType": {
+            "type": "string",
+            "enum": [
+              "FULL_TIME",
+              "PART_TIME",
+              "CONTRACT",
+              "INTERN"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "ACTIVE",
+              "INACTIVE",
+              "TERMINATED",
+              "ON_LEAVE"
+            ]
+          },
+          "salary": {
+            "type": "number"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "hireDate": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "employeeCode",
+          "firstName",
+          "lastName",
+          "email"
+        ]
+      },
+      "StaffProvisionAuthDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "UpdateEmployeeDto": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string"
+          },
+          "employeeCode": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "phone": {
+            "type": "string"
+          },
+          "department": {
+            "type": "string"
+          },
+          "designation": {
+            "type": "string"
+          },
+          "employmentType": {
+            "type": "string",
+            "enum": [
+              "FULL_TIME",
+              "PART_TIME",
+              "CONTRACT",
+              "INTERN"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "ACTIVE",
+              "INACTIVE",
+              "TERMINATED",
+              "ON_LEAVE"
+            ]
+          },
+          "salary": {
+            "type": "number"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "socialSecurity": {
+            "type": "object"
+          },
+          "complianceFlags": {
+            "type": "object"
+          },
+          "profileExtensions": {
+            "type": "object"
+          },
+          "hireDate": {
+            "type": "string"
+          }
+        }
+      },
+      "CreateEmploymentHistoryDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "department": {
+            "type": "string"
+          },
+          "effectiveFrom": {
+            "type": "string"
+          },
+          "effectiveTo": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "effectiveFrom"
+        ]
+      },
+      "RecordJobChangeDto": {
+        "type": "object",
+        "properties": {
+          "kind": {
+            "type": "string",
+            "enum": [
+              "PROMOTION",
+              "TRANSFER",
+              "LATERAL_MOVE",
+              "RECLASSIFICATION",
+              "OTHER"
+            ]
+          },
+          "effectiveFrom": {
+            "type": "string",
+            "description": "Effective date of the new role / placement (YYYY-MM-DD)"
+          },
+          "newDepartment": {
+            "type": "string",
+            "description": "When set, updates employee department (empty string clears)"
+          },
+          "newDesignation": {
+            "type": "string",
+            "description": "When set, updates employee designation / job title"
+          },
+          "notes": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "effectiveFrom"
+        ]
+      },
+      "CreateEmployeeDocumentDto": {
+        "type": "object",
+        "properties": {
+          "docType": {
+            "type": "string",
+            "enum": [
+              "CONTRACT",
+              "ID",
+              "TAX",
+              "SOCIAL_SECURITY",
+              "OTHER"
+            ]
+          },
+          "fileRef": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "docType"
+        ]
+      },
+      "UpsertOnboardingItemDto": {
+        "type": "object",
+        "properties": {
+          "itemKey": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "done": {
+            "type": "boolean",
+            "description": "Legacy flag; kept in sync with `status` (DONE/SKIPPED => true)."
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "PENDING",
+              "IN_PROGRESS",
+              "BLOCKED",
+              "DONE",
+              "SKIPPED"
+            ]
+          },
+          "dueDate": {
+            "type": "string",
+            "description": "ISO date (YYYY-MM-DD)"
+          },
+          "completedByUserId": {
+            "type": "string",
+            "description": "Defaults to the authenticated user when transitioning to a terminal status."
+          },
+          "evidenceFileRef": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "blockingReason": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "itemKey",
+          "done"
+        ]
+      },
+      "EmergencyContactEntryDto": {
+        "type": "object",
+        "properties": {
+          "fullName": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "relationship": {
+            "type": "string",
+            "example": "Spouse",
+            "maxLength": 80
+          },
+          "phone": {
+            "type": "string",
+            "maxLength": 32
+          },
+          "email": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "fullName",
+          "relationship",
+          "phone"
+        ]
+      },
+      "ReplaceEmergencyContactsDto": {
+        "type": "object",
+        "properties": {
+          "contacts": {
+            "maxItems": 5,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EmergencyContactEntryDto"
+            }
+          }
+        },
+        "required": [
+          "contacts"
+        ]
+      },
+      "ReplaceReportingManagerDto": {
+        "type": "object",
+        "properties": {
+          "reportingManagerUserId": {
+            "type": "string",
+            "nullable": true,
+            "description": "FluideAuth user id of the reporting manager; send null to remove."
+          }
+        },
+        "required": [
+          "reportingManagerUserId"
+        ]
+      },
+      "DependentEntryDto": {
+        "type": "object",
+        "properties": {
+          "fullName": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "relationship": {
+            "type": "string",
+            "example": "Child",
+            "maxLength": 80
+          },
+          "dateOfBirth": {
+            "type": "string",
+            "description": "ISO date YYYY-MM-DD"
+          },
+          "isStudentBeneficiary": {
+            "type": "boolean",
+            "description": "For benefits / tax eligibility hints"
+          }
+        },
+        "required": [
+          "fullName",
+          "relationship"
+        ]
+      },
+      "ReplaceDependentsDto": {
+        "type": "object",
+        "properties": {
+          "dependents": {
+            "maxItems": 15,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DependentEntryDto"
+            }
+          }
+        },
+        "required": [
+          "dependents"
+        ]
+      },
+      "CreateEmploymentContractDto": {
+        "type": "object",
+        "properties": {
+          "employeeId": {
+            "type": "string",
+            "description": "HR employee id"
+          },
+          "startDate": {
+            "type": "string",
+            "example": "2026-03-01"
+          },
+          "endDate": {
+            "type": "string",
+            "example": "2026-12-31"
+          },
+          "employmentType": {
+            "type": "string",
+            "enum": [
+              "FULL_TIME",
+              "PART_TIME",
+              "CONTRACT",
+              "INTERN"
+            ],
+            "default": "FULL_TIME"
+          },
+          "baseSalary": {
+            "type": "number",
+            "example": 5000
+          },
+          "currency": {
+            "type": "string",
+            "example": "XAF",
+            "default": "USD"
+          },
+          "allowances": {
+            "type": "object",
+            "example": {
+              "housing": 500
+            }
+          }
+        },
+        "required": [
+          "employeeId",
+          "startDate",
+          "baseSalary"
+        ]
+      },
+      "UpdateEmploymentContractDto": {
+        "type": "object",
+        "properties": {
+          "baseSalary": {
+            "type": "number"
+          },
+          "allowances": {
+            "type": "object"
+          },
+          "endDate": {
+            "type": "string"
+          },
+          "employmentType": {
+            "type": "string",
+            "enum": [
+              "FULL_TIME",
+              "PART_TIME",
+              "CONTRACT",
+              "INTERN"
+            ]
+          },
+          "currency": {
+            "type": "string"
+          },
+          "startDate": {
+            "type": "string"
+          }
+        }
+      },
+      "CreateLeaveTypeDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "paid": {
+            "type": "boolean"
+          },
+          "maxDaysPerYear": {
+            "type": "number"
+          },
+          "ccsRuleRef": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "name"
+        ]
+      },
+      "CreateLeaveRequestDto": {
+        "type": "object",
+        "properties": {
+          "hrEmployeeId": {
+            "type": "string"
+          },
+          "leaveTypeId": {
+            "type": "string"
+          },
+          "startDate": {
+            "type": "string"
+          },
+          "endDate": {
+            "type": "string"
+          },
+          "workingDays": {
+            "type": "number"
+          },
+          "reason": {
+            "type": "string"
+          },
+          "attachmentUrls": {
+            "description": "Public URLs or storage keys for supporting documents",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "diagnosisTag": {
+            "type": "string",
+            "description": "Sick/medical category label for HR reporting"
+          }
+        },
+        "required": [
+          "hrEmployeeId",
+          "leaveTypeId",
+          "startDate",
+          "endDate",
+          "workingDays"
+        ]
+      },
+      "WorkingDaysQueryDto": {
+        "type": "object",
+        "properties": {
+          "startDate": {
+            "type": "string"
+          },
+          "endDate": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "startDate",
+          "endDate"
+        ]
+      },
+      "SubmitLeaveQueryDto": {
+        "type": "object",
+        "properties": {
+          "subject": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "message"
+        ]
+      },
+      "CreateCompanyHolidayDto": {
+        "type": "object",
+        "properties": {
+          "holidayDate": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "holidayDate",
+          "name"
+        ]
+      },
+      "CreateLeavePolicyDocumentDto": {
+        "type": "object",
+        "properties": {
+          "slug": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "fileName": {
+            "type": "string"
+          },
+          "fileSizeBytes": {
+            "type": "number"
+          },
+          "storageUrl": {
+            "type": "string",
+            "description": "Download or view URL (or storage key resolved by gateway)"
+          },
+          "mimeType": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "slug",
+          "title",
+          "fileName",
+          "storageUrl"
+        ]
+      },
+      "CreateLeavePolicyFaqDto": {
+        "type": "object",
+        "properties": {
+          "sortOrder": {
+            "type": "number"
+          },
+          "question": {
+            "type": "string"
+          },
+          "snippet": {
+            "type": "string"
+          },
+          "articleUrl": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "question",
+          "snippet"
+        ]
+      },
+      "CreateLeavePolicyAnnouncementDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "validUntil": {
+            "type": "string"
+          },
+          "isActive": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "title",
+          "body"
+        ]
+      },
+      "TerminateOnboardingFlowDto": {
+        "type": "object",
+        "properties": {
+          "reasonCode": {
+            "type": "string",
+            "enum": [
+              "CANDIDATE_WITHDREW",
+              "OFFER_RESCINDED",
+              "FAILED_PREBOARDING_CHECKS",
+              "DUPLICATE_HIRE",
+              "OTHER"
+            ]
+          },
+          "notes": {
+            "type": "string"
+          },
+          "acknowledgedConsequences": {
+            "type": "boolean",
+            "description": "Must be true: confirms the actor is authorized to stop onboarding and understands separation workflow may follow."
+          },
+          "secondApproverUserId": {
+            "type": "string",
+            "description": "Optional second approver (HRBP / legal designee) when organizational policy requires two-person control."
+          }
+        },
+        "required": [
+          "reasonCode",
+          "acknowledgedConsequences"
+        ]
+      },
+      "PatchOffboardingDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "INITIATED",
+              "IN_PROGRESS",
+              "COMPLETED",
+              "CANCELLED"
+            ]
+          },
+          "checklist": {
+            "type": "object",
+            "additionalProperties": true
+          },
+          "terminationDate": {
+            "type": "string"
+          },
+          "terminationReasonCode": {
+            "type": "string",
+            "maxLength": 64
+          }
+        }
+      },
+      "ClockAttendanceDto": {
+        "type": "object",
+        "properties": {
+          "hrEmployeeId": {
+            "type": "string"
+          },
+          "clientRequestId": {
+            "type": "string",
+            "description": "Idempotency token (or send `Idempotency-Key` header). When set, duplicate submits return the same clock row."
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "CLOCK_IN",
+              "CLOCK_OUT"
+            ]
+          },
+          "occurredAt": {
+            "type": "string",
+            "description": "ISO 8601 instant; defaults to server now"
+          },
+          "source": {
+            "type": "string",
+            "enum": [
+              "WEB",
+              "MOBILE",
+              "KIOSK",
+              "SYSTEM"
+            ]
+          },
+          "note": {
+            "type": "string"
+          },
+          "latitude": {
+            "type": "number",
+            "description": "Client-reported latitude (geofence adapters may use later)"
+          },
+          "longitude": {
+            "type": "number",
+            "description": "Client-reported longitude"
+          },
+          "geofenceId": {
+            "type": "string",
+            "description": "Logical geofence / site id from your mobile app"
+          },
+          "deviceAttestation": {
+            "type": "string",
+            "description": "Opaque device attestation / integrity blob"
+          },
+          "biometricVendor": {
+            "type": "string",
+            "description": "Biometric stack vendor label (e.g. passkey provider)"
+          },
+          "skipPairValidation": {
+            "type": "boolean",
+            "description": "If true and caller holds hr:attendance:write, skips IN/OUT alternation validation (HR correction)"
+          }
+        },
+        "required": [
+          "hrEmployeeId",
+          "kind"
+        ]
+      },
+      "CreateWorkShiftDto": {
+        "type": "object",
+        "properties": {
+          "hrEmployeeId": {
+            "type": "string"
+          },
+          "startsAt": {
+            "type": "string"
+          },
+          "endsAt": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "hrEmployeeId",
+          "startsAt",
+          "endsAt"
+        ]
+      },
+      "UpdateWorkShiftDto": {
+        "type": "object",
+        "properties": {
+          "startsAt": {
+            "type": "string"
+          },
+          "endsAt": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "SCHEDULED",
+              "COMPLETED",
+              "CANCELLED"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "x-mint": {
+    "productOverview": "/hr/overview",
+    "basePath": "/api/v1/hr"
+  }
+}

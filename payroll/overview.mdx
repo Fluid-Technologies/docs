@@ -1,0 +1,33 @@
+---
+title: Payroll overview
+description: FluidePayroll payroll processing microservice.
+---
+
+# Payroll overview
+
+**FluidePayroll** handles payroll runs and payslips. Use HR APIs to manage employees, then use payroll APIs to run payroll.
+
+## Base URL
+
+All payroll endpoints are under:
+
+- `/api/v1/payroll/*`
+
+Authenticate using developer keys described in [authentication](/getting-started/authentication).
+
+## Responsibilities
+
+| Area | Description |
+| --- | --- |
+| Payroll runs | CRUD, process, validate pipeline |
+| Payslips | Allowances, deductions, breakdown |
+| Kafka | Async payroll computation, wallet provision commands |
+
+<CardGroup cols={2}>
+  <Card title="API reference" icon="code" href="/api-reference">
+    Browse payroll endpoints and schemas.
+  </Card>
+  <Card title="First workflow" icon="rocket" href="/api-reference">
+    Create a payroll run and fetch payslips.
+  </Card>
+</CardGroup>

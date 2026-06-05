@@ -1,0 +1,131 @@
+---
+title: Authentication
+description: Exchange API credentials for a JWT and call Fluide product APIs from your integration.
+---
+
+Fluide Connect uses a **two-step** model: exchange your developer API key and secret for a short-lived JWT, then call product APIs with the JWT and your API key.
+
+## Prerequisites
+
+You already have a verified developer account and API credentials from the Connect dashboard (**API Keys**):
+
+- `apiKey` — e.g. `fl_dev_...`
+- `apiSecret` — shown once at provisioning; store it in your secret manager
+
+<Note>
+If you need to view or rotate credentials, sign in to Connect. The API secret is never returned again from `GET /api/v1/developer-access/current`.
+</Note>
+
+## Exchange key + secret for an access token
+
+Send your credentials only to the token endpoint. Never include the secret on HR, payroll, payments, or other product routes.
+
+<CodeGroup>
+
+```bash curl
+curl -X POST "$FLUIDE_BASE_URL/api/v1/developer-access/token" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Api-Secret: $FLUIDE_API_SECRET" \
+  -H "X-Fluide-Client-Id: fluide-developer"
+```
+
+```javascript Node.js
+const baseUrl = process.env.FLUIDE_BASE_URL;
+
+const res = await fetch(`${baseUrl}/api/v1/developer-access/token`, {
+  method: 'POST',
+  headers: {
+    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,
+    'X-Fluide-Api-Secret': process.env.FLUIDE_API_SECRET,
+    'X-Fluide-Client-Id': 'fluide-developer',
+  },
+});
+
+if (!res.ok) throw new Error(`Token exchange failed: ${await res.text()}`);
+const { accessToken } = await res.json();
+```
+
+</CodeGroup>
+
+Response (abbreviated):
+
+```json
+{
+  "accessToken": "eyJ...",
+  "exp": 1710000000,
+  "tenantId": "...",
+  "fluideClientId": "fluide-developer",
+  "authContextPath": "/api/v1/auth-context/..."
+}
+```
+
+<Warning>
+Use the API secret only for token exchange. Never send it on product API routes.
+</Warning>
+
+## Call Fluide APIs
+
+Send **both** the Bearer token and your API key on every product request.
+
+| Header | Value |
+| --- | --- |
+| `Authorization` | `Bearer <accessToken>` |
+| `X-Fluide-Api-Key` | Your `fl_dev_...` key |
+| `X-Fluide-Client-Id` | `fluide-developer` |
+
+<CodeGroup>
+
+```bash curl
+curl -X GET "$FLUIDE_BASE_URL/api/v1/hr/health" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer"
+```
+
+```javascript Node.js
+const res = await fetch(`${baseUrl}/api/v1/hr/health`, {
+  headers: {
+    Authorization: `Bearer ${accessToken}`,
+    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,
+    'X-Fluide-Client-Id': 'fluide-developer',
+  },
+});
+
+if (!res.ok) throw new Error(`HTTP ${res.status}: ${await res.text()}`);
+const health = await res.json();
+```
+
+</CodeGroup>
+
+<Tip>
+Cache the `accessToken` until `exp` and refresh before it expires. See [First request](/getting-started/first-request) for an end-to-end walkthrough.
+</Tip>
+
+## Rotate credentials
+
+If a secret is exposed, rotate it from the Connect dashboard or with a valid Bearer session:
+
+<CodeGroup>
+
+```bash curl
+curl -X POST "$FLUIDE_BASE_URL/api/v1/developer-access/rotate-secret" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Client-Id: fluide-developer"
+```
+
+```javascript Node.js
+const res = await fetch(`${baseUrl}/api/v1/developer-access/rotate-secret`, {
+  method: 'POST',
+  headers: {
+    Authorization: `Bearer ${sessionToken}`,
+    'X-Fluide-Client-Id': 'fluide-developer',
+  },
+});
+
+if (!res.ok) throw new Error(`Rotate failed: ${await res.text()}`);
+const { apiSecret } = await res.json();
+```
+
+</CodeGroup>
+
+Update your integration and exchange a new token with the new secret.

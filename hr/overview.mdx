@@ -1,0 +1,35 @@
+---
+title: HR overview
+description: fluide-hr human resources microservice for the Fluide Suite.
+---
+
+# HR overview
+
+`fluide-hr` manages employees, employment contracts, leave, performance, OKRs, country configuration (CCS), compliance, and HR insights. It is the **canonical source** for employee records consumed by payroll.
+
+## Base URL
+
+All HR endpoints are under:
+
+- `/api/v1/hr/*`
+
+Authenticate using developer keys described in [authentication](/getting-started/authentication).
+
+## Technology
+
+| Layer | Choice |
+| --- | --- |
+| Framework | NestJS |
+| ORM | TypeORM + PostgreSQL |
+| i18n | nestjs-i18n |
+| Messaging | Kafka |
+| Metrics | Prometheus |
+
+<CardGroup cols={2}>
+  <Card title="Modules" icon="puzzle-piece" href="/hr/modules">
+    Feature modules and permissions.
+  </Card>
+  <Card title="First workflow" icon="rocket" href="/api-reference">
+    Create an employee, then sync payroll (see API reference for exact endpoints).
+  </Card>
+</CardGroup>

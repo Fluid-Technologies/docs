@@ -1,0 +1,32 @@
+---
+title: Pay modules
+description: FluidePay API modules and provider integrations.
+---
+
+# Pay modules
+
+| Module | Path | Description |
+| --- | --- | --- |
+| Accounts | `/api/v1/accounts` | Create and manage wallets |
+| Transactions | `/api/v1/transactions` | CREDIT / DEBIT processing |
+| Ecobank | `/api/v1/ecobank` | Ecobank provider integration |
+| Mobile money | `/api/v1/mobile-money` | Mobile money integration |
+
+## Configuration
+
+Provider settings live in `src/config/` (`app.config.ts`, legacy `config.service.ts`). Validate env with Joi at bootstrap.
+
+## Inter-service
+
+- **TCP** RPC on microservice port for internal calls
+- **Kafka** for async transaction processing
+- Wallets may be provisioned from payroll via Kafka commands
+
+## Technology
+
+| Layer | Choice |
+| --- | --- |
+| Framework | NestJS 10 |
+| ORM | TypeORM |
+| HTTP client | Axios for provider APIs |
+| Docs | Swagger / OpenAPI |

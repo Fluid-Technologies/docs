@@ -1,0 +1,25 @@
+---
+title: Errors and rate limits
+description: Common error responses and how to handle them.
+---
+
+# Errors and rate limits
+
+## Authentication errors
+
+- **401 Unauthorized**: missing/invalid keys or secret
+- **403 Forbidden**: valid keys, but insufficient access for the endpoint
+
+## Recommended handling
+
+- Never retry `401` blindly. Re-check headers and rotated secrets.
+- For `429 Too Many Requests`, back off and retry with jitter.
+
+## Support data
+
+When contacting support, include:
+
+- Timestamp (UTC)
+- Endpoint + HTTP method
+- Response status + body
+- A request ID header if present

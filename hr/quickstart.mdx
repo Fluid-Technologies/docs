@@ -1,0 +1,35 @@
+---
+title: HR quickstart
+description: Run fluide-hr locally and access Swagger.
+---
+
+# HR quickstart
+
+<Steps>
+  <Step title="Install">
+    ```bash
+    cd fluide-hr
+    npm install
+    cp .env.example .env
+    ```
+  </Step>
+  <Step title="Configure database">
+    Set `DB_HOST`, `DB_PORT`, `DB_USERNAME`, `DB_PASSWORD`, `DB_NAME` (default `fluide_hr`).
+  </Step>
+  <Step title="Start API">
+    ```bash
+    npm run start:dev
+    ```
+  </Step>
+  <Step title="Open Swagger">
+    `http://localhost:3000/api/docs` (or your configured `PORT`).
+
+    With gateway: `/api/v1/docs/hr/`.
+  </Step>
+</Steps>
+
+## Authentication
+
+All tenant APIs require a valid JWT from `fluide-auth` through Tyk. Controllers use `GatewayUserGuard` and permission decorators such as `hr:employees:read`.
+
+Internal controllers (platform employee list, auth link) are excluded from public Swagger where marked `@ApiExcludeController`.

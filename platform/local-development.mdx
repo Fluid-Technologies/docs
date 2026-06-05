@@ -1,0 +1,76 @@
+---
+title: Local development
+description: Run the Fluide stack locally with Docker Compose and preview documentation.
+---
+
+# Local development
+
+## Full stack (recommended)
+
+From `Fluide/ochestrator/docker`:
+
+```bash
+cp .env.example .env
+# Edit secrets (POSTGRES_PASSWORD, etc.)
+docker compose up -d
+```
+
+This starts Postgres, Redis, Kafka, Tyk gateway, and microservices including `authz`, `hr`, `payroll`, `payments`, and accounting (`books`).
+
+## Single service
+
+Each service supports `npm install` / `pnpm install` and `npm run start:dev` (auth uses **pnpm**). Copy `.env.example` to `.env` and point `DATABASE_URL` or `DB_*` at a local Postgres instance.
+
+| Service | Package manager | Typical dev command |
+| --- | --- | --- |
+| fluide-auth | pnpm | `pnpm run start:dev` |
+| fluide-hr | npm | `npm run start:dev` |
+| FluidePayroll | npm | `npm run start:dev` |
+| FluidePay | npm | `npm run start:dev` |
+| FluideBooks | npm | `npm run start:dev` |
+
+## Preview this documentation site
+
+From the **FluideConnect** repository root (where `docs.json` lives):
+
+```bash
+npm run dev
+```
+
+This starts Next.js and Mintlify together. Open **http://localhost:3000/docs** (the app root redirects there).
+
+Docs-only or app-only:
+
+```bash
+npm run dev:docs   # Mintlify on port 3001
+npm run dev:next   # Next.js on port 3000
+```
+
+Install the Mintlify CLI once if `mint` is not found:
+
+```bash
+npm install -g mint --prefix ~/.local
+export PATH="$HOME/.local/bin:$PATH"
+```
+
+## Refresh API reference specs
+
+With services running locally:
+
+```bash
+node scripts/export-openapi.mjs
+```
+
+Commit updated files under `openapi/` so the **API reference** tab stays current.
+
+## Export script defaults
+
+| Service | Swagger JSON URL |
+| --- | --- |
+| Auth | `http://localhost:3000/api/docs-json` |
+| HR | `http://localhost:3000/api/docs-json` |
+| Payroll | `http://localhost:5051/api/docs-json` |
+| Pay | `http://localhost:5058/api/docs-json` |
+| Books | `http://localhost:5052/api/docs-json` |
+
+Override with environment variables documented in `scripts/export-openapi.mjs`.

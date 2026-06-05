@@ -1,0 +1,31 @@
+---
+title: Auth features
+description: Supported authentication capabilities and intentional exclusions.
+---
+
+# Auth features
+
+Better Auth plugins are wired only through explicit Nest **v1 controllers**. Anything not exposed there is **unsupported** for product and compliance reviews.
+
+| Capability | Supported | Notes |
+| --- | --- | --- |
+| Email + password | Yes | `POST /api/v1/auth/sign-in`, `sign-up` |
+| Email OTP | Yes | Verify + passwordless sign-in |
+| Google / Apple / Microsoft OAuth | Yes | When env configured; JWT via `JwtIssuerService` |
+| Enterprise OIDC SSO | Yes | `POST /api/v1/auth/sso/authorize`, `GET .../callback` |
+| Magic link sign-in | **No** | Plugin removed; reset links are password-reset only |
+| TOTP / 2FA on sign-in | **No** | `twoFactor()` removed from factory |
+| Phone / WhatsApp OTP | **No** | `phoneNumber()` removed |
+
+<Info>
+Reintroduce magic link, phone OTP, or 2FA only behind dedicated `/api/v1/auth/*` handlers that issue credentials through `JwtIssuerService`, matching social and SSO flows.
+</Info>
+
+## Other platform features
+
+- Multi-tenant organizations (`/api/v1/organizations/*`)
+- Email via Kafka to `fluide-utils` (Resend templates)
+- Redis-backed cache (sessions, rate limits, OTP); in-memory fallback
+- Drizzle migrations as single source of schema truth
+
+See [Enterprise SSO](/auth/sso) for operator setup.

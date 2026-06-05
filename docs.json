@@ -1,72 +1,143 @@
 {
   "$schema": "https://mintlify.com/docs.json",
+  "name": "Fluide Connect",
+  "description": "Developer documentation for the Fluide Suite: auth, HR, payroll, payments, accounting, and shared utilities.",
   "theme": "mint",
-  "name": "Mintlify Starter Kit",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
-  },
-  "favicon": "/favicon.svg",
-  "navigation": {
-    "pages": [
-      {
-        "group": "Getting Started",
-        "pages": [
-          "index",
-          "quickstart"
-        ]
-      }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
-          "icon": "book-open-cover"
-        },
-        {
-          "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
-          "icon": "newspaper"
-        }
-      ]
-    }
+    "primary": "#0D9488",
+    "light": "#14B8A6",
+    "dark": "#0F766E"
   },
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "/public/Fluide Connect.svg",
+    "dark": "/public/Fluide Connect-W.svg"
   },
+  "favicon": "/public/Fluide Connect.svg",
   "navbar": {
     "links": [
       {
-        "label": "Support",
-        "href": "mailto:hi@mintlify.com"
+        "label": "API reference",
+        "href": "/api-reference"
       }
     ],
     "primary": {
-      "type": "button",
-      "label": "Dashboard",
-      "href": "https://app.mintlify.com"
+      "type": "github",
+      "href": "https://github.com/Fluid-Technologies"
     }
   },
-  "contextual": {
-    "options": [
-      "copy",
-      "view",
-      "chatgpt",
-      "claude",
-      "perplexity",
-      "mcp",
-      "cursor",
-      "vscode"
+  "api": {
+    "openapi": [
+      "openapi/fluide-auth.json",
+      "openapi/fluide-hr.json",
+      "openapi/fluide-payroll.json",
+      "openapi/fluide-pay.json",
+      "openapi/fluide-books.json",
+      "openapi/fluide-utils.json"
+    ],
+    "playground": {
+      "display": "interactive"
+    },
+    "examples": {
+      "languages": ["bash", "node"],
+      "defaults": "required",
+      "prefill": false,
+      "autogenerate": true
+    }
+  },
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Get started",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": [
+              "introduction",
+              "getting-started/authentication",
+              "getting-started/environments",
+              "getting-started/first-request",
+              "getting-started/errors-and-rate-limits",
+              "changelog",
+              "platform/documentation-pipeline",
+              "platform/api-change-strategy",
+              "platform/mintlify-deployment"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "Products",
+        "groups": [
+          {
+            "group": "Auth",
+            "pages": [
+              "auth/overview",
+              "auth/quickstart"
+            ]
+          },
+          {
+            "group": "HR",
+            "pages": ["hr/overview", "hr/quickstart"]
+          },
+          {
+            "group": "Payroll",
+            "pages": ["payroll/overview", "payroll/quickstart"]
+          },
+          {
+            "group": "Pay",
+            "pages": ["pay/overview", "pay/quickstart"]
+          },
+          {
+            "group": "Books",
+            "pages": ["books/overview"]
+          },
+          {
+            "group": "Utils",
+            "pages": ["utils/overview", "utils/modules"]
+          }
+        ]
+      },
+      {
+        "tab": "API reference",
+        "pages": [
+          "api-reference",
+          {
+            "group": "Auth API",
+            "openapi": "openapi/fluide-auth.json",
+            "pages": ["api-reference/auth"]
+          },
+          {
+            "group": "HR API",
+            "openapi": "openapi/fluide-hr.json",
+            "pages": ["api-reference/hr"]
+          },
+          {
+            "group": "Payroll API",
+            "openapi": "openapi/fluide-payroll.json",
+            "pages": ["api-reference/payroll"]
+          },
+          {
+            "group": "Pay API",
+            "openapi": "openapi/fluide-pay.json",
+            "pages": ["api-reference/pay"]
+          },
+          {
+            "group": "Books API",
+            "openapi": "openapi/fluide-books.json",
+            "pages": ["api-reference/books"]
+          },
+          {
+            "group": "Utils API",
+            "openapi": "openapi/fluide-utils.json",
+            "pages": ["api-reference/utils"]
+          }
+        ]
+      }
     ]
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "github": "https://github.com/Fluid-Technologies"
     }
   }
 }

@@ -1,0 +1,31 @@
+---
+title: Pay API
+description: Wallets, transactions, and payment provider integrations.
+---
+
+The **Pay API** (`FluidePay`) provides digital wallets, ledger transactions, and integrations with external payment providers.
+
+## Base path
+
+`/api/v1/payments`
+
+## Authentication
+
+Developer JWT + API key on every request. See [Authentication](/getting-started/authentication).
+
+## Operations and monitoring
+
+| Endpoint | Purpose |
+| --- | --- |
+| `GET /api/v1/payments` | Service root |
+| `GET /api/v1/payments/metrics` | Prometheus scrape target |
+
+## Typical integration flow
+
+1. Provision or fetch wallet accounts for your organization
+2. Initiate transactions or provider payments
+3. Poll transaction status or subscribe to async events where available
+
+<Card title="Pay product guide" icon="credit-card" href="/pay/overview">
+  Wallet types, providers, and async settlement.
+</Card>

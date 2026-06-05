@@ -1,0 +1,36 @@
+---
+title: Auth overview
+description: Developer onboarding, token exchange, and credentials via fluide-auth.
+---
+
+# Auth overview
+
+`fluide-auth` issues RS256 JWTs and manages **developer API keys** for Fluide Connect integrations.
+
+## Responsibilities
+
+- Developer account creation (`type: developer`)
+- One-time API key + secret provisioning after email verification
+- Token exchange (`POST /api/v1/developer-access/token`)
+- JWT validation, org RBAC, and auth-context for the gateway
+
+## Authentication model
+
+| Step | Credentials |
+| --- | --- |
+| Token exchange | `X-Fluide-Api-Key`, `X-Fluide-Api-Secret`, `X-Fluide-Client-Id: fluide-developer` |
+| Product APIs (via gateway) | `Authorization: Bearer <token>`, `X-Fluide-Api-Key`, `X-Fluide-Client-Id: fluide-developer` |
+
+The API secret is used **only** at token exchange, not on downstream product calls.
+
+See [Authentication](/getting-started/authentication) for the full flow.
+
+## Key lifecycle
+
+- **Provision:** automatically on first email verification for developer accounts
+- **View:** `GET /api/v1/developer-access/current` (metadata only; no secret)
+- **Rotate:** `POST /api/v1/developer-access/rotate-secret` (returns new secret once)
+
+<Note>
+Human operators using Fluide SPAs use email/password or OTP with `fluide-admin` / other client IDs — not the developer key flow.
+</Note>

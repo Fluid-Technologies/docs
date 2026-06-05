@@ -1,0 +1,85 @@
+---
+title: First request
+description: Exchange developer credentials and call a Fluide product API.
+---
+
+This walkthrough verifies your Connect integration end-to-end.
+
+## Prerequisites
+
+- `FLUIDE_BASE_URL` for your environment — see [Environments](/getting-started/environments)
+- Developer `apiKey` and `apiSecret` from the Connect dashboard — see [Authentication](/getting-started/authentication)
+
+<Steps>
+
+<Step title="Get an access token">
+
+<CodeGroup>
+
+```bash curl
+export FLUIDE_BASE_URL="https://staging.api.fluidehr.com"
+export FLUIDE_API_KEY="fl_dev_..."
+export FLUIDE_API_SECRET="..."
+
+TOKEN_RESPONSE=$(curl -sS -X POST "$FLUIDE_BASE_URL/api/v1/developer-access/token" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Api-Secret: $FLUIDE_API_SECRET" \
+  -H "X-Fluide-Client-Id: fluide-developer")
+
+export FLUIDE_ACCESS_TOKEN=$(echo "$TOKEN_RESPONSE" | jq -r '.accessToken')
+```
+
+```javascript Node.js
+const baseUrl = process.env.FLUIDE_BASE_URL;
+
+const tokenRes = await fetch(`${baseUrl}/api/v1/developer-access/token`, {
+  method: 'POST',
+  headers: {
+    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,
+    'X-Fluide-Api-Secret': process.env.FLUIDE_API_SECRET,
+    'X-Fluide-Client-Id': 'fluide-developer',
+  },
+});
+
+if (!tokenRes.ok) throw new Error(`Token exchange failed: ${await tokenRes.text()}`);
+const { accessToken } = await tokenRes.json();
+```
+
+</CodeGroup>
+
+</Step>
+
+<Step title="Call a product endpoint">
+
+<CodeGroup>
+
+```bash curl
+curl -sS "$FLUIDE_BASE_URL/api/v1/hr/health" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer"
+```
+
+```javascript Node.js
+const apiRes = await fetch(`${baseUrl}/api/v1/hr/health`, {
+  headers: {
+    Authorization: `Bearer ${accessToken}`,
+    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,
+    'X-Fluide-Client-Id': 'fluide-developer',
+  },
+});
+
+if (!apiRes.ok) throw new Error(`HTTP ${apiRes.status}: ${await apiRes.text()}`);
+console.log(await apiRes.json());
+```
+
+</CodeGroup>
+
+</Step>
+
+</Steps>
+
+## Next steps
+
+- Explore endpoints in [API reference](/api-reference)
+- Pick a product tab and follow the quickstart for that service

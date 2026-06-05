@@ -1,0 +1,29 @@
+---
+title: Pay overview
+description: FluidePay payments and wallet microservice.
+---
+
+# Pay overview
+
+**FluidePay** provides digital wallets, transactions, and integrations with external payment providers (Ecobank, mobile money).
+
+## Base URL
+
+All payments endpoints are under:
+
+- `/api/v1/payments/*`
+
+Authenticate using developer keys described in [authentication](/getting-started/authentication).
+
+## Wallet types
+
+Accounts support types such as **PRIMARY**, **SAVINGS**, and **ESCROW** (see Swagger for full enum).
+
+## Async processing
+
+Transactions may be processed via **Kafka** for reliability. Metrics are exposed at `/metrics`.
+
+<CardGroup cols={2}>
+  <Card title="API reference" icon="code" href="/api-reference" />
+  <Card title="First workflow" icon="rocket" href="/api-reference" />
+</CardGroup>

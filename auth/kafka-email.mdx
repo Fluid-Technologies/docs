@@ -1,0 +1,34 @@
+---
+title: Kafka email contract
+description: Email job envelope produced by fluide-auth for fluide-utils consumption.
+---
+
+# Kafka email contract
+
+`fluide-auth` publishes to `KAFKA_EMAIL_TOPIC` (default `fluide.notifications.email.send`). **fluide-utils** consumes and sends via Resend.
+
+## Envelope
+
+```json
+{
+  "eventId": "uuid",
+  "schemaVersion": 1,
+  "occurredAt": "2026-01-01T00:00:00.000Z",
+  "sourceService": "fluide-auth",
+  "jobName": "auth.send-otp",
+  "data": {
+    "to": "user@example.com",
+    "subject": "Optional subject",
+    "resendTemplateId": "tpl_xxx",
+    "resendTemplateVariables": { "code": "123456" },
+    "html": "<p>Optional fallback</p>",
+    "text": "Optional fallback"
+  }
+}
+```
+
+## Conventions
+
+- `jobName`: `^[a-z0-9][a-z0-9._-]{2,127}$` (recommended `service.action`)
+- `data.to` is required
+- Include either `resendTemplateId` or `html` / `text` fallback content

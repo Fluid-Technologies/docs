@@ -1,0 +1,40 @@
+---
+title: HR modules
+description: fluide-hr feature modules, routes, and permission hints.
+---
+
+# HR modules
+
+| Module | Route base | Permissions (examples) |
+| --- | --- | --- |
+| Employees | `/employees` | `hr:employees:read`, `hr:employees:write` |
+| Employment contracts | `/employment-contracts` | Contract CRUD |
+| Leave | `/leave` | Leave requests and balances |
+| Performance | `/performance` | Performance cycles |
+| OKR | `/okr` | Objectives and key results |
+| CCS | `/ccs` | `hr:ccs:read`, `hr:ccs:write` — country rule versions |
+| Compliance | `/compliance` | Compliance workflows |
+| Insights | `/insights` | `hr:insights:read`, `hr:insights:write` |
+| Dashboard | `/dashboard` | `hr:employees:read`, `hr:insights:read`, `jobs:read` |
+| Integrations | integrations module | External HR connectors |
+| Audit | audit module | Audit trail |
+| Engagement read model | engagement-readmodel | Engagement lifecycle from Kafka |
+
+## Dashboard endpoints
+
+- `GET /dashboard/home-summary` — headcount, compliance heuristics, engagement
+- `GET /dashboard/recruiting-summary` — recruiting metrics (jobs integration pending)
+
+## CCS (country configuration)
+
+- `GET /ccs/versions` — list CCS versions by country
+- `GET /ccs/effective` — effective rules for a country
+- `POST /ccs/versions` — publish new version (`hr:ccs:write`)
+
+## Employee operations
+
+Public tenant CRUD lives under `/api/v1/hr/employees`. Bulk import, payout configuration, and employment invites are documented in Swagger tags on `EmployeesController`.
+
+<Note>
+Do not create employees only in payroll. Use HR as source of truth, then mirror to payroll.
+</Note>

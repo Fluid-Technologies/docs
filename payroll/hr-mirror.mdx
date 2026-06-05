@@ -1,0 +1,51 @@
+---
+title: HR mirror
+description: Internal payroll endpoints called by fluide-hr.
+---
+
+# HR mirror
+
+Payroll does not own employee master data. HR drives mirrors through authenticated internal routes.
+
+## Authentication
+
+```http
+x-internal-api-key: <PAYROLL_INTERNAL_API_KEY>
+```
+
+The same value must be configured in `fluide-hr` when calling payroll.
+
+## Endpoints
+
+### Mirror employee
+
+`POST /api/v1/payroll/internal/employees/mirror-from-hr`
+
+- Handler: `mirrorFromHr` in `employees.service.ts`
+- **Idempotent:** payroll `employees.id` = HR `hrEmployeeId`
+
+### Upsert contract
+
+`POST /api/v1/payroll/internal/contracts/upsert-from-hr`
+
+Syncs employment contract fields required by the payroll engine.
+
+### Provision wallet
+
+`POST /api/v1/payroll/internal/employees/provision-wallet`
+
+Triggers wallet provisioning (Kafka topic `wallet.provision.commands` by default).
+
+## Configuration checklist
+
+| Variable | Service | Purpose |
+| --- | --- | --- |
+| `PAYROLL_BASE_URL` | HR | Origin URL to payroll HTTP server |
+| `PAYROLL_INTERNAL_API_KEY` | HR + Payroll | Shared secret |
+| `PAYROLL_BASE_URL` | HR | No path suffix—e.g. `http://payroll:5051` |
+
+## Failure modes
+
+HR may persist an employee while payroll mirror fails. Investigate connectivity and keys, then re-trigger sync from HR.
+
+Related: [HR payroll integration](/hr/payroll-integration).

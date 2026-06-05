@@ -1,0 +1,40 @@
+---
+title: Introduction
+description: Integrate Fluide APIs into your product using developer API keys.
+---
+
+# Fluide Connect
+
+Fluide Connect is the developer documentation hub for integrating the **Fluide Suite** APIs into your product.
+
+## Services covered
+
+| Product API | Purpose |
+| --- | --- |
+| Auth | Developer onboarding and credentials |
+| HR | Employee and HR operations |
+| Payroll | Payroll runs and payslips |
+| Pay | Wallets, transactions, provider payments |
+| Books | Accounting, journals, invoicing |
+| Utils | Notifications, files, and document generation |
+
+## How to use this site
+
+<CardGroup cols={2}>
+  <Card title="Get started" icon="rocket" href="/getting-started/authentication">
+    Authenticate with your API credentials and make your first request in Sandbox.
+  </Card>
+  <Card title="API reference" icon="code" href="/api-reference">
+    Browse endpoints and schemas per product.
+  </Card>
+</CardGroup>
+
+## Environments
+
+Use the **beta staging** gateway (`https://staging.api.fluidehr.com`) while integrating. Production URL will be announced at GA.
+
+See [environments](/getting-started/environments).
+
+## Browse every endpoint
+
+Open the **[API reference](/api-reference)** tab in the sidebar. Endpoints are generated from `openapi/*.json` (Auth, HR, Payroll, Pay, Books) with an interactive playground.

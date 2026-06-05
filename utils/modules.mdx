@@ -1,0 +1,50 @@
+---
+title: Utils modules
+description: Notifications, files, documents, and document jobs in fluide-utils.
+---
+
+# Utils modules
+
+## Notifications
+
+REST surface under `/api/v1/app/notifications`.
+
+- `POST` — send a notification
+- `POST /engagement-template` — create from an engagement lifecycle template
+- `GET` — list notifications for the current user (filter by channel)
+- `PATCH /:id/dismiss` — dismiss an in-app notification
+
+Requires Bearer JWT with organization context from the gateway.
+
+## File Management
+
+REST surface under `/api/v1/app/files`.
+
+- `POST` — multipart upload (`file`, optional `isPublic`)
+- `GET` — list files for the organization
+- `GET /:id` — download a file
+- `DELETE /:id` — remove a file
+
+Upload size limits are enforced server-side. See the API reference for the current maximum.
+
+## Documents
+
+REST surface under `/api/v1/app/documents`.
+
+Generates PDFs and spreadsheets, stores artifacts on disk, and returns a public URL. Common routes:
+
+- `POST /payslips` — payslip PDF (idempotent per org + payslip ID)
+- `POST /invoices` — invoice PDF
+- Financial exports — balance sheet, income statement, trial balance, general ledger, and more
+
+Pass `force=true` to overwrite an artifact after upstream data corrections.
+
+## Document Jobs
+
+REST surface under `/api/v1/app/document-jobs`.
+
+Use for long-running generation where synchronous `Documents` calls would time out. Create a job, poll status, then fetch the result URL.
+
+<Note>
+Internal controllers (`internal-*`) are excluded from public OpenAPI. They are called service-to-service with internal API keys, not from Connect integrations.
+</Note>

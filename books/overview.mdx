@@ -1,0 +1,29 @@
+---
+title: Books overview
+description: FluideBooks accounting and general ledger microservice.
+---
+
+# Books overview
+
+**FluideBooks** is the accounting service for the Fluide Suite: chart of accounts, journal entries, invoicing, bills, banking, budgets, and payroll GL integration.
+
+## Base URL
+
+All accounting endpoints are under:
+
+- `/api/v1/*`
+
+Authenticate using developer keys described in [authentication](/getting-started/authentication).
+
+## Core capabilities
+
+- Double-entry **journal entries** (post / void)
+- **Chart of accounts** hierarchy (ASSET, LIABILITY, EQUITY, REVENUE, EXPENSE)
+- **Invoices** and **bills** lifecycle
+- **Payroll GL** mappings and Kafka consumer for completed payroll runs
+- Reporting, reconciliation, fixed assets, exchange rates, and more
+
+<CardGroup cols={2}>
+  <Card title="API reference" icon="code" href="/api-reference" />
+  <Card title="First workflow" icon="rocket" href="/api-reference" />
+</CardGroup>

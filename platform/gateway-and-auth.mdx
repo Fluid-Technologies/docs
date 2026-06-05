@@ -1,0 +1,38 @@
+---
+title: Gateway and authentication
+description: How Tyk routes requests and how fluide-auth integrates with downstream services.
+---
+
+# Gateway and authentication
+
+## Request flow (Connect developers)
+
+1. Client exchanges API key + secret at `POST /api/v1/developer-access/token` (keyless on gateway).
+2. Client calls the **Tyk gateway** with `Authorization: Bearer <jwt>`, `X-Fluide-Api-Key`, and `X-Fluide-Client-Id: fluide-developer`.
+3. Tyk validates the JWT against **JWKS** (`/api/v1/auth/.well-known/jwks.json`).
+4. `userFetcher` middleware checks `X-Fluide-Client-Id` and, for machine tokens, `X-Fluide-Api-Key` against the JWT `dev_api_key` claim.
+5. Tyk forwards the request with `X-User-Object` and related headers to the target microservice.
+
+## fluide-auth surfaces
+
+| Surface | Path | Use |
+| --- | --- | --- |
+| Credential APIs | `/api/v1/auth/*` | Sign-up, OTP, sign-in |
+| Developer access | `/api/v1/developer-access/*` | Token exchange, key metadata, rotation |
+| Organizations | `/api/v1/organizations/*` | Multi-tenant orgs and members |
+| Auth context | `GET /api/v1/auth-context/:jti` | Gateway user enrichment |
+| Swagger | `/api/docs` | OpenAPI (proxied at `/api/v1/docs/auth/`) |
+
+<Warning>
+Treat `/api/v1/auth/*` and `/api/v1/developer-access/token` as public credential surfaces. Product routes require Bearer + `X-Fluide-Api-Key` for developer tokens.
+</Warning>
+
+## Scopes and policies
+
+Gateway JWT policies map coarse scopes such as `hr:read`, `payroll:read`, and `payments:write` to Tyk policies. Services enforce fine-grained permissions from `X-User-Object.rbac`.
+
+See [Auth RBAC](/auth/rbac) for app-wide and organization roles.
+
+## Internal service calls
+
+Some flows use **internal API keys** instead of user JWTs (for example HR → Payroll mirror). Document the shared secret in both services and never commit keys to git.

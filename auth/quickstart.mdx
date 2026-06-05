@@ -1,0 +1,72 @@
+---
+title: Auth quickstart
+description: Install, configure, and run fluide-auth locally.
+---
+
+# Auth quickstart
+
+<Steps>
+  <Step title="Clone and install">
+    ```bash
+    git clone https://github.com/Fluid-Technologies/FluideAuth.git
+    cd FluideAuth
+    pnpm install
+    ```
+  </Step>
+  <Step title="Configure environment">
+    ```bash
+    cp .env.example .env
+    ```
+
+    Set at minimum:
+
+    - `DATABASE_URL` — PostgreSQL connection string
+    - `BETTER_AUTH_SECRET` — min 32 characters
+    - `KAFKA_BROKERS` — for email jobs (or disable if testing without mail)
+  </Step>
+  <Step title="Apply migrations">
+    ```bash
+    pnpm run db:migrate
+    ```
+
+    Migrations also run on app bootstrap unless `DB_SKIP_MIGRATE_ON_BOOT=true`.
+  </Step>
+  <Step title="Start the API">
+    ```bash
+    pnpm run start:dev
+    ```
+
+    API: `http://localhost:3000` (global prefix `/api`).
+  </Step>
+  <Step title="Developer token exchange (optional)">
+    After a developer account verifies email, exchange API credentials:
+
+    ```bash
+    curl -X POST "http://localhost:3000/api/v1/developer-access/token" \
+      -H "X-Fluide-Api-Key: fl_dev_..." \
+      -H "X-Fluide-Api-Secret: YOUR_SECRET" \
+      -H "X-Fluide-Client-Id: fluide-developer"
+    ```
+
+    Use the returned `accessToken` with `X-Fluide-Api-Key` on gateway calls. See [Authentication](/getting-started/authentication).
+  </Step>
+  <Step title="Optional: Postman">
+    Import `fluide-auth.postman_collection.json`. Set `baseUrl` and `Origin` header (required by Better Auth).
+  </Step>
+</Steps>
+
+## Bootstrap super admin
+
+```bash
+EMAIL=admin@example.com pnpm run bootstrap:super-admin
+```
+
+Requires `DATABASE_URL` and an existing user with that email.
+
+## Docker
+
+```bash
+docker compose up -d
+```
+
+Uses `.env` for secrets; set `DATABASE_URL` host to `postgres` and `REDIS_HOST=redis` inside Compose.

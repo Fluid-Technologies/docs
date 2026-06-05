@@ -1,0 +1,4569 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/v1/payments": {
+      "get": {
+        "operationId": "AppController_getHello",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "App"
+        ]
+      }
+    },
+    "/api/v1/payments/metrics": {
+      "get": {
+        "operationId": "PrometheusController_index",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Prometheus"
+        ],
+        "summary": "Payments Prometheus metrics",
+        "description": "Prometheus scrape target for wallet and transaction metrics."
+      }
+    },
+    "/api/v1/payments/wallets": {
+      "get": {
+        "operationId": "PayWalletsController_list",
+        "parameters": [
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Free-text search (endpoint-specific)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number (1-indexed)",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "companyId",
+            "required": false,
+            "in": "query",
+            "description": "Filter wallets for a specific company in the tenant",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List wallets for the active organization",
+        "tags": [
+          "wallets"
+        ]
+      },
+      "post": {
+        "operationId": "PayWalletsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePayWalletDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create an additional company wallet",
+        "tags": [
+          "wallets"
+        ]
+      }
+    },
+    "/api/v1/payments/internal/wallets/resolve-treasury": {
+      "get": {
+        "description": "Uses PAYMENTS_INTERNAL_API_KEY. Returns wallet UUID for payroll disbursement debit source.",
+        "operationId": "InternalTreasuryWalletsController_resolveTreasury",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "companyId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "currency",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Resolve default company operating wallet for a payout currency",
+        "tags": [
+          "internal-wallets"
+        ]
+      }
+    },
+    "/api/v1/payments/transactions": {
+      "get": {
+        "operationId": "TransactionsController_list",
+        "parameters": [
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Free-text search (endpoint-specific)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number (1-indexed)",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "sort",
+            "required": false,
+            "in": "query",
+            "description": "Sort in the format field:direction (e.g. createdAt:desc)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "startDate",
+            "required": false,
+            "in": "query",
+            "description": "Filter transactions created on/after this date (ISO string)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "endDate",
+            "required": false,
+            "in": "query",
+            "description": "Filter transactions created on/before this date (ISO string)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "CREDIT",
+                "DEBIT"
+              ]
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "PENDING",
+                "COMPLETED",
+                "FAILED",
+                "REVERSED"
+              ]
+            }
+          },
+          {
+            "name": "currency",
+            "required": false,
+            "in": "query",
+            "description": "ISO currency code (e.g. USD)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "walletId",
+            "required": false,
+            "in": "query",
+            "description": "Filter to a specific wallet id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "reference",
+            "required": false,
+            "in": "query",
+            "description": "Filter to an exact reference",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "providerReference",
+            "required": false,
+            "in": "query",
+            "description": "Filter to an exact provider reference",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List transactions for the active organization",
+        "tags": [
+          "transactions"
+        ]
+      }
+    },
+    "/api/v1/payments/transactions/export": {
+      "get": {
+        "operationId": "TransactionsController_export",
+        "parameters": [
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Free-text search (endpoint-specific)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number (1-indexed)",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Max rows to export (server-capped)",
+            "schema": {
+              "minimum": 1,
+              "maximum": 10000,
+              "default": 5000,
+              "type": "number"
+            }
+          },
+          {
+            "name": "sort",
+            "required": false,
+            "in": "query",
+            "description": "Sort in the format field:direction (e.g. createdAt:desc)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "startDate",
+            "required": false,
+            "in": "query",
+            "description": "Filter transactions created on/after this date (ISO string)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "endDate",
+            "required": false,
+            "in": "query",
+            "description": "Filter transactions created on/before this date (ISO string)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "type",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "CREDIT",
+                "DEBIT"
+              ]
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "PENDING",
+                "COMPLETED",
+                "FAILED",
+                "REVERSED"
+              ]
+            }
+          },
+          {
+            "name": "currency",
+            "required": false,
+            "in": "query",
+            "description": "ISO currency code (e.g. USD)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "walletId",
+            "required": false,
+            "in": "query",
+            "description": "Filter to a specific wallet id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "reference",
+            "required": false,
+            "in": "query",
+            "description": "Filter to an exact reference",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "providerReference",
+            "required": false,
+            "in": "query",
+            "description": "Filter to an exact provider reference",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "format",
+            "required": false,
+            "in": "query",
+            "description": "Export format",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "csv",
+                "xlsx",
+                "pdf"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Export transactions (csv/xlsx/pdf) with filters applied",
+        "tags": [
+          "transactions"
+        ]
+      }
+    },
+    "/api/v1/payments/transactions/{id}": {
+      "get": {
+        "operationId": "TransactionsController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get a transaction by id (scoped to the active organization)",
+        "tags": [
+          "transactions"
+        ]
+      }
+    },
+    "/api/v1/payments/flutterwave/customers": {
+      "post": {
+        "operationId": "FlutterwaveController_createCustomer",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCustomerDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Customer successfully created."
+          }
+        },
+        "summary": "Create a new Flutterwave customer",
+        "tags": [
+          "Flutterwave"
+        ]
+      },
+      "get": {
+        "operationId": "FlutterwaveController_getAllCustomers",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Retrieve all customers",
+        "tags": [
+          "Flutterwave"
+        ]
+      }
+    },
+    "/api/v1/payments/flutterwave/customers/{id}": {
+      "get": {
+        "operationId": "FlutterwaveController_getCustomer",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Retrieve a customer by Flutterwave ID",
+        "tags": [
+          "Flutterwave"
+        ]
+      }
+    },
+    "/api/v1/payments/flutterwave/recipients": {
+      "post": {
+        "operationId": "FlutterwaveController_createRecipient",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRecipientDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Recipient successfully created."
+          }
+        },
+        "summary": "Create a transfer recipient (Bank details)",
+        "tags": [
+          "Flutterwave"
+        ]
+      },
+      "get": {
+        "operationId": "FlutterwaveController_getAllRecipients",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Retrieve all transfer recipients",
+        "tags": [
+          "Flutterwave"
+        ]
+      }
+    },
+    "/api/v1/payments/flutterwave/recipients/{id}": {
+      "get": {
+        "operationId": "FlutterwaveController_getRecipient",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Retrieve a transfer recipient by ID",
+        "tags": [
+          "Flutterwave"
+        ]
+      }
+    },
+    "/api/v1/payments/flutterwave/get-payment-methods": {
+      "get": {
+        "description": "Retrieves the list of available payment methods for a given currency.",
+        "operationId": "FlutterwaveController_getPaymentMethods",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Returns the list of payment methods."
+          },
+          "401": {
+            "description": "OAuth2 Token Refresh failed."
+          }
+        },
+        "summary": "Get Payment Methods",
+        "tags": [
+          "Flutterwave"
+        ]
+      }
+    },
+    "/api/v1/payments/flutterwave/transfers": {
+      "post": {
+        "operationId": "FlutterwaveController_createTransfer",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InitiateTransferDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Initiate a standard transfer using saved IDs",
+        "tags": [
+          "Flutterwave"
+        ]
+      }
+    },
+    "/api/v1/payments/flutterwave/direct-transfers": {
+      "post": {
+        "operationId": "FlutterwaveController_initiateDirectTransfer",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DirectTransferDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Initiate a one-shot direct transfer (Orchestrator)",
+        "tags": [
+          "Flutterwave"
+        ]
+      }
+    },
+    "/api/v1/payments/flutterwave/virtual-accounts": {
+      "post": {
+        "operationId": "FlutterwaveController_createVirtualAccount",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateVirtualAccountDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Create a virtual account for a customer",
+        "tags": [
+          "Flutterwave"
+        ]
+      },
+      "get": {
+        "operationId": "FlutterwaveController_listVirtualAccounts",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "List all virtual accounts",
+        "tags": [
+          "Flutterwave"
+        ]
+      }
+    },
+    "/api/v1/payments/flutterwave/virtual-accounts/{id}": {
+      "get": {
+        "operationId": "FlutterwaveController_getVirtualAccount",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Get details of a specific virtual account",
+        "tags": [
+          "Flutterwave"
+        ]
+      }
+    },
+    "/api/v1/payments/flutterwave/charges": {
+      "get": {
+        "operationId": "FlutterwaveController_listCharges",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Fetch charges with different status",
+        "tags": [
+          "Flutterwave"
+        ]
+      },
+      "post": {
+        "operationId": "FlutterwaveController_createCharge",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateChargeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Create a charge (USSD or other).",
+        "tags": [
+          "Flutterwave"
+        ]
+      }
+    },
+    "/api/v1/payments/flutterwave/wallet-balance": {
+      "get": {
+        "operationId": "FlutterwaveController_getWalletBalance",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Fetch wallet balance for multiple currencies",
+        "tags": [
+          "Flutterwave"
+        ]
+      }
+    },
+    "/api/v1/payments/flutterwave/wallet-balance/{currency}": {
+      "get": {
+        "operationId": "FlutterwaveController_getCurrencyWalletBalance",
+        "parameters": [
+          {
+            "name": "currency",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Fetch wallet balance for a specific currency",
+        "tags": [
+          "Flutterwave"
+        ]
+      }
+    },
+    "/api/v1/payments/flutterwave/wallet-to-wallet": {
+      "post": {
+        "description": "Auto-creates recipient if needed, checks balance, instant bank transfer from Flutterwave wallet",
+        "operationId": "FlutterwaveController_walletToWalletTransfer",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WalletToWalletTransferDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Transfer initiated successfully."
+          }
+        },
+        "summary": "Wallet-to-wallet transfer (simple flow)",
+        "tags": [
+          "Flutterwave"
+        ]
+      }
+    },
+    "/api/v1/payments/flutterwave/banks": {
+      "get": {
+        "operationId": "FlutterwaveController_getBanks",
+        "parameters": [
+          {
+            "name": "country",
+            "required": true,
+            "in": "query",
+            "description": "ISO 3166-1 alpha-2 country code",
+            "schema": {
+              "example": "NG",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Get supported banks for a country",
+        "tags": [
+          "Flutterwave"
+        ]
+      }
+    },
+    "/api/v1/payments/flutterwave/payment-methods": {
+      "post": {
+        "operationId": "FlutterwaveController_createPaymentMethod",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePaymentMethodDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Create a payment method",
+        "tags": [
+          "Flutterwave"
+        ]
+      }
+    },
+    "/api/v1/payments/flutterwave/charges/{id}": {
+      "get": {
+        "operationId": "FlutterwaveController_getCharge",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Retrieve a charge by ID",
+        "tags": [
+          "Flutterwave"
+        ]
+      }
+    },
+    "/api/v1/payments/flutterwave/ussd/collect": {
+      "post": {
+        "operationId": "FlutterwaveController_initiateUssdCollection",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InitiateUssdCollectionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Initiate USSD collection (NGN only). Creates customer if needed, creates payment method, initiates charge, returns dial string.",
+        "tags": [
+          "Flutterwave"
+        ]
+      }
+    },
+    "/api/v1/payments/flutterwave/opay/collect": {
+      "post": {
+        "operationId": "FlutterwaveController_initiateOpayCollection",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InitiateOpayCollectionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Initiate OPay collection (NGN only). Creates payment method, initiates charge, returns redirect URL for customer authorization.",
+        "tags": [
+          "Flutterwave"
+        ]
+      }
+    },
+    "/api/v1/payments/flutterwave/card/collect": {
+      "post": {
+        "operationId": "FlutterwaveController_initiateCardCollection",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InitiateCardCollectionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Initiate card collection. Creates card payment method and charge. Returns next_action for frontend to handle authorization.",
+        "tags": [
+          "Flutterwave"
+        ]
+      }
+    },
+    "/api/v1/payments/flutterwave/card/charge/{chargeId}/authorize": {
+      "put": {
+        "operationId": "FlutterwaveController_authorizeCharge",
+        "parameters": [
+          {
+            "name": "chargeId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AuthorizeCardChargeDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Authorize a pending card charge. Use after receiving requires_pin, requires_otp, or requires_additional_fields from initiate.",
+        "tags": [
+          "Flutterwave"
+        ]
+      }
+    },
+    "/api/v1/payments/flutterwave/transfers/bank": {
+      "post": {
+        "operationId": "FlutterwaveController_initiateBankAccountTransfer",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BankAccountTransferDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Initiate a bank account transfer (payout). Debits your Flutterwave wallet and sends to recipient bank account.",
+        "tags": [
+          "Flutterwave"
+        ]
+      }
+    },
+    "/api/v1/payments/flutterwave/transfers/mobile-money": {
+      "post": {
+        "operationId": "FlutterwaveController_initiateMobileMoneyTransfer",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MobileMoneyTransferDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Initiate a mobile money transfer (payout). Debits your Flutterwave wallet and sends to recipient mobile wallet.",
+        "tags": [
+          "Flutterwave"
+        ]
+      }
+    },
+    "/api/v1/payments/flutterwave/refund": {
+      "post": {
+        "operationId": "FlutterwaveController_refund",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefundDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Card refunds are completed between 3-15 days after the refund is initiated. Refunds to mobile money wallets take 3-5 days, while refunds to bank accounts are completed in 24 hours.",
+        "tags": [
+          "Flutterwave"
+        ]
+      }
+    },
+    "/api/v1/payments/flutterwave/refunds/{id}": {
+      "get": {
+        "operationId": "FlutterwaveController_getRefundStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Get refund status by ID",
+        "tags": [
+          "Flutterwave"
+        ]
+      }
+    },
+    "/api/v1/payments/flutterwave/refunds": {
+      "get": {
+        "operationId": "FlutterwaveController_listRefunds",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "List refunds with optional filters",
+        "tags": [
+          "Flutterwave"
+        ]
+      }
+    },
+    "/api/v1/payments/flutterwave/webhook": {
+      "post": {
+        "operationId": "FlutterwaveWebhookController_handleWebhook",
+        "parameters": [
+          {
+            "name": "flutterwave-signature",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Flutterwave webhook endpoint (PWBT payment notification)",
+        "tags": [
+          "Flutterwave Webhooks"
+        ]
+      }
+    },
+    "/api/v1/payments/ecobank/token": {
+      "post": {
+        "operationId": "EcobankController_generateToken",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Token generated successfully"
+          },
+          "400": {
+            "description": "Bad request - Invalid credentials"
+          }
+        },
+        "summary": "Generate access token for Ecobank APIs",
+        "tags": [
+          "Ecobank Services"
+        ]
+      }
+    },
+    "/api/v1/payments/ecobank/account/Create": {
+      "post": {
+        "operationId": "EcobankController_createAccount",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountOpeningRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Account created successfully"
+          },
+          "400": {
+            "description": "Bad request - Invalid account details"
+          }
+        },
+        "summary": "Create a new account",
+        "tags": [
+          "Ecobank Services"
+        ]
+      }
+    },
+    "/api/v1/payments/ecobank/payment": {
+      "post": {
+        "operationId": "EcobankController_initiatePayment",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaymentInitiationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Payment initiated successfully"
+          },
+          "400": {
+            "description": "Bad request - Invalid payment details"
+          }
+        },
+        "summary": "Initiate a payment with Ecobank",
+        "tags": [
+          "Ecobank Services"
+        ]
+      }
+    },
+    "/api/v1/payments/ecobank/account/balance": {
+      "post": {
+        "operationId": "EcobankController_getAccountBalance",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountBalanceRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Balance retrieved successfully"
+          },
+          "400": {
+            "description": "Bad request - Invalid account details"
+          }
+        },
+        "summary": "Get account balance",
+        "tags": [
+          "Ecobank Services"
+        ]
+      }
+    },
+    "/api/v1/payments/ecobank/account/statement": {
+      "post": {
+        "operationId": "EcobankController_getAccountStatement",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AccountStatementRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Statement retrieved successfully"
+          },
+          "400": {
+            "description": "Bad request - Invalid request details"
+          }
+        },
+        "summary": "Get account statement",
+        "tags": [
+          "Ecobank Services"
+        ]
+      }
+    },
+    "/api/v1/payments/ecobank/remittance": {
+      "post": {
+        "operationId": "EcobankController_processRemittance",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RemittanceRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Remittance processed successfully"
+          },
+          "400": {
+            "description": "Bad request - Invalid remittance details"
+          }
+        },
+        "summary": "Process a cross-border remittance",
+        "tags": [
+          "Ecobank Services"
+        ]
+      }
+    },
+    "/api/v1/payments/ecobank/bills/payment": {
+      "post": {
+        "operationId": "EcobankController_processBillPayment",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BillPaymentRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Bill payment processed successfully"
+          },
+          "400": {
+            "description": "Bad request - Invalid payment details"
+          }
+        },
+        "summary": "Process a bill payment",
+        "tags": [
+          "Ecobank Services"
+        ]
+      }
+    },
+    "/api/v1/payments/ecobank/institutions": {
+      "post": {
+        "operationId": "EcobankController_getInstitutionList",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstitutionListRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Institution list retrieved successfully"
+          },
+          "400": {
+            "description": "Bad request"
+          }
+        },
+        "summary": "Get list of supported institutions",
+        "tags": [
+          "Ecobank Services"
+        ]
+      }
+    },
+    "/api/v1/payments/ecobank/name-enquiry": {
+      "post": {
+        "operationId": "EcobankController_nameEnquiry",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/NameEnquiryRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Name enquiry completed successfully"
+          },
+          "400": {
+            "description": "Bad request - Invalid account details"
+          }
+        },
+        "summary": "Perform name enquiry on an account",
+        "tags": [
+          "Ecobank Services"
+        ]
+      }
+    },
+    "/api/v1/payments/mobile-money": {
+      "get": {
+        "operationId": "MobileMoneyController_findAll",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "MobileMoney"
+        ]
+      }
+    },
+    "/api/v1/payments/mobile-money/{id}": {
+      "get": {
+        "operationId": "MobileMoneyController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "MobileMoney"
+        ]
+      },
+      "delete": {
+        "operationId": "MobileMoneyController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "MobileMoney"
+        ]
+      }
+    },
+    "/api/v1/payments/stripe/create-payment-intent": {
+      "post": {
+        "operationId": "StripeController_createPaymentIntent",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePaymentIntentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create a Stripe Payment Intent",
+        "tags": [
+          "Stripe Payments"
+        ]
+      }
+    },
+    "/api/v1/payments/internal/stripe/checkout-sessions": {
+      "post": {
+        "operationId": "StripeInternalController_createCheckoutSession",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCheckoutSessionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Create a Stripe Checkout session (internal)",
+        "tags": [
+          "Stripe Internal"
+        ]
+      }
+    },
+    "/api/v1/payments/stripe/webhook": {
+      "post": {
+        "operationId": "StripeWebhookController_handleWebhook",
+        "parameters": [
+          {
+            "name": "stripe-signature",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Stripe webhook endpoint (checkout session completion)",
+        "tags": [
+          "Stripe Webhooks"
+        ]
+      }
+    },
+    "/api/v1/payments/capabilities/snapshot": {
+      "get": {
+        "operationId": "PaymentsCapabilitiesController_snapshot",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Latest committed provider capabilities snapshot (global facts)",
+        "tags": [
+          "Payments capabilities"
+        ]
+      }
+    },
+    "/api/v1/payments/capabilities/evaluate": {
+      "post": {
+        "operationId": "PaymentsCapabilitiesController_evaluate",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EvaluateCapabilityDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Evaluate provider capability + org entitlements for a rail/currency/country",
+        "tags": [
+          "Payments capabilities"
+        ]
+      }
+    },
+    "/api/v1/payments/capabilities-admin/providers": {
+      "get": {
+        "operationId": "PaymentsCapabilitiesAdminController_listProviders",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List payment providers",
+        "tags": [
+          "Payments capabilities (internal admin)"
+        ]
+      },
+      "post": {
+        "operationId": "PaymentsCapabilitiesAdminController_createProvider",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePaymentProviderDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create a payment provider",
+        "tags": [
+          "Payments capabilities (internal admin)"
+        ]
+      }
+    },
+    "/api/v1/payments/capabilities-admin/providers/{id}": {
+      "patch": {
+        "operationId": "PaymentsCapabilitiesAdminController_updateProvider",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePaymentProviderDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update a payment provider (including demotion via active=false)",
+        "tags": [
+          "Payments capabilities (internal admin)"
+        ]
+      }
+    },
+    "/api/v1/payments/capabilities-admin/providers/{providerId}/rails": {
+      "get": {
+        "operationId": "PaymentsCapabilitiesAdminController_listRails",
+        "parameters": [
+          {
+            "name": "providerId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List rails (and corridors) for a provider",
+        "tags": [
+          "Payments capabilities (internal admin)"
+        ]
+      },
+      "post": {
+        "operationId": "PaymentsCapabilitiesAdminController_upsertRail",
+        "parameters": [
+          {
+            "name": "providerId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpsertProviderRailDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Upsert (enable) a rail for a provider",
+        "tags": [
+          "Payments capabilities (internal admin)"
+        ]
+      }
+    },
+    "/api/v1/payments/capabilities-admin/rails/{railId}/active": {
+      "patch": {
+        "operationId": "PaymentsCapabilitiesAdminController_setRailActive",
+        "parameters": [
+          {
+            "name": "railId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetActiveDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Activate/deactivate a rail",
+        "tags": [
+          "Payments capabilities (internal admin)"
+        ]
+      }
+    },
+    "/api/v1/payments/capabilities-admin/rails/{railId}/corridors": {
+      "post": {
+        "operationId": "PaymentsCapabilitiesAdminController_addCorridor",
+        "parameters": [
+          {
+            "name": "railId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AddProviderCorridorDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Add a corridor to a rail",
+        "tags": [
+          "Payments capabilities (internal admin)"
+        ]
+      }
+    },
+    "/api/v1/payments/capabilities-admin/corridors/{corridorId}/active": {
+      "patch": {
+        "operationId": "PaymentsCapabilitiesAdminController_setCorridorActive",
+        "parameters": [
+          {
+            "name": "corridorId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SetActiveDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Activate/deactivate a corridor",
+        "tags": [
+          "Payments capabilities (internal admin)"
+        ]
+      }
+    },
+    "/api/v1/payments/capabilities-admin/publish": {
+      "post": {
+        "operationId": "PaymentsCapabilitiesAdminController_publish",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PublishCapabilitiesDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Publish a new global capabilities snapshot from the current active graph",
+        "tags": [
+          "Payments capabilities (internal admin)"
+        ]
+      }
+    },
+    "/api/v1/payments/capabilities/org/payout-rails": {
+      "get": {
+        "description": "Does not expose payment provider identities — only rails and supported corridors from the published snapshot.",
+        "operationId": "PaymentsCapabilitiesOrgController_payoutRailsSummary",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List supported payout rails and country/currency corridors (merged across providers)",
+        "tags": [
+          "Payments capabilities"
+        ]
+      }
+    },
+    "/api/v1/payments/billing/summary": {
+      "get": {
+        "operationId": "getBillingSummary",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Billing overview: plan, seat usage, and current-period estimates",
+        "tags": [
+          "billing"
+        ]
+      }
+    },
+    "/api/v1/payments/billing": {
+      "post": {
+        "operationId": "upsertBilling",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpsertBillingDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create or sync organization billing (plan, pricing band, provider ids)",
+        "tags": [
+          "billing"
+        ]
+      }
+    },
+    "/api/v1/payments/billing/internal": {
+      "post": {
+        "operationId": "upsertBillingInternal",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpsertBillingDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Internal: create or sync organization billing (plan onboarding)",
+        "tags": [
+          "billing-internal"
+        ]
+      }
+    },
+    "/api/v1/payments/billing/internal/orgs/{organizationId}/paid-status": {
+      "get": {
+        "operationId": "BillingInternalController_paidStatus",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Internal: whether billing is active and any invoice has been paid (referrals / eligibility)",
+        "tags": [
+          "billing-internal"
+        ]
+      }
+    },
+    "/api/v1/payments/billing/internal/customer": {
+      "post": {
+        "operationId": "BillingCustomerInternalController_ensureCustomer",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EnsureBillingCustomerDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Internal: ensure Flutterwave customer exists for org billing",
+        "tags": [
+          "billing-internal"
+        ]
+      }
+    },
+    "/api/v1/payments/billing/checkout": {
+      "get": {
+        "description": "Creates/updates the current-period invoice for manual payment via hosted checkout. The system computes the amount from plan pricing and current billable seats (including any seat overage). VAT is not applied in this version. Requires a logged-in user context; frontend must NOT send amount.",
+        "operationId": "createBillingCheckout",
+        "parameters": [
+          {
+            "name": "plan",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create hosted checkout for the current billing period (system computed)",
+        "tags": [
+          "billing-payments"
+        ]
+      }
+    },
+    "/api/v1/payments/billing/checkout/hosted-link": {
+      "get": {
+        "description": "Legacy hosted checkout flow (non-orchestrator). Useful as a fallback when v4 orchestrator redirect_url validation blocks Mobile Money flows.",
+        "operationId": "BillingPaymentsController_checkoutHostedLink",
+        "parameters": [
+          {
+            "name": "plan",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create hosted checkout link (legacy hosted flow)",
+        "tags": [
+          "billing-payments"
+        ]
+      }
+    },
+    "/api/v1/payments/billing/checkout/mobile-money": {
+      "post": {
+        "description": "Creates/updates the current-period invoice and initiates a Flutterwave v4 orchestrator charge. Returns checkoutUrl when Flutterwave next_action is redirect_url.",
+        "operationId": "BillingPaymentsController_checkoutMobileMoney",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BillingMobileMoneyCheckoutDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create hosted checkout for Mobile Money (Flutterwave v4 Orchestrator)",
+        "tags": [
+          "billing-payments"
+        ]
+      }
+    },
+    "/api/v1/payments/billing/invoices/ping": {
+      "get": {
+        "operationId": "BillingPaymentsController_ping",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "billing-payments"
+        ]
+      }
+    },
+    "/api/v1/payments/billing/webhooks/flutterwave": {
+      "post": {
+        "operationId": "BillingWebhooksController_flutterwave",
+        "parameters": [
+          {
+            "name": "flutterwave-signature",
+            "required": true,
+            "in": "header",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Flutterwave webhook (charge completed/failed)",
+        "tags": [
+          "billing-webhooks"
+        ]
+      }
+    },
+    "/api/v1/payments/internal/payouts/bills/mobile-money": {
+      "post": {
+        "operationId": "InternalPayoutsController_billMobileMoney",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BillMobileMoneyPayoutDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Initiate a mobile money payout for a bill (internal)",
+        "tags": [
+          "Internal Payouts"
+        ]
+      }
+    },
+    "/api/v1/payments/internal/ar/checkout": {
+      "post": {
+        "operationId": "ArCollectionInternalController_checkout",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ArCheckoutDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Start AR invoice checkout for a payment channel",
+        "tags": [
+          "AR Collection Internal"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Fluide Pay API",
+    "description": "Digital wallets, transactions, and payment provider integrations (Ecobank, mobile money). Supports async settlement via Kafka.",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [
+    {
+      "name": "App",
+      "description": "Service root and build metadata. Use for quick connectivity checks.",
+      "x-group": "Operations"
+    },
+    {
+      "name": "Prometheus",
+      "description": "Prometheus scrape endpoint in text exposition format. Configure your metrics collector to poll this path on each service.",
+      "x-group": "Operations"
+    },
+    {
+      "name": "wallets"
+    },
+    {
+      "name": "internal-wallets"
+    },
+    {
+      "name": "transactions"
+    },
+    {
+      "name": "Flutterwave"
+    },
+    {
+      "name": "Flutterwave Webhooks"
+    },
+    {
+      "name": "Ecobank Services"
+    },
+    {
+      "name": "MobileMoney"
+    },
+    {
+      "name": "Stripe Payments"
+    },
+    {
+      "name": "Stripe Internal"
+    },
+    {
+      "name": "Stripe Webhooks"
+    },
+    {
+      "name": "Payments capabilities"
+    },
+    {
+      "name": "Payments capabilities (internal admin)"
+    },
+    {
+      "name": "billing"
+    },
+    {
+      "name": "billing-internal"
+    },
+    {
+      "name": "billing-payments"
+    },
+    {
+      "name": "billing-webhooks"
+    },
+    {
+      "name": "Internal Payouts"
+    },
+    {
+      "name": "AR Collection Internal"
+    }
+  ],
+  "servers": [
+    {
+      "url": "https://staging.api.fluidehr.com",
+      "description": "Beta (staging)"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearer": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      }
+    },
+    "schemas": {
+      "CreatePayWalletDto": {
+        "type": "object",
+        "properties": {
+          "companyId": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string",
+            "example": "XAF"
+          },
+          "walletType": {
+            "type": "string",
+            "enum": [
+              "PRIMARY",
+              "OPERATING",
+              "SAVINGS",
+              "ESCROW"
+            ],
+            "default": "SAVINGS"
+          }
+        },
+        "required": [
+          "companyId",
+          "currency"
+        ]
+      },
+      "AddressDto": {
+        "type": "object",
+        "properties": {
+          "city": {
+            "type": "string",
+            "example": "Buea"
+          },
+          "country": {
+            "type": "string",
+            "example": "CM"
+          },
+          "line1": {
+            "type": "string",
+            "example": "P.O. Box 1234"
+          },
+          "postal_code": {
+            "type": "string",
+            "example": "0000"
+          },
+          "state": {
+            "type": "string",
+            "example": "South West"
+          }
+        },
+        "required": [
+          "city",
+          "country",
+          "line1",
+          "postal_code",
+          "state"
+        ]
+      },
+      "NameDto": {
+        "type": "object",
+        "properties": {
+          "first": {
+            "type": "string",
+            "example": "King"
+          },
+          "last": {
+            "type": "string",
+            "example": "LeBron"
+          }
+        },
+        "required": [
+          "first",
+          "last"
+        ]
+      },
+      "PhoneDto": {
+        "type": "object",
+        "properties": {
+          "country_code": {
+            "type": "string",
+            "example": "237"
+          },
+          "number": {
+            "type": "string",
+            "example": "653033620"
+          }
+        },
+        "required": [
+          "country_code",
+          "number"
+        ]
+      },
+      "CreateCustomerDto": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "$ref": "#/components/schemas/AddressDto"
+          },
+          "email": {
+            "type": "string",
+            "description": "The customer email address",
+            "example": "cornelius@gmail.com"
+          },
+          "name": {
+            "$ref": "#/components/schemas/NameDto"
+          },
+          "phone": {
+            "$ref": "#/components/schemas/PhoneDto"
+          }
+        },
+        "required": [
+          "address",
+          "email",
+          "name"
+        ]
+      },
+      "MobileMoneyDto": {
+        "type": "object",
+        "properties": {
+          "network": {
+            "type": "string",
+            "example": "MTN"
+          },
+          "country": {
+            "type": "string",
+            "example": "CM"
+          },
+          "msisdn": {
+            "type": "string",
+            "example": "237653033620"
+          }
+        },
+        "required": [
+          "network",
+          "country",
+          "msisdn"
+        ]
+      },
+      "CreateRecipientDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "bank_egp",
+              "bank_etb",
+              "bank_eur",
+              "bank_gbp",
+              "bank_ghs",
+              "bank_kes",
+              "bank_mwk",
+              "bank_ngn",
+              "bank_usd",
+              "bank_rwf",
+              "bank_sll",
+              "bank_ugx",
+              "bank_xaf",
+              "bank_xof",
+              "bank_zar",
+              "mobile_money_egp",
+              "mobile_money_etb",
+              "mobile_money_ghs",
+              "mobile_money_kes",
+              "mobile_money_rwf",
+              "mobile_money_tzs",
+              "mobile_money_ugx",
+              "mobile_money_xaf",
+              "mobile_money_xof",
+              "mobile_money_zmw"
+            ],
+            "description": "The type of transfer recipient (e.g., bank_egp, mobile_money_ghs, etc.)"
+          },
+          "name": {
+            "$ref": "#/components/schemas/NameDto"
+          },
+          "phone": {
+            "$ref": "#/components/schemas/PhoneDto"
+          },
+          "address": {
+            "$ref": "#/components/schemas/AddressDto"
+          },
+          "email": {
+            "type": "string",
+            "description": "email address"
+          },
+          "bank": {
+            "type": "object",
+            "description": "The bank details for the recipient."
+          },
+          "mobile_money": {
+            "description": "The mobile money details for the recipient.",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/MobileMoneyDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "type",
+          "name",
+          "phone",
+          "address",
+          "email",
+          "bank",
+          "mobile_money"
+        ]
+      },
+      "DisbursementObject": {
+        "type": "object",
+        "properties": {
+          "date_time": {
+            "type": "string",
+            "example": "2026-09-27 16:57:55"
+          },
+          "timezone": {
+            "type": "string",
+            "example": "Africa/Douala"
+          }
+        },
+        "required": [
+          "date_time",
+          "timezone"
+        ]
+      },
+      "AmountDto": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "number",
+            "example": 1000
+          },
+          "applies_to": {
+            "type": "string",
+            "example": "destination_currency"
+          }
+        },
+        "required": [
+          "value",
+          "applies_to"
+        ]
+      },
+      "PaymentInstructionDto": {
+        "type": "object",
+        "properties": {
+          "source_currency": {
+            "type": "string",
+            "example": "XAF"
+          },
+          "amount": {
+            "$ref": "#/components/schemas/AmountDto"
+          },
+          "recipient_id": {
+            "type": "string",
+            "description": "The ID of the saved recipient"
+          },
+          "sender_id": {
+            "type": "string",
+            "description": "Optional Flutterwave v4 sender entity id"
+          }
+        },
+        "required": [
+          "source_currency",
+          "amount",
+          "recipient_id"
+        ]
+      },
+      "InitiateTransferDto": {
+        "type": "object",
+        "properties": {
+          "action": {
+            "type": "string",
+            "enum": [
+              "instant",
+              "scheduled",
+              "deferred"
+            ]
+          },
+          "reference": {
+            "type": "string",
+            "example": "tfr-org123-f4e2d110",
+            "description": "Unique transaction reference (6–42 chars)->`tfr-${organizationId}-${uuidv4().slice(0,8)}`"
+          },
+          "narration": {
+            "type": "string",
+            "example": "Staff Salary"
+          },
+          "disburse_option": {
+            "$ref": "#/components/schemas/DisbursementObject"
+          },
+          "payment_instruction": {
+            "$ref": "#/components/schemas/PaymentInstructionDto"
+          }
+        },
+        "required": [
+          "action",
+          "reference",
+          "narration",
+          "payment_instruction"
+        ]
+      },
+      "OrchestratorRecipientMomoDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/NameDto"
+          },
+          "mobile_money": {
+            "$ref": "#/components/schemas/MobileMoneyDto"
+          }
+        },
+        "required": [
+          "name",
+          "mobile_money"
+        ]
+      },
+      "OrchestratorSenderDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/NameDto"
+          },
+          "phone": {
+            "$ref": "#/components/schemas/PhoneDto"
+          },
+          "email": {
+            "type": "string",
+            "example": "mercy1@gmail.com"
+          },
+          "address": {
+            "$ref": "#/components/schemas/AddressDto"
+          }
+        },
+        "required": [
+          "name",
+          "phone",
+          "email",
+          "address"
+        ]
+      },
+      "OchestatorPaymentInstructionDto": {
+        "type": "object",
+        "properties": {
+          "source_currency": {
+            "type": "string",
+            "example": "XAF"
+          },
+          "destination_currency": {
+            "type": "string",
+            "example": "XAF"
+          },
+          "amount": {
+            "$ref": "#/components/schemas/AmountDto"
+          },
+          "recipient": {
+            "description": "The object of the recipient",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OrchestratorRecipientMomoDto"
+              }
+            ]
+          },
+          "sender": {
+            "description": "The object of the sender",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OrchestratorSenderDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "source_currency",
+          "destination_currency",
+          "amount",
+          "recipient",
+          "sender"
+        ]
+      },
+      "DirectTransferDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "mobile_money",
+            "enum": [
+              "bank",
+              "mobile_money",
+              "wallet"
+            ]
+          },
+          "action": {
+            "type": "string",
+            "example": "instant",
+            "enum": [
+              "instant",
+              "scheduled",
+              "deferred"
+            ]
+          },
+          "reference": {
+            "type": "string",
+            "example": "tfr-org123-f4e2d1c0",
+            "description": "Unique transaction reference (6–42 chars)->`tfr-${organizationId}-${uuidv4().slice(0,8)}`"
+          },
+          "narration": {
+            "type": "string",
+            "example": "Payment for supplies"
+          },
+          "payment_instruction": {
+            "$ref": "#/components/schemas/OchestatorPaymentInstructionDto"
+          }
+        },
+        "required": [
+          "type",
+          "action",
+          "reference",
+          "narration",
+          "payment_instruction"
+        ]
+      },
+      "CreateVirtualAccountDto": {
+        "type": "object",
+        "properties": {
+          "customer_id": {
+            "type": "string",
+            "example": "123456",
+            "description": "ID of the customer this virtual account belongs to."
+          },
+          "reference": {
+            "type": "string",
+            "example": "va-org123-f4e2d1c0",
+            "description": "Unique transaction reference (6–42 chars)->`va-${organizationId}-${uuidv4().slice(0,8)}`"
+          },
+          "amount": {
+            "type": "number",
+            "example": 0,
+            "description": "Amount to collect. Use 0 for static accounts, >0 for dynamic."
+          },
+          "currency": {
+            "type": "string",
+            "example": "NGN",
+            "enum": [
+              "NGN",
+              "GHS",
+              "EGP",
+              "KES",
+              "MAD",
+              "ZAR"
+            ],
+            "description": "ISO 4217 currency code."
+          },
+          "account_type": {
+            "type": "string",
+            "example": "static",
+            "enum": [
+              "static",
+              "dynamic"
+            ],
+            "description": "Must be \"static\" when amount=0, \"dynamic\" when amount>0."
+          },
+          "expiry": {
+            "type": "number",
+            "example": 3600,
+            "description": "Expiry in seconds (60–31536000). Required when account_type is dynamic."
+          },
+          "narration": {
+            "type": "string",
+            "example": "Cornelius Ashley-Osuzoka",
+            "description": "Name shown when the account is resolved."
+          },
+          "bvn": {
+            "type": "string",
+            "example": "12345678901",
+            "description": "Customer's Bank Verification Number. Required for NGN static accounts."
+          },
+          "nin": {
+            "type": "string",
+            "example": "20757826342",
+            "description": "Customer's National Identity Number."
+          },
+          "customer_account_number": {
+            "type": "string",
+            "example": "0812345678",
+            "description": "Bank account the transfer originates from. Required for EGP and KES."
+          }
+        },
+        "required": [
+          "customer_id",
+          "reference",
+          "amount",
+          "currency",
+          "account_type"
+        ]
+      },
+      "phone": {
+        "type": "object",
+        "properties": {
+          "country_code": {
+            "type": "string",
+            "example": "237"
+          },
+          "number": {
+            "type": "string",
+            "example": "690000031"
+          }
+        },
+        "required": [
+          "country_code",
+          "number"
+        ]
+      },
+      "address": {
+        "type": "object",
+        "properties": {
+          "city": {
+            "type": "string",
+            "example": "Douala"
+          },
+          "country": {
+            "type": "string",
+            "example": "Cameroon"
+          },
+          "line1": {
+            "type": "string",
+            "example": "123 Main St"
+          },
+          "postal_code": {
+            "type": "string",
+            "example": "12345"
+          },
+          "state": {
+            "type": "string",
+            "example": "Littoral"
+          }
+        },
+        "required": [
+          "city",
+          "country",
+          "line1",
+          "postal_code",
+          "state"
+        ]
+      },
+      "WalletToWalletTransferDto": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "example": 50000,
+            "description": "Transfer amount"
+          },
+          "currency": {
+            "type": "string",
+            "example": "XAF",
+            "description": "Currency (e.g., XAF, NGN, USD)"
+          },
+          "account_number": {
+            "type": "string",
+            "example": "0690000031",
+            "description": "Recipient bank account number"
+          },
+          "bank_code": {
+            "type": "string",
+            "example": "044",
+            "description": "Recipient bank code (e.g., Ecobank Cameroon: 044)"
+          },
+          "recipient_name": {
+            "type": "string",
+            "example": "John Doe"
+          },
+          "narration": {
+            "type": "string",
+            "example": "Salary payment for January"
+          },
+          "reference": {
+            "type": "string",
+            "example": "w2w-org123-f4e2d1c0",
+            "description": "Unique transaction reference (6–42 chars)->`w2w-${organizationId}-${uuidv4().slice(0,8)}`"
+          },
+          "phone": {
+            "example": {
+              "country_code": "237",
+              "number": "690000031"
+            },
+            "description": "Recipient phone details",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/phone"
+              }
+            ]
+          },
+          "address": {
+            "example": {
+              "city": "Douala",
+              "country": "Cameroon",
+              "line1": "123 Main St",
+              "postal_code": "12345",
+              "state": "Littoral"
+            },
+            "description": "Recipient address details",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/address"
+              }
+            ]
+          }
+        },
+        "required": [
+          "amount",
+          "currency",
+          "account_number",
+          "bank_code",
+          "recipient_name",
+          "narration",
+          "reference",
+          "phone",
+          "address"
+        ]
+      },
+      "UssdDto": {
+        "type": "object",
+        "properties": {
+          "account_bank": {
+            "type": "string",
+            "example": "044",
+            "description": "Bank code from GET /banks"
+          }
+        },
+        "required": [
+          "account_bank"
+        ]
+      },
+      "CardCofDto": {
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "type": "boolean",
+            "example": true
+          },
+          "agreement_id": {
+            "type": "string",
+            "example": "Agreement00w02W1"
+          }
+        },
+        "required": [
+          "enabled",
+          "agreement_id"
+        ]
+      },
+      "CardDto": {
+        "type": "object",
+        "properties": {
+          "encrypted_card_number": {
+            "type": "string",
+            "description": "AES-256-GCM encrypted card number"
+          },
+          "encrypted_expiry_month": {
+            "type": "string",
+            "description": "AES-256-GCM encrypted expiry month"
+          },
+          "encrypted_expiry_year": {
+            "type": "string",
+            "description": "AES-256-GCM encrypted expiry year"
+          },
+          "encrypted_cvv": {
+            "type": "string",
+            "description": "AES-256-GCM encrypted CVV"
+          },
+          "nonce": {
+            "type": "string",
+            "description": "Randomly generated 12-character nonce"
+          },
+          "cof": {
+            "$ref": "#/components/schemas/CardCofDto"
+          }
+        },
+        "required": [
+          "encrypted_card_number",
+          "encrypted_expiry_month",
+          "encrypted_expiry_year",
+          "encrypted_cvv",
+          "nonce"
+        ]
+      },
+      "CreatePaymentMethodDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "ussd",
+            "description": "\"ussd\", \"opay\", or \"card\""
+          },
+          "ussd": {
+            "description": "Required when type is \"ussd\"",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UssdDto"
+              }
+            ]
+          },
+          "card": {
+            "description": "Required when type is \"card\"",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/CardDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "CreateChargeDto": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "example": 250
+          },
+          "currency": {
+            "type": "string",
+            "example": "NGN",
+            "description": "Must be NGN for USSD"
+          },
+          "reference": {
+            "type": "string",
+            "example": "charge-org123-f4e2d110",
+            "description": "Unique transaction reference (6–42 chars)->`charge-${organizationId}-${uuidv4().slice(0,8)}`"
+          },
+          "customer_id": {
+            "type": "string",
+            "example": "cus_2CoVnkAIww"
+          },
+          "payment_method_id": {
+            "type": "string",
+            "example": "pmd_1lXw6jmAkT"
+          },
+          "redirect_url": {
+            "type": "string",
+            "example": "https://fluide.com/redirect"
+          },
+          "meta": {
+            "type": "object",
+            "example": {
+              "order_id": "ORD_001"
+            }
+          }
+        },
+        "required": [
+          "amount",
+          "currency",
+          "reference",
+          "customer_id",
+          "payment_method_id"
+        ]
+      },
+      "InitiateUssdCollectionDto": {
+        "type": "object",
+        "properties": {
+          "customerId": {
+            "type": "string",
+            "example": "cus_2CoVnkAIww",
+            "description": "Flutterwave customer ID."
+          },
+          "bankCode": {
+            "type": "string",
+            "example": "044",
+            "description": "Bank code from GET /flutterwave/banks?country=NG"
+          },
+          "amount": {
+            "type": "number",
+            "example": 250,
+            "description": "Amount in NGN"
+          },
+          "reference": {
+            "type": "string",
+            "example": "ussd-org123-f4e2d1c0",
+            "description": "Unique transaction reference (6–42 chars)->`ussd-${organizationId}-${uuidv4().slice(0,8)}`"
+          },
+          "redirectUrl": {
+            "type": "string",
+            "example": "https://fluidepay.com/redirect"
+          },
+          "meta": {
+            "type": "object",
+            "example": {
+              "orderId": "ORD_001"
+            }
+          }
+        },
+        "required": [
+          "customerId",
+          "bankCode",
+          "amount",
+          "reference"
+        ]
+      },
+      "InitiateOpayCollectionDto": {
+        "type": "object",
+        "properties": {
+          "customerId": {
+            "type": "string",
+            "example": "cus_2CoVnkAIww",
+            "description": "Flutterwave customer ID"
+          },
+          "amount": {
+            "type": "number",
+            "example": 200,
+            "description": "Amount in NGN"
+          },
+          "reference": {
+            "type": "string",
+            "example": "opay-org123-f4e2d1c0",
+            "description": "Unique reference (6–42 chars) → `opay-${organisationId}-${random}`"
+          },
+          "meta": {
+            "type": "object",
+            "example": {
+              "orderId": "ORD_001"
+            }
+          }
+        },
+        "required": [
+          "customerId",
+          "amount",
+          "reference"
+        ]
+      },
+      "PlainCardDto": {
+        "type": "object",
+        "properties": {
+          "card_number": {
+            "type": "string",
+            "example": "5531886652142950",
+            "description": "Plain card number — encrypted by backend before sending to Flutterwave"
+          },
+          "expiry_month": {
+            "type": "string",
+            "example": "09",
+            "description": "Expiry month (2 digits)"
+          },
+          "expiry_year": {
+            "type": "string",
+            "example": "32",
+            "description": "Expiry year (2 digits)"
+          },
+          "cvv": {
+            "type": "string",
+            "example": "564",
+            "description": "CVV"
+          }
+        },
+        "required": [
+          "card_number",
+          "expiry_month",
+          "expiry_year",
+          "cvv"
+        ]
+      },
+      "InitiateCardCollectionDto": {
+        "type": "object",
+        "properties": {
+          "customerId": {
+            "type": "string",
+            "example": "cus_2CoVnkAIww"
+          },
+          "card": {
+            "description": "Plain card details — backend encrypts before forwarding",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PlainCardDto"
+              }
+            ]
+          },
+          "amount": {
+            "type": "number",
+            "example": 2500
+          },
+          "currency": {
+            "type": "string",
+            "example": "NGN"
+          },
+          "reference": {
+            "type": "string",
+            "example": "card-abc12345-f4e2d1c0",
+            "description": "Unique reference (6–42 chars) → buildReference(\"card\", orgShort)"
+          },
+          "redirectUrl": {
+            "type": "string",
+            "example": "https://fluidepay.com/redirect"
+          },
+          "meta": {
+            "type": "object",
+            "example": {
+              "orderId": "ORD_001"
+            }
+          },
+          "recurring": {
+            "type": "boolean",
+            "example": false,
+            "description": "Set true for recurring/tokenized charges — skips authorization flow"
+          },
+          "scenarioKey": {
+            "type": "string",
+            "example": "scenario:auth_3ds&issuer:approved",
+            "description": "Flutterwave sandbox scenario key for testing auth models"
+          }
+        },
+        "required": [
+          "customerId",
+          "card",
+          "amount",
+          "currency",
+          "reference"
+        ]
+      },
+      "PinAuthInputDto": {
+        "type": "object",
+        "properties": {
+          "pin": {
+            "type": "string",
+            "example": "1234",
+            "description": "Customer PIN — backend encrypts before sending"
+          }
+        },
+        "required": [
+          "pin"
+        ]
+      },
+      "OtpAuthDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "123456"
+          }
+        },
+        "required": [
+          "code"
+        ]
+      },
+      "AvsAddressDto": {
+        "type": "object",
+        "properties": {
+          "city": {
+            "type": "string",
+            "example": "Gotham"
+          },
+          "country": {
+            "type": "string",
+            "example": "US"
+          },
+          "line1": {
+            "type": "string",
+            "example": "221B Baker Street"
+          },
+          "line2": {
+            "type": "string",
+            "example": "Apt 2"
+          },
+          "postal_code": {
+            "type": "string",
+            "example": "94105"
+          },
+          "state": {
+            "type": "string",
+            "example": "Colorado"
+          }
+        },
+        "required": [
+          "city",
+          "country",
+          "line1",
+          "postal_code",
+          "state"
+        ]
+      },
+      "AvsAuthDto": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "$ref": "#/components/schemas/AvsAddressDto"
+          }
+        },
+        "required": [
+          "address"
+        ]
+      },
+      "AuthorizeCardChargeDto": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "example": "pin",
+            "description": "\"pin\", \"otp\", or \"avs\""
+          },
+          "pin": {
+            "description": "Required when type is \"pin\"",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/PinAuthInputDto"
+              }
+            ]
+          },
+          "otp": {
+            "description": "Required when type is \"otp\"",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/OtpAuthDto"
+              }
+            ]
+          },
+          "avs": {
+            "description": "Required when type is \"avs\"",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AvsAuthDto"
+              }
+            ]
+          }
+        },
+        "required": [
+          "type"
+        ]
+      },
+      "BankTransferAmountDto": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "number",
+            "example": 1000
+          },
+          "applies_to": {
+            "type": "string",
+            "example": "destination_currency",
+            "enum": [
+              "destination_currency",
+              "source_currency"
+            ]
+          }
+        },
+        "required": [
+          "value",
+          "applies_to"
+        ]
+      },
+      "BankTransferNameDto": {
+        "type": "object",
+        "properties": {
+          "first": {
+            "type": "string",
+            "example": "Bob"
+          },
+          "middle": {
+            "type": "string",
+            "example": "The"
+          },
+          "last": {
+            "type": "string",
+            "example": "Builder"
+          }
+        },
+        "required": [
+          "first",
+          "last"
+        ]
+      },
+      "BankDetailsDto": {
+        "type": "object",
+        "properties": {
+          "account_number": {
+            "type": "string",
+            "example": "1234567890"
+          },
+          "name": {
+            "type": "string",
+            "example": "Commonwealth Bank of Australia"
+          },
+          "code": {
+            "type": "string",
+            "example": "044",
+            "description": "Bank code — required for NGN and most African currency transfers"
+          },
+          "routing_number": {
+            "type": "string",
+            "example": "062123",
+            "description": "Routing number — required for some international transfers (e.g. USD, AUD)"
+          },
+          "swift_code": {
+            "type": "string",
+            "example": "BANK123",
+            "description": "SWIFT code — required for international transfers"
+          }
+        },
+        "required": [
+          "account_number"
+        ]
+      },
+      "BankTransferPhoneDto": {
+        "type": "object",
+        "properties": {
+          "country_code": {
+            "type": "string",
+            "example": "61"
+          },
+          "number": {
+            "type": "string",
+            "example": "9012345678"
+          }
+        },
+        "required": [
+          "country_code",
+          "number"
+        ]
+      },
+      "BankTransferAddressDto": {
+        "type": "object",
+        "properties": {
+          "line1": {
+            "type": "string",
+            "example": "7A Awesome Apartments"
+          },
+          "line2": {
+            "type": "string",
+            "example": "Sweet Street"
+          },
+          "postal_code": {
+            "type": "string",
+            "example": "123456"
+          },
+          "city": {
+            "type": "string",
+            "example": "Cool City"
+          },
+          "state": {
+            "type": "string",
+            "example": "Super State"
+          },
+          "country": {
+            "type": "string",
+            "example": "AU",
+            "description": "ISO 3166-1 alpha-2 country code"
+          }
+        },
+        "required": [
+          "line1",
+          "postal_code",
+          "city",
+          "state",
+          "country"
+        ]
+      },
+      "BankAccountTransferDto": {
+        "type": "object",
+        "properties": {
+          "reference": {
+            "type": "string",
+            "example": "tfr-org123-f4e2d1c0",
+            "description": "Unique reference (6–42 chars) → buildReference(\"tfr\", orgShort)"
+          },
+          "action": {
+            "type": "string",
+            "example": "instant",
+            "enum": [
+              "instant",
+              "scheduled",
+              "deferred"
+            ]
+          },
+          "source_currency": {
+            "type": "string",
+            "example": "USD",
+            "description": "Currency of your Flutterwave wallet being debited"
+          },
+          "destination_currency": {
+            "type": "string",
+            "example": "NGN",
+            "description": "Currency the recipient receives"
+          },
+          "amount": {
+            "$ref": "#/components/schemas/BankTransferAmountDto"
+          },
+          "recipient_name": {
+            "$ref": "#/components/schemas/BankTransferNameDto"
+          },
+          "bank": {
+            "$ref": "#/components/schemas/BankDetailsDto"
+          },
+          "phone": {
+            "$ref": "#/components/schemas/BankTransferPhoneDto"
+          },
+          "address": {
+            "$ref": "#/components/schemas/BankTransferAddressDto"
+          },
+          "email": {
+            "type": "string",
+            "example": "user@example.com"
+          },
+          "narration": {
+            "type": "string",
+            "example": "Salary payment"
+          },
+          "callback_url": {
+            "type": "string",
+            "example": "https://fluidePay.com/callback"
+          }
+        },
+        "required": [
+          "reference",
+          "action",
+          "source_currency",
+          "destination_currency",
+          "amount",
+          "recipient_name",
+          "bank"
+        ]
+      },
+      "MomoAmountDto": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": "number",
+            "example": 1000
+          },
+          "applies_to": {
+            "type": "string",
+            "example": "destination_currency",
+            "enum": [
+              "destination_currency",
+              "source_currency"
+            ]
+          }
+        },
+        "required": [
+          "value",
+          "applies_to"
+        ]
+      },
+      "MomoNameDto": {
+        "type": "object",
+        "properties": {
+          "first": {
+            "type": "string",
+            "example": "John"
+          },
+          "middle": {
+            "type": "string",
+            "example": "The"
+          },
+          "last": {
+            "type": "string",
+            "example": "Doe"
+          }
+        },
+        "required": [
+          "first",
+          "last"
+        ]
+      },
+      "MobileMoneyTransferDto": {
+        "type": "object",
+        "properties": {
+          "reference": {
+            "type": "string",
+            "example": "momo-org123-f4e2d1c0",
+            "description": "Unique reference (6–42 chars) → buildReference(\"momo\", orgShort)"
+          },
+          "action": {
+            "type": "string",
+            "example": "instant",
+            "enum": [
+              "instant",
+              "scheduled",
+              "deferred"
+            ]
+          },
+          "source_currency": {
+            "type": "string",
+            "example": "NGN",
+            "description": "Currency of your Flutterwave wallet"
+          },
+          "destination_currency": {
+            "type": "string",
+            "example": "GHS",
+            "description": "Currency the recipient receives"
+          },
+          "amount": {
+            "$ref": "#/components/schemas/MomoAmountDto"
+          },
+          "recipient_name": {
+            "$ref": "#/components/schemas/MomoNameDto"
+          },
+          "network": {
+            "type": "string",
+            "example": "MTN",
+            "description": "Mobile money network e.g. MTN, Mpesa, Airtel, Vodafone"
+          },
+          "msisdn": {
+            "type": "string",
+            "example": "2339012345678",
+            "description": "Recipient mobile number with country code prefix e.g. 233 for Ghana"
+          },
+          "country": {
+            "type": "string",
+            "example": "CM",
+            "description": "Required for XAF and XOF transfers"
+          },
+          "narration": {
+            "type": "string",
+            "example": "Salary payment"
+          },
+          "callback_url": {
+            "type": "string",
+            "example": "https://yoursite.com/callback"
+          }
+        },
+        "required": [
+          "reference",
+          "action",
+          "source_currency",
+          "destination_currency",
+          "amount",
+          "recipient_name",
+          "network",
+          "msisdn"
+        ]
+      },
+      "RefundDto": {
+        "type": "object",
+        "properties": {
+          "charge_id": {
+            "type": "string",
+            "example": "rfd_jorpTzecoF",
+            "description": "chargeId from original charge response"
+          },
+          "amount": {
+            "type": "number",
+            "example": 1000,
+            "description": "Amount to refund (must be ≤ original charge amount)"
+          },
+          "reason": {
+            "type": "string",
+            "example": "duplicate"
+          }
+        },
+        "required": [
+          "charge_id",
+          "amount"
+        ]
+      },
+      "AccountOpeningRequestDto": {
+        "type": "object",
+        "properties": {
+          "firstName": {
+            "type": "string",
+            "description": "First name of the account holder",
+            "example": "Mercy"
+          },
+          "middlename": {
+            "type": "string",
+            "description": "Middle name of the account holder",
+            "example": "Ioo"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "Last name of the account holder",
+            "example": "Kasumu"
+          },
+          "mobileNo": {
+            "type": "string",
+            "description": "Mobile number of the account holder",
+            "example": "237674999999"
+          },
+          "email": {
+            "type": "string",
+            "description": "email address of the account holder",
+            "example": "mercy@gmail.com"
+          },
+          "gender": {
+            "type": "string",
+            "description": "gender of the account holder",
+            "example": "F",
+            "enum": [
+              "MALE",
+              "FEMALE",
+              "M",
+              "F"
+            ]
+          },
+          "dateOfBirth": {
+            "type": "string",
+            "description": "Date of birth in date-time format",
+            "example": "1990-01-01"
+          },
+          "identityType": {
+            "type": "string",
+            "description": "ID type of the account holder",
+            "example": "NATIONAL_ID"
+          },
+          "identityNo": {
+            "type": "string",
+            "description": "ID number of the account holder",
+            "example": "A1234567890"
+          },
+          "idIssueDate": {
+            "type": "string",
+            "description": "ID issue date in date-time format",
+            "example": "2020-01-01"
+          },
+          "idExpiryDate": {
+            "type": "string",
+            "description": "ID card expiration date in date-time format",
+            "example": "2030-01-01"
+          },
+          "countryOfResidence": {
+            "type": "string",
+            "description": " Country of residence",
+            "example": "CAMEROON"
+          },
+          "city": {
+            "type": "string",
+            "description": "city of residence",
+            "example": "Buea"
+          },
+          "state": {
+            "type": "string",
+            "description": "state of residence",
+            "example": "South West"
+          },
+          "street": {
+            "type": "string",
+            "description": "street address of the account holder",
+            "example": "123 Main Street"
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency code for the account",
+            "example": "XAF"
+          }
+        },
+        "required": [
+          "firstName",
+          "middlename",
+          "lastName",
+          "mobileNo",
+          "email",
+          "gender",
+          "dateOfBirth",
+          "identityType",
+          "identityNo",
+          "idIssueDate",
+          "idExpiryDate",
+          "countryOfResidence",
+          "city",
+          "state",
+          "street",
+          "currency"
+        ]
+      },
+      "PaymentInitiationDto": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "string",
+            "description": "The amount to be paid",
+            "example": "1000.00"
+          },
+          "currency": {
+            "type": "string",
+            "description": "The currency code for the payment",
+            "example": "NGN"
+          },
+          "orderInfo": {
+            "type": "string",
+            "description": "Additional information about the order",
+            "example": "Payment for order #12345"
+          },
+          "returnUrl": {
+            "type": "string",
+            "description": "URL to redirect after payment",
+            "example": "https://your-return-url.com/callback"
+          }
+        },
+        "required": [
+          "amount",
+          "currency"
+        ]
+      },
+      "AccountBalanceRequestDto": {
+        "type": "object",
+        "properties": {
+          "requestId": {
+            "type": "string",
+            "description": "Unique request identifier",
+            "example": "142324363AB"
+          },
+          "affiliateCode": {
+            "type": "string",
+            "description": "Affiliate code",
+            "example": "EGH"
+          },
+          "accountNumber": {
+            "type": "string",
+            "description": "Account number",
+            "example": "1441000574000"
+          },
+          "clientId": {
+            "type": "string",
+            "description": "Client ID",
+            "example": "ECO00184371123"
+          },
+          "companyName": {
+            "type": "string",
+            "description": "Company name",
+            "example": "ECOBANK TEST CO"
+          },
+          "secureHash": {
+            "type": "string",
+            "description": "Secure hash for request validation"
+          }
+        },
+        "required": [
+          "requestId",
+          "affiliateCode",
+          "accountNumber",
+          "clientId",
+          "companyName",
+          "secureHash"
+        ]
+      },
+      "AccountStatementRequestDto": {
+        "type": "object",
+        "properties": {
+          "affiliateCode": {
+            "type": "string",
+            "description": "Affiliate code",
+            "example": "EGH"
+          },
+          "corporateId": {
+            "type": "string",
+            "description": "Corporate ID",
+            "example": "OMNI"
+          },
+          "accountNumber": {
+            "type": "string",
+            "description": "Account number",
+            "example": "1441000574000"
+          },
+          "startDate": {
+            "type": "string",
+            "description": "Start date (YYYYMMDD)",
+            "example": "20250401"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "End date (YYYYMMDD)",
+            "example": "20250415"
+          },
+          "secureHash": {
+            "type": "string",
+            "description": "Secure hash for request validation"
+          }
+        },
+        "required": [
+          "affiliateCode",
+          "corporateId",
+          "accountNumber",
+          "startDate",
+          "endDate",
+          "secureHash"
+        ]
+      },
+      "RemittanceRequestDto": {
+        "type": "object",
+        "properties": {
+          "request_id": {
+            "type": "string",
+            "description": "Unique request identifier",
+            "example": "2323V"
+          },
+          "request_type": {
+            "type": "string",
+            "description": "Type of remittance",
+            "example": "ECOBANKAFRICA"
+          },
+          "receiverLastName": {
+            "type": "string",
+            "description": "Receiver last name",
+            "example": "Kasumu"
+          },
+          "sourceCountry": {
+            "type": "string",
+            "description": "Source country",
+            "example": "NG"
+          },
+          "senderNationality": {
+            "type": "string",
+            "description": "Sender nationality",
+            "example": "GH"
+          },
+          "senderPhoneNumber": {
+            "type": "string",
+            "description": "Sender phone number",
+            "example": "07066690519"
+          },
+          "destinationBank": {
+            "type": "string",
+            "description": "Destination bank",
+            "example": "NG"
+          },
+          "purpose": {
+            "type": "string",
+            "description": "Purpose of transfer",
+            "example": "Travel"
+          },
+          "receiverCcy": {
+            "type": "string",
+            "description": "Receiver currency",
+            "example": "USD"
+          },
+          "secureHash": {
+            "type": "string",
+            "description": "Secure hash for request validation"
+          }
+        },
+        "required": [
+          "request_id",
+          "request_type",
+          "receiverLastName",
+          "sourceCountry",
+          "senderNationality",
+          "senderPhoneNumber",
+          "destinationBank",
+          "purpose",
+          "receiverCcy",
+          "secureHash"
+        ]
+      },
+      "BillPaymentRequestDto": {
+        "type": "object",
+        "properties": {
+          "requestId": {
+            "type": "string",
+            "description": "Unique request identifier",
+            "example": "2323V"
+          },
+          "billerCode": {
+            "type": "string",
+            "description": "Biller code",
+            "example": "DSTV"
+          },
+          "customerNumber": {
+            "type": "string",
+            "description": "Customer identifier",
+            "example": "1234567890"
+          },
+          "amount": {
+            "type": "string",
+            "description": "Amount to pay",
+            "example": "5000.00"
+          },
+          "currency": {
+            "type": "string",
+            "description": "Payment currency",
+            "example": "NGN"
+          },
+          "secureHash": {
+            "type": "string",
+            "description": "Secure hash for request validation"
+          }
+        },
+        "required": [
+          "requestId",
+          "billerCode",
+          "customerNumber",
+          "amount",
+          "currency",
+          "secureHash"
+        ]
+      },
+      "InstitutionListRequestDto": {
+        "type": "object",
+        "properties": {
+          "requestId": {
+            "type": "string",
+            "description": "Unique request identifier",
+            "example": "2323V"
+          },
+          "secureHash": {
+            "type": "string",
+            "description": "Secure hash for request validation"
+          }
+        },
+        "required": [
+          "requestId",
+          "secureHash"
+        ]
+      },
+      "NameEnquiryRequestDto": {
+        "type": "object",
+        "properties": {
+          "deliveryMethod": {
+            "type": "string",
+            "description": "Delivery method",
+            "example": "ACCOUNT",
+            "enum": [
+              "ACCOUNT"
+            ]
+          },
+          "destinationEntityCode": {
+            "type": "string",
+            "description": "Destination entity code",
+            "example": "ECOBANK"
+          },
+          "accountNo": {
+            "type": "string",
+            "description": "Account number",
+            "example": "3441002127474"
+          },
+          "destinationCountry": {
+            "type": "string",
+            "description": "Destination country",
+            "example": "GH"
+          },
+          "requestId": {
+            "type": "string",
+            "description": "Request ID",
+            "example": "23100191000000002"
+          },
+          "secureHash": {
+            "type": "string",
+            "description": "Secure hash for request validation"
+          }
+        },
+        "required": [
+          "deliveryMethod",
+          "destinationEntityCode",
+          "accountNo",
+          "destinationCountry",
+          "requestId",
+          "secureHash"
+        ]
+      },
+      "CreatePaymentIntentDto": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "description": "The amount to be charged in the smallest currency unit (e.g., cents for USD)",
+            "example": 1000
+          },
+          "currency": {
+            "type": "string",
+            "description": "The currency in which the payment is made (e.g., xaf)",
+            "example": "xaf"
+          },
+          "paymentMethodType": {
+            "type": "string",
+            "description": "The type of payment method to be used (e.g., card)",
+            "example": "card"
+          }
+        },
+        "required": [
+          "amount",
+          "currency",
+          "paymentMethodType"
+        ]
+      },
+      "CreateCheckoutSessionDto": {
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "number",
+            "description": "Amount in smallest currency unit (e.g. cents)",
+            "example": 12500
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency (ISO 4217)",
+            "example": "usd"
+          },
+          "successUrl": {
+            "type": "string",
+            "description": "Success URL (Stripe will append ?session_id=...)"
+          },
+          "cancelUrl": {
+            "type": "string",
+            "description": "Cancel URL"
+          },
+          "label": {
+            "type": "string",
+            "description": "Checkout line item name",
+            "example": "Invoice payment"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Opaque metadata to propagate to Stripe objects"
+          }
+        },
+        "required": [
+          "amount",
+          "currency",
+          "successUrl",
+          "cancelUrl"
+        ]
+      },
+      "EvaluateCapabilityDto": {
+        "type": "object",
+        "properties": {
+          "organizationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "providerCode": {
+            "type": "string",
+            "example": "FLUTTERWAVE"
+          },
+          "rail": {
+            "type": "string",
+            "enum": [
+              "BANK_TRANSFER",
+              "MOBILE_MONEY"
+            ]
+          },
+          "currency": {
+            "type": "string",
+            "example": "KES",
+            "minLength": 3,
+            "maxLength": 3
+          },
+          "countryCode": {
+            "type": "string",
+            "example": "KE",
+            "minLength": 2,
+            "maxLength": 2
+          }
+        },
+        "required": [
+          "organizationId",
+          "providerCode",
+          "rail",
+          "currency"
+        ]
+      },
+      "CreatePaymentProviderDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "example": "FLUTTERWAVE"
+          },
+          "displayName": {
+            "type": "string",
+            "example": "Flutterwave"
+          },
+          "notes": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "displayName"
+        ]
+      },
+      "UpdatePaymentProviderDto": {
+        "type": "object",
+        "properties": {
+          "displayName": {
+            "type": "string"
+          },
+          "active": {
+            "type": "boolean"
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
+      },
+      "UpsertProviderRailDto": {
+        "type": "object",
+        "properties": {
+          "rail": {
+            "type": "string",
+            "enum": [
+              "BANK_TRANSFER",
+              "MOBILE_MONEY"
+            ]
+          },
+          "notes": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "rail"
+        ]
+      },
+      "SetActiveDto": {
+        "type": "object",
+        "properties": {
+          "active": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "active"
+        ]
+      },
+      "AddProviderCorridorDto": {
+        "type": "object",
+        "properties": {
+          "currency": {
+            "type": "string",
+            "example": "XAF"
+          },
+          "countryCode": {
+            "type": "string",
+            "example": "CM"
+          },
+          "metadata": {
+            "type": "object",
+            "description": "Opaque JSON metadata attached to the corridor row"
+          },
+          "notes": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "currency"
+        ]
+      },
+      "PublishCapabilitiesDto": {
+        "type": "object",
+        "properties": {
+          "notes": {
+            "type": "string"
+          },
+          "publishedBy": {
+            "type": "string",
+            "description": "Opaque operator identifier (email/subject id)"
+          }
+        }
+      },
+      "UpsertBillingDto": {
+        "type": "object",
+        "properties": {
+          "organizationId": {
+            "type": "string"
+          },
+          "plan": {
+            "type": "string",
+            "enum": [
+              "starter",
+              "essential",
+              "growth",
+              "enterprise"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "past_due",
+              "suspended",
+              "canceled"
+            ],
+            "default": "active"
+          },
+          "billingCurrency": {
+            "type": "string",
+            "example": "XAF"
+          },
+          "billingProvider": {
+            "type": "string",
+            "enum": [
+              "stripe",
+              "flutterwave"
+            ]
+          },
+          "providerCustomerId": {
+            "type": "string",
+            "description": "External provider customer id (Stripe customer / Flutterwave customer)"
+          },
+          "providerSubscriptionId": {
+            "type": "string",
+            "description": "External provider recurring contract id where applicable (e.g. Stripe)"
+          },
+          "bandMin": {
+            "type": "number",
+            "example": 1
+          },
+          "bandMax": {
+            "type": "number",
+            "example": 4,
+            "description": "Null means unlimited"
+          },
+          "unitPricePerEmployee": {
+            "type": "number",
+            "example": 2500
+          },
+          "overageUnitPrice": {
+            "type": "number",
+            "example": 2500
+          }
+        },
+        "required": [
+          "organizationId",
+          "plan"
+        ]
+      },
+      "EnsureBillingCustomerDto": {
+        "type": "object",
+        "properties": {
+          "organizationId": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string",
+            "example": "owner@acme.com"
+          },
+          "name": {
+            "type": "string",
+            "example": "Acme Owner"
+          },
+          "phone": {
+            "type": "string",
+            "example": "+237653033620"
+          }
+        },
+        "required": [
+          "organizationId",
+          "email"
+        ]
+      },
+      "BillingMobileMoneyCheckoutDto": {
+        "type": "object",
+        "properties": {
+          "plan": {
+            "type": "string",
+            "enum": [
+              "starter",
+              "essential",
+              "growth",
+              "enterprise"
+            ],
+            "description": "Used to create billing row if missing."
+          },
+          "countryCode": {
+            "type": "string",
+            "example": "233",
+            "description": "Mobile money country calling code (digits only)."
+          },
+          "network": {
+            "type": "string",
+            "example": "MTN",
+            "description": "Mobile money network identifier."
+          },
+          "phoneNumber": {
+            "type": "string",
+            "example": "9012345678",
+            "description": "Mobile money phone number (digits only)."
+          },
+          "scenarioKey": {
+            "type": "string",
+            "example": "scenario:auth_pin&issuer:approved",
+            "description": "Optional Flutterwave scenario key for sandbox testing."
+          },
+          "redirectUrl": {
+            "type": "string",
+            "example": "http://localhost:3000/billing/return",
+            "description": "Absolute redirect URL Flutterwave sends the user back to after authorization."
+          },
+          "debug": {
+            "type": "boolean",
+            "example": true,
+            "description": "When true, include sanitized Flutterwave request/response payloads for debugging."
+          },
+          "discountCode": {
+            "type": "string",
+            "description": "Optional discount code (platform-managed)"
+          }
+        },
+        "required": [
+          "countryCode",
+          "network",
+          "phoneNumber"
+        ]
+      },
+      "RecipientDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "$ref": "#/components/schemas/NameDto"
+          },
+          "mobile_money": {
+            "$ref": "#/components/schemas/MobileMoneyDto"
+          }
+        },
+        "required": [
+          "name",
+          "mobile_money"
+        ]
+      },
+      "BillMobileMoneyPayoutDto": {
+        "type": "object",
+        "properties": {
+          "billId": {
+            "type": "string"
+          },
+          "organizationId": {
+            "type": "string"
+          },
+          "companyId": {
+            "type": "string"
+          },
+          "amount": {
+            "type": "number"
+          },
+          "currency": {
+            "type": "string",
+            "example": "XAF"
+          },
+          "reference": {
+            "type": "string"
+          },
+          "narration": {
+            "type": "string"
+          },
+          "recipient": {
+            "$ref": "#/components/schemas/RecipientDto"
+          }
+        },
+        "required": [
+          "billId",
+          "organizationId",
+          "companyId",
+          "amount",
+          "currency",
+          "reference",
+          "narration",
+          "recipient"
+        ]
+      },
+      "ArCheckoutMomoDto": {
+        "type": "object",
+        "properties": {
+          "countryCode": {
+            "type": "string"
+          },
+          "network": {
+            "type": "string"
+          },
+          "phoneNumber": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "countryCode",
+          "network",
+          "phoneNumber"
+        ]
+      },
+      "ArCheckoutCardDto": {
+        "type": "object",
+        "properties": {
+          "card_number": {
+            "type": "string"
+          },
+          "expiry_month": {
+            "type": "string"
+          },
+          "expiry_year": {
+            "type": "string"
+          },
+          "cvv": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "card_number",
+          "expiry_month",
+          "expiry_year",
+          "cvv"
+        ]
+      },
+      "ArCheckoutDto": {
+        "type": "object",
+        "properties": {
+          "channel": {
+            "type": "string",
+            "enum": [
+              "STRIPE_CARD",
+              "FLUTTERWAVE_CARD",
+              "FLUTTERWAVE_MOBILE_MONEY",
+              "FLUTTERWAVE_USSD",
+              "FLUTTERWAVE_OPAY"
+            ]
+          },
+          "amountMinor": {
+            "type": "number",
+            "description": "Amount in minor units (cents)"
+          },
+          "currency": {
+            "type": "string",
+            "example": "usd"
+          },
+          "successUrl": {
+            "type": "string"
+          },
+          "cancelUrl": {
+            "type": "string"
+          },
+          "label": {
+            "type": "string"
+          },
+          "customerEmail": {
+            "type": "string"
+          },
+          "customerName": {
+            "type": "string"
+          },
+          "metadata": {
+            "type": "object"
+          },
+          "momo": {
+            "$ref": "#/components/schemas/ArCheckoutMomoDto"
+          },
+          "ussdBankCode": {
+            "type": "string"
+          },
+          "card": {
+            "$ref": "#/components/schemas/ArCheckoutCardDto"
+          }
+        },
+        "required": [
+          "channel",
+          "amountMinor",
+          "currency",
+          "successUrl",
+          "cancelUrl",
+          "customerEmail",
+          "metadata"
+        ]
+      }
+    }
+  },
+  "x-mint": {
+    "productOverview": "/pay/overview",
+    "basePath": "/api/v1/payments"
+  }
+}

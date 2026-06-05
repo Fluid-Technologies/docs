@@ -1,0 +1,32 @@
+---
+title: Changelog
+description: API and documentation changes for Fluide Connect integrators.
+---
+
+# Changelog
+
+Subscribe to updates via RSS: append `/rss.xml` to this page URL.
+
+<Update label="June 2025" description="Beta docs pipeline" rss={{ title: "June 2025 — Beta docs pipeline", description: "Staging gateway, OpenAPI export, Utils product, and API change diff tooling." }}>
+
+## Documentation platform
+
+- API reference exports from `https://staging.api.fluidehr.com/api/v1/docs/*`
+- Product overview pages before endpoint lists (Auth, HR, Payroll, Pay, Books, Utils)
+- cURL and Node.js examples in the API playground
+- OpenAPI diff script: `node scripts/diff-openapi.mjs`
+
+## Utils API
+
+- Added **Utils** product docs and API reference (`/api/v1/app/*` via gateway)
+
+## Integrations
+
+- Beta base URL: `https://staging.api.fluidehr.com`
+- Authentication docs assume an existing developer account (no sign-up walkthrough)
+
+</Update>
+
+<Note>
+When services ship API changes, add a new `<Update>` block here **before** saving the OpenAPI baseline. See [API change strategy](/platform/api-change-strategy) for the full workflow.
+</Note>

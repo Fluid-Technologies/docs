@@ -1,0 +1,30 @@
+---
+title: Payroll modules
+description: FluidePayroll API modules and endpoints.
+---
+
+# Payroll modules
+
+| Module | Public path | Description |
+| --- | --- | --- |
+| Payroll runs | `/api/v1/payroll/payroll/*` | Create runs, process, validate |
+| Payslips | `/api/v1/payroll/payslips/*` | View payslip lines and totals |
+| Employees (mirror) | `/api/v1/payroll/internal/employees/*` | HR sync only |
+| Contracts (mirror) | `/api/v1/payroll/internal/contracts/*` | HR contract sync |
+
+## Processing pipeline
+
+Payroll runs support a full **process / validate** pipeline. Heavy computation may be pushed to **Kafka** for async execution.
+
+## Events
+
+On completion, payroll publishes **`PAYROLL_RUN_COMPLETED`** on topic `payroll.events` for **FluideBooks** to post journal entries. See [Books payroll GL](/books/payroll-gl).
+
+## Technology
+
+| Layer | Choice |
+| --- | --- |
+| Framework | NestJS 11 |
+| ORM | TypeORM |
+| DB | PostgreSQL (JSONB for allowances/deductions) |
+| Metrics | Prometheus `/metrics` |

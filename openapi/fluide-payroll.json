@@ -1,0 +1,2099 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/api/v1/payroll": {
+      "get": {
+        "operationId": "AppController_getHello",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "App"
+        ]
+      }
+    },
+    "/api/v1/payroll/metrics": {
+      "get": {
+        "operationId": "PrometheusController_index",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Prometheus"
+        ],
+        "summary": "Payroll Prometheus metrics",
+        "description": "Prometheus scrape target for payroll processing and API metrics."
+      }
+    },
+    "/api/v1/payroll/payslips": {
+      "post": {
+        "operationId": "PayslipsController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePaySlipDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create a new payslip",
+        "tags": [
+          "Payslips"
+        ]
+      },
+      "get": {
+        "operationId": "PayslipsController_findAll",
+        "parameters": [
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Free-text search (endpoint-specific)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number (1-indexed)",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "employeeId",
+            "required": false,
+            "in": "query",
+            "description": "Filter payslips to this employee",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List payslips (optional employeeId filter)",
+        "tags": [
+          "Payslips"
+        ]
+      }
+    },
+    "/api/v1/payroll/payslips/{id}": {
+      "get": {
+        "operationId": "PayslipsController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get payslip by ID",
+        "tags": [
+          "Payslips"
+        ]
+      }
+    },
+    "/api/v1/payroll/rules/versions": {
+      "post": {
+        "operationId": "PayrollConfigAdminController_createRuleVersion",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateRuleVersionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create a new RuleVersion (effective-dated, config-driven)",
+        "tags": [
+          "Rules"
+        ]
+      },
+      "get": {
+        "operationId": "PayrollConfigAdminController_listRuleVersions",
+        "parameters": [
+          {
+            "name": "countryCode",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ruleType",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List RuleVersions",
+        "tags": [
+          "Rules"
+        ]
+      }
+    },
+    "/api/v1/payroll/rules/versions/{id}": {
+      "get": {
+        "operationId": "PayrollConfigAdminController_getRuleVersion",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get RuleVersion by ID",
+        "tags": [
+          "Rules"
+        ]
+      }
+    },
+    "/api/v1/payroll/rules/versions/{id}/brackets": {
+      "post": {
+        "operationId": "PayrollConfigAdminController_createTaxBracket",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateTaxBracketDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create a TaxBracket row for a RuleVersion",
+        "tags": [
+          "Rules"
+        ]
+      }
+    },
+    "/api/v1/payroll/rules/versions/{id}/statutory-deductions": {
+      "post": {
+        "operationId": "PayrollConfigAdminController_createStatutoryDeduction",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateStatutoryDeductionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create a StatutoryDeductionConfig row for a RuleVersion",
+        "tags": [
+          "Rules"
+        ]
+      }
+    },
+    "/api/v1/payroll/payroll": {
+      "post": {
+        "operationId": "PayrollController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePayrollRunDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create a new payroll run (DRAFT)",
+        "tags": [
+          "Payroll"
+        ]
+      },
+      "get": {
+        "operationId": "PayrollController_findAll",
+        "parameters": [
+          {
+            "name": "q",
+            "required": false,
+            "in": "query",
+            "description": "Free-text search (endpoint-specific)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Page number (1-indexed)",
+            "schema": {
+              "minimum": 1,
+              "default": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Number of items per page",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "List payroll runs for the current company",
+        "tags": [
+          "Payroll"
+        ]
+      }
+    },
+    "/api/v1/payroll/payroll/process": {
+      "post": {
+        "operationId": "PayrollController_process",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProcessPayrollDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Process payroll for a company and period",
+        "tags": [
+          "Payroll"
+        ]
+      }
+    },
+    "/api/v1/payroll/payroll/process-off-cycle": {
+      "post": {
+        "operationId": "PayrollController_processOffCycle",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProcessOffCyclePayrollDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Process an off-cycle payroll run for explicit period boundaries",
+        "tags": [
+          "Payroll"
+        ]
+      }
+    },
+    "/api/v1/payroll/payroll/{id}/process": {
+      "patch": {
+        "operationId": "PayrollController_processDraftRun",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Process a draft payroll run (full engine + snapshot + events)",
+        "tags": [
+          "Payroll"
+        ]
+      }
+    },
+    "/api/v1/payroll/payroll/validate": {
+      "post": {
+        "operationId": "PayrollController_validate",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidatePayrollDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Validate an approved payroll run and generate payslips",
+        "tags": [
+          "Payroll"
+        ]
+      }
+    },
+    "/api/v1/payroll/payroll/{id}/validation-status": {
+      "get": {
+        "operationId": "PayrollController_validationStatus",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Per-group validation progress for a payroll run",
+        "tags": [
+          "Payroll"
+        ]
+      }
+    },
+    "/api/v1/payroll/payroll/{id}/validate-group/{groupId}": {
+      "post": {
+        "operationId": "PayrollController_validateGroup",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "groupId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ValidatePayrollGroupDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Sign off validation for a payroll group; finalizes run when all groups complete",
+        "tags": [
+          "Payroll"
+        ]
+      }
+    },
+    "/api/v1/payroll/payroll/{id}/tax-remittance": {
+      "get": {
+        "operationId": "PayrollController_taxRemittance",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Download tax remittance summary PDF (CM/NG)",
+        "tags": [
+          "Payroll"
+        ]
+      }
+    },
+    "/api/v1/payroll/payroll/{id}/submit": {
+      "post": {
+        "operationId": "PayrollController_submit",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitPayrollApprovalDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Submit a computed payroll run for approval (freezes it)",
+        "tags": [
+          "Payroll"
+        ]
+      }
+    },
+    "/api/v1/payroll/payroll/{id}/approve": {
+      "post": {
+        "operationId": "PayrollController_approve",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecisionPayrollApprovalDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Approve a payroll run (as an assigned approver)",
+        "tags": [
+          "Payroll"
+        ]
+      }
+    },
+    "/api/v1/payroll/payroll/{id}/reject": {
+      "post": {
+        "operationId": "PayrollController_reject",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DecisionPayrollApprovalDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Reject a payroll run (as an assigned approver)",
+        "tags": [
+          "Payroll"
+        ]
+      }
+    },
+    "/api/v1/payroll/payroll/{id}/reopen": {
+      "post": {
+        "operationId": "PayrollController_reopen",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Reopen a rejected payroll run back to draft (clears approvals)",
+        "tags": [
+          "Payroll"
+        ]
+      }
+    },
+    "/api/v1/payroll/payroll/{id}/disburse": {
+      "post": {
+        "operationId": "PayrollController_disburse",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DisbursePayrollDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Queue validated payslips for FluidePay disbursement (Kafka)",
+        "tags": [
+          "Payroll"
+        ]
+      }
+    },
+    "/api/v1/payroll/payroll/import-template": {
+      "get": {
+        "operationId": "PayrollController_downloadImportTemplate",
+        "parameters": [
+          {
+            "name": "format",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Download payroll line import template (CSV or XLSX)",
+        "tags": [
+          "Payroll"
+        ]
+      }
+    },
+    "/api/v1/payroll/payroll/runs/export": {
+      "get": {
+        "operationId": "PayrollController_exportRuns",
+        "parameters": [
+          {
+            "name": "format",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Export payroll run register (CSV or XLSX)",
+        "tags": [
+          "Payroll"
+        ]
+      }
+    },
+    "/api/v1/payroll/payroll/runs/{id}/payslips/export": {
+      "get": {
+        "operationId": "PayrollController_exportRunPayslips",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "format",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Export payslip lines for a payroll run (CSV or XLSX)",
+        "tags": [
+          "Payroll"
+        ]
+      }
+    },
+    "/api/v1/payroll/payroll/{id}/settlement": {
+      "get": {
+        "operationId": "PayrollController_getSettlement",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Settlement snapshot and payslip disbursement summary for a payroll run",
+        "tags": [
+          "Payroll"
+        ]
+      }
+    },
+    "/api/v1/payroll/payroll/{id}/reconcile": {
+      "post": {
+        "operationId": "PayrollController_reconcile",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Reconcile payroll run against books journals (or internal payslip check)",
+        "tags": [
+          "Payroll"
+        ]
+      }
+    },
+    "/api/v1/payroll/payroll/{id}/retry-failed-disbursements": {
+      "post": {
+        "operationId": "PayrollController_retryFailedDisbursements",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DisbursePayrollDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Idempotently re-queue FAILED payslips for disbursement",
+        "tags": [
+          "Payroll"
+        ]
+      }
+    },
+    "/api/v1/payroll/payroll/{id}": {
+      "get": {
+        "operationId": "PayrollController_findOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get payroll run by ID with payslips",
+        "tags": [
+          "Payroll"
+        ]
+      },
+      "patch": {
+        "operationId": "PayrollController_update",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePayrollRunDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Update a draft payroll run",
+        "tags": [
+          "Payroll"
+        ]
+      }
+    },
+    "/api/v1/payroll/settings": {
+      "get": {
+        "operationId": "PayrollSettingsController_getSettings",
+        "parameters": [
+          {
+            "name": "companyId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Get payroll settings for a subsidiary",
+        "tags": [
+          "Payroll Settings"
+        ]
+      },
+      "put": {
+        "operationId": "PayrollSettingsController_upsertSettings",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpsertPayrollSettingsDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Upsert payroll settings for a subsidiary",
+        "tags": [
+          "Payroll Settings"
+        ]
+      }
+    },
+    "/api/v1/payroll/settings/cycles": {
+      "get": {
+        "operationId": "PayrollSettingsController_listCycles",
+        "parameters": [
+          {
+            "name": "companyId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Payroll Settings"
+        ]
+      },
+      "post": {
+        "operationId": "PayrollSettingsController_createCycle",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpsertPayrollCycleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Payroll Settings"
+        ]
+      }
+    },
+    "/api/v1/payroll/settings/cycles/{id}": {
+      "patch": {
+        "operationId": "PayrollSettingsController_updateCycle",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePayrollCycleDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Payroll Settings"
+        ]
+      },
+      "delete": {
+        "operationId": "PayrollSettingsController_deleteCycle",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Payroll Settings"
+        ]
+      }
+    },
+    "/api/v1/payroll/settings/groups": {
+      "get": {
+        "operationId": "PayrollSettingsController_listGroups",
+        "parameters": [
+          {
+            "name": "companyId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Payroll Settings"
+        ]
+      },
+      "post": {
+        "operationId": "PayrollSettingsController_createGroup",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpsertPayrollGroupDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Payroll Settings"
+        ]
+      }
+    },
+    "/api/v1/payroll/settings/groups/{id}": {
+      "patch": {
+        "operationId": "PayrollSettingsController_updateGroup",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePayrollGroupDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Payroll Settings"
+        ]
+      },
+      "delete": {
+        "operationId": "PayrollSettingsController_deleteGroup",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Payroll Settings"
+        ]
+      }
+    },
+    "/api/v1/payroll/settings/groups/{id}/members": {
+      "post": {
+        "operationId": "PayrollSettingsController_upsertMember",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpsertPayrollGroupMemberDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Payroll Settings"
+        ]
+      }
+    },
+    "/api/v1/payroll/settings/groups/{groupId}/members/{employeeId}": {
+      "delete": {
+        "operationId": "PayrollSettingsController_removeMember",
+        "parameters": [
+          {
+            "name": "groupId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "employeeId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Payroll Settings"
+        ]
+      }
+    },
+    "/api/v1/payroll/settings/approval-policy": {
+      "get": {
+        "operationId": "PayrollSettingsController_getApprovalPolicy",
+        "parameters": [
+          {
+            "name": "companyId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Payroll Settings"
+        ]
+      },
+      "put": {
+        "operationId": "PayrollSettingsController_upsertApprovalPolicy",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpsertPayrollApprovalPolicyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "tags": [
+          "Payroll Settings"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "Fluide Payroll API",
+    "description": "Payroll runs, payslip generation, validators, and async payroll processing. Integrate after employee records exist in HR.",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [
+    {
+      "name": "App",
+      "description": "Service root and build metadata. Use for quick connectivity checks.",
+      "x-group": "Operations"
+    },
+    {
+      "name": "Prometheus",
+      "description": "Prometheus scrape endpoint in text exposition format. Configure your metrics collector to poll this path on each service.",
+      "x-group": "Operations"
+    },
+    {
+      "name": "Payslips"
+    },
+    {
+      "name": "Rules"
+    },
+    {
+      "name": "Payroll"
+    },
+    {
+      "name": "Payroll Settings"
+    }
+  ],
+  "servers": [
+    {
+      "url": "https://staging.api.fluidehr.com",
+      "description": "Beta (staging)"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "bearer": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      }
+    },
+    "schemas": {
+      "CreatePaySlipDto": {
+        "type": "object",
+        "properties": {
+          "payrollRunId": {
+            "type": "string",
+            "description": "Payroll run ID"
+          },
+          "employeeId": {
+            "type": "string",
+            "description": "Employee ID"
+          },
+          "basicSalary": {
+            "type": "number",
+            "description": "Basic salary for this period",
+            "example": 5000
+          },
+          "allowances": {
+            "type": "object",
+            "description": "Allowances breakdown",
+            "example": {
+              "housing": 500,
+              "transport": 200
+            }
+          },
+          "deductions": {
+            "type": "object",
+            "description": "Deductions breakdown",
+            "example": {
+              "tax": 800,
+              "insurance": 200
+            }
+          },
+          "grossPay": {
+            "type": "number",
+            "description": "Gross pay",
+            "example": 5700
+          },
+          "netPay": {
+            "type": "number",
+            "description": "Net pay",
+            "example": 4700
+          }
+        },
+        "required": [
+          "payrollRunId",
+          "employeeId",
+          "basicSalary",
+          "grossPay",
+          "netPay"
+        ]
+      },
+      "CreateRuleVersionDto": {
+        "type": "object",
+        "properties": {
+          "countryCode": {
+            "type": "string",
+            "description": "Country ISO code (e.g., CM, NG)"
+          },
+          "ruleType": {
+            "type": "string",
+            "description": "Rule type key used by payroll strategies (e.g., CNPS, TAX, PENSION, PAYE, NHF, NSITF, ITF)"
+          },
+          "effectiveFrom": {
+            "type": "string",
+            "description": "Effective from date"
+          },
+          "effectiveTo": {
+            "type": "string",
+            "description": "Effective to date"
+          },
+          "configJson": {
+            "type": "object",
+            "description": "Frozen config payload used for deterministic computation"
+          }
+        },
+        "required": [
+          "countryCode",
+          "ruleType",
+          "effectiveFrom",
+          "effectiveTo",
+          "configJson"
+        ]
+      },
+      "CreateTaxBracketDto": {
+        "type": "object",
+        "properties": {
+          "lowerBound": {
+            "type": "number",
+            "description": "Lower bound (major currency units)"
+          },
+          "upperBound": {
+            "type": "number",
+            "description": "Upper bound (major currency units), null for open-ended bracket"
+          },
+          "rate": {
+            "type": "number",
+            "description": "Marginal rate for the bracket (fractional, e.g. 0.05 for 5%)"
+          },
+          "baseOffset": {
+            "type": "number",
+            "description": "Optional base offset to compute tax quickly"
+          }
+        },
+        "required": [
+          "lowerBound",
+          "rate"
+        ]
+      },
+      "CreateStatutoryDeductionDto": {
+        "type": "object",
+        "properties": {
+          "deductionCode": {
+            "type": "string",
+            "description": "Deduction code used by payroll strategies"
+          },
+          "configJson": {
+            "type": "object",
+            "description": "Config payload used by engine"
+          }
+        },
+        "required": [
+          "deductionCode",
+          "configJson"
+        ]
+      },
+      "CreatePayrollRunDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Payroll run title",
+            "example": "March 2026 Payroll"
+          },
+          "periodMonth": {
+            "type": "number",
+            "description": "Period month (1-12)",
+            "example": 3
+          },
+          "periodYear": {
+            "type": "number",
+            "description": "Period year",
+            "example": 2026
+          },
+          "currency": {
+            "type": "string",
+            "description": "Currency (ISO 4217)",
+            "example": "USD",
+            "default": "USD"
+          }
+        },
+        "required": [
+          "title",
+          "periodMonth",
+          "periodYear"
+        ]
+      },
+      "ProcessPayrollDto": {
+        "type": "object",
+        "properties": {
+          "companyId": {
+            "type": "string",
+            "description": "Company ID (from FluideAuth)",
+            "example": "c0a80123-..."
+          },
+          "month": {
+            "type": "number",
+            "description": "Payroll period month (1-12)",
+            "example": 3
+          },
+          "year": {
+            "type": "number",
+            "description": "Payroll period year",
+            "example": 2026
+          },
+          "periodStart": {
+            "type": "string",
+            "description": "Inclusive period start (ISO date)",
+            "example": "2026-03-01"
+          },
+          "periodEnd": {
+            "type": "string",
+            "description": "Inclusive period end (ISO date)",
+            "example": "2026-03-15"
+          },
+          "payDate": {
+            "type": "string",
+            "description": "Scheduled pay date (ISO date)",
+            "example": "2026-03-16"
+          },
+          "runType": {
+            "type": "string",
+            "enum": [
+              "SCHEDULED",
+              "OFF_CYCLE"
+            ],
+            "default": "SCHEDULED"
+          },
+          "offCycleReason": {
+            "type": "string",
+            "description": "Required when runType is OFF_CYCLE"
+          },
+          "clientIdempotencyKey": {
+            "type": "string",
+            "description": "Client-supplied idempotency key for off-cycle runs (dedupes retries)"
+          },
+          "forceRecalculate": {
+            "type": "boolean",
+            "description": "If true, recompute when prior run failed/processing (immutability preserved after validation)",
+            "default": false
+          },
+          "employeeIds": {
+            "description": "Payroll employee UUIDs to include. Omit for all active employees. Must match an existing run unless forceRecalculate is true.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "cycleId": {
+            "type": "string",
+            "description": "Reusable payroll cycle template to seed period and roster"
+          }
+        },
+        "required": [
+          "companyId",
+          "month",
+          "year"
+        ]
+      },
+      "ProcessOffCyclePayrollDto": {
+        "type": "object",
+        "properties": {
+          "companyId": {
+            "type": "string",
+            "description": "Company ID (from FluideAuth)",
+            "example": "c0a80123-..."
+          },
+          "month": {
+            "type": "number",
+            "description": "Payroll period month (1-12)",
+            "example": 3
+          },
+          "year": {
+            "type": "number",
+            "description": "Payroll period year",
+            "example": 2026
+          },
+          "periodStart": {
+            "type": "string",
+            "description": "Inclusive period start (ISO date)",
+            "example": "2026-03-10"
+          },
+          "periodEnd": {
+            "type": "string",
+            "description": "Inclusive period end (ISO date)",
+            "example": "2026-03-10"
+          },
+          "payDate": {
+            "type": "string",
+            "description": "Pay date (ISO date); defaults to periodEnd",
+            "example": "2026-03-16"
+          },
+          "runType": {
+            "type": "string",
+            "enum": [
+              "SCHEDULED",
+              "OFF_CYCLE"
+            ],
+            "default": "SCHEDULED"
+          },
+          "offCycleReason": {
+            "type": "string",
+            "description": "Reason for off-cycle payroll",
+            "example": "Termination payout"
+          },
+          "clientIdempotencyKey": {
+            "type": "string",
+            "description": "Client idempotency key for safe retries"
+          },
+          "forceRecalculate": {
+            "type": "boolean",
+            "description": "If true, recompute when prior run failed/processing (immutability preserved after validation)",
+            "default": false
+          },
+          "employeeIds": {
+            "description": "Payroll employee UUIDs to include. Omit for all active employees. Must match an existing run unless forceRecalculate is true.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "cycleId": {
+            "type": "string",
+            "description": "Reusable payroll cycle template to seed period and roster"
+          }
+        },
+        "required": [
+          "companyId",
+          "month",
+          "year"
+        ]
+      },
+      "ValidatePayrollDto": {
+        "type": "object",
+        "properties": {
+          "payrollRunId": {
+            "type": "string",
+            "description": "Payroll run ID",
+            "example": "c0a80123-..."
+          },
+          "employeeIds": {
+            "description": "Only validate these payroll employee IDs (payslips for others are removed). Omit for all lines.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        },
+        "required": [
+          "payrollRunId"
+        ]
+      },
+      "ValidatePayrollGroupDto": {
+        "type": "object",
+        "properties": {
+          "comment": {
+            "type": "string"
+          }
+        }
+      },
+      "SubmitPayrollApprovalDto": {
+        "type": "object",
+        "properties": {
+          "approverSubjectIds": {
+            "description": "Optional override approver list (FluideAuth user ids). Omit to use the company policy.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "DecisionPayrollApprovalDto": {
+        "type": "object",
+        "properties": {
+          "comment": {
+            "type": "string",
+            "description": "Optional comment stored with the approval decision."
+          }
+        }
+      },
+      "DisbursePayrollDto": {
+        "type": "object",
+        "properties": {
+          "sourceWalletId": {
+            "type": "string",
+            "description": "Company FluidePay wallet to debit when all selected payslips share the same payout currency, or as default when sourceWalletIdsByPayoutCurrency omits that currency. Omit to auto-resolve the default OPERATING company wallet per payout currency (FluidePay internal API)."
+          },
+          "sourceWalletIdsByPayoutCurrency": {
+            "type": "object",
+            "description": "Treasury wallet UUID per payout ISO currency (e.g. { \"XAF\": \"…\", \"NGN\": \"…\" }). Required when the selection spans multiple payout currencies.",
+            "additionalProperties": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "payslipIds": {
+            "description": "Only disburse these payslip IDs. Omit to disburse all PROCESSED/FAILED payslips.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "UpdatePayrollRunDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string",
+            "description": "Payroll run title"
+          },
+          "includedEmployeeIds": {
+            "description": "Planned subset of payroll employee IDs (DRAFT only). Used when processing this run.",
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "UpsertPayrollSettingsDto": {
+        "type": "object",
+        "properties": {
+          "companyId": {
+            "type": "string"
+          },
+          "defaultCycleId": {
+            "type": "string"
+          },
+          "cutoffDayOfMonth": {
+            "type": "number"
+          },
+          "autoIncludeNewHires": {
+            "type": "boolean"
+          },
+          "allowOffCycleRuns": {
+            "type": "boolean"
+          },
+          "emailValidatorsOnComplete": {
+            "type": "boolean"
+          },
+          "emailEmployeesOnPaid": {
+            "type": "boolean"
+          },
+          "emailTaxFileAfterRun": {
+            "type": "boolean"
+          },
+          "inAppPaymentAlertEnabled": {
+            "type": "boolean"
+          },
+          "taxFileRecipientEmails": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "companyId"
+        ]
+      },
+      "UpsertPayrollCycleDto": {
+        "type": "object",
+        "properties": {
+          "companyId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "isDefault": {
+            "type": "boolean"
+          },
+          "frequency": {
+            "type": "string"
+          },
+          "periodRules": {
+            "type": "object"
+          },
+          "includedEmployeeIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "employeeFilterRules": {
+            "type": "object"
+          },
+          "approvalPolicySnapshot": {
+            "type": "object"
+          },
+          "groupValidatorSnapshot": {
+            "type": "object"
+          },
+          "metadata": {
+            "type": "object"
+          }
+        },
+        "required": [
+          "companyId",
+          "name"
+        ]
+      },
+      "UpdatePayrollCycleDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "UpsertPayrollGroupDto": {
+        "type": "object",
+        "properties": {
+          "companyId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "assignmentRules": {
+            "type": "object"
+          },
+          "validatorSubjectIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "validationRule": {
+            "type": "string"
+          },
+          "kRequired": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "companyId",
+          "name"
+        ]
+      },
+      "UpdatePayrollGroupDto": {
+        "type": "object",
+        "properties": {}
+      },
+      "UpsertPayrollGroupMemberDto": {
+        "type": "object",
+        "properties": {
+          "companyId": {
+            "type": "string"
+          },
+          "employeeId": {
+            "type": "string"
+          },
+          "excluded": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "companyId",
+          "employeeId"
+        ]
+      },
+      "UpsertPayrollApprovalPolicyDto": {
+        "type": "object",
+        "properties": {
+          "companyId": {
+            "type": "string"
+          },
+          "approverSubjectIds": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "rule": {
+            "type": "string"
+          },
+          "kRequired": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "companyId",
+          "approverSubjectIds"
+        ]
+      }
+    }
+  },
+  "x-mint": {
+    "productOverview": "/payroll/overview",
+    "basePath": "/api/v1/payroll"
+  }
+}

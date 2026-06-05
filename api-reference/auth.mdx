@@ -1,0 +1,52 @@
+---
+title: Auth API
+description: Developer credentials, token exchange, organizations, and identity for the Fluide Suite.
+---
+
+The **Auth API** (`fluide-auth`) is the entry point for Fluide Connect integrations. Exchange your developer API key and secret for a JWT, then use that token on every product API call.
+
+## Base path
+
+`/api/v1`
+
+## Authentication
+
+| Step | Headers |
+| --- | --- |
+| Token exchange | `X-Fluide-Api-Key`, `X-Fluide-Api-Secret`, `X-Fluide-Client-Id: fluide-developer` |
+| Product APIs | `Authorization: Bearer <token>`, `X-Fluide-Api-Key`, `X-Fluide-Client-Id: fluide-developer` |
+
+See [Authentication](/getting-started/authentication) for curl and Node.js examples.
+
+## Operations and monitoring
+
+| Endpoint | Purpose |
+| --- | --- |
+| `GET /api/v1` | Service root — quick connectivity check |
+| `GET /api/v1/health` | Health check with dependency status (database, etc.) |
+
+<Note>
+Prometheus metrics for auth may be exposed on the service directly depending on deployment. Check the **Operations** tag group in the sidebar for `App` and `Health` endpoints.
+</Note>
+
+## What to build first
+
+<Steps>
+
+<Step title="Exchange credentials">
+Call `POST /api/v1/developer-access/token` with your API key and secret.
+</Step>
+
+<Step title="Call a product API">
+Use the returned JWT on HR, Payroll, Pay, Books, or Utils routes.
+</Step>
+
+<Step title="Rotate if needed">
+Use `POST /api/v1/developer-access/rotate-secret` or the Connect dashboard if a secret is exposed.
+</Step>
+
+</Steps>
+
+<Card title="Product guide" icon="book" href="/auth/overview">
+  Auth concepts, RBAC, and credential lifecycle.
+</Card>
