@@ -1,0 +1,20 @@
+/* Navbar wordmark — default Mintlify scaling is too small for wide SVGs. */
+.nav-logo img,
+.nav-logo svg,
+a.nav-logo img,
+a.nav-logo svg {
+  height: 2.25rem !important;
+  width: auto !important;
+  max-height: 2.25rem !important;
+  max-width: min(320px, 55vw) !important;
+}
+
+@media (min-width: 768px) {
+  .nav-logo img,
+  .nav-logo svg,
+  a.nav-logo img,
+  a.nav-logo svg {
+    height: 2.5rem !important;
+    max-height: 2.5rem !important;
+  }
+}

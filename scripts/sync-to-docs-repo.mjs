@@ -38,6 +38,7 @@ const SYNC_PATHS = [
   "openapi",
   "logo",
   "favicon.svg",
+  "custom.css",
   "public",
   "scripts/enrich-openapi.mjs",
   "scripts/diff-openapi.mjs",
