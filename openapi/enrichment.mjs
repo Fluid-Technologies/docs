@@ -11,7 +11,7 @@ export const CONNECT_SECURITY_SCHEMES = {
     scheme: "bearer",
     bearerFormat: "JWT",
     description:
-      "Developer access token from POST /api/v1/developer-access/token. Paste the raw JWT; Mintlify adds the Bearer prefix.",
+      "Access token from POST /api/v1/developer-access/token. Use the accessToken value from the response as Authorization: Bearer <token>. In the API playground, paste the JWT only.",
   },
   fluideApiKey: {
     type: "apiKey",
