@@ -1,0 +1,12 @@
+{
+  "service": "books",
+  "generatedAt": "2026-06-06T00:00:00.000Z",
+  "codes": [
+    { "code": "BILL_NOT_FOUND", "httpStatus": 404, "messageKey": "errors.bill_not_found", "summary": "Bill not found", "developerAction": "Verify the bill ID belongs to the active company" },
+    { "code": "INTERNAL_ERROR", "httpStatus": 500, "messageKey": "common.unexpected_error", "summary": "Unexpected server error", "developerAction": "Retry with backoff; contact support with timestamp and request details" },
+    { "code": "INVOICE_NOT_FOUND", "httpStatus": 404, "messageKey": "errors.invoice_not_found", "summary": "Invoice not found", "developerAction": "Verify the invoice ID belongs to the active company" },
+    { "code": "JOURNAL_ENTRY_NOT_BALANCED", "httpStatus": 400, "messageKey": "errors.journal_entry_not_balanced", "summary": "Journal entry debits and credits do not balance", "developerAction": "Adjust line amounts so total debits equal total credits" },
+    { "code": "JOURNAL_ENTRY_NOT_FOUND", "httpStatus": 404, "messageKey": "errors.journal_entry_not_found", "summary": "Journal entry not found", "developerAction": "Verify the journal entry ID and company scope" },
+    { "code": "VALIDATION_FAILED", "httpStatus": 400, "messageKey": "validation.failed", "summary": "Request body or query parameters failed validation", "developerAction": "Fix the fields listed in `errors` and retry" }
+  ]
+}

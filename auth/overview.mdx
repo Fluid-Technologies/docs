@@ -21,8 +21,8 @@ See [Authorization](/getting-started/authorization) for the full flow.
 ## Key lifecycle
 
 - **Provision:** API key and one-time secret after email verification in Connect
-- **View:** `GET /api/v1/developer-access/current` (metadata only; secret never returned)
-- **Rotate:** `POST /api/v1/developer-access/rotate-secret` or the Connect dashboard
+- **View:** `GET /api/v1/authorize/current` (metadata only; secret never returned)
+- **Rotate:** `POST /api/v1/authorize/rotate-secret` or the Connect dashboard
 
 <CardGroup cols={2}>
   <Card title="Auth quickstart" icon="rocket" href="/auth/quickstart">

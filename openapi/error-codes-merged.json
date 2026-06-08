@@ -1,0 +1,268 @@
+{
+  "generatedAt": "2026-06-06T21:31:20.706Z",
+  "services": [
+    "auth",
+    "books",
+    "hr",
+    "pay",
+    "payroll"
+  ],
+  "codes": [
+    {
+      "code": "DEVELOPER_KEYS_INVALID",
+      "httpStatus": 401,
+      "messageKey": "errors.developer_keys_invalid",
+      "summary": "API key or secret is invalid",
+      "developerAction": "Verify X-Fluide-Api-Key and X-Fluide-Api-Secret headers",
+      "service": "auth"
+    },
+    {
+      "code": "EMAIL_NOT_VERIFIED",
+      "httpStatus": 403,
+      "messageKey": "errors.email_not_verified",
+      "summary": "Email address has not been verified",
+      "developerAction": "Complete email verification before accessing this resource",
+      "service": "auth"
+    },
+    {
+      "code": "HTTP_ERROR",
+      "httpStatus": 400,
+      "messageKey": "common.unexpected_error",
+      "summary": "Generic HTTP error without a domain code",
+      "developerAction": "Read `message` and `code`; fix request or permissions",
+      "service": "auth"
+    },
+    {
+      "code": "INTERNAL_ERROR",
+      "httpStatus": 500,
+      "messageKey": "common.unexpected_error",
+      "summary": "Unexpected server error",
+      "developerAction": "Retry with backoff; contact support with timestamp and request details",
+      "service": "auth"
+    },
+    {
+      "code": "INVALID_CREDENTIALS",
+      "httpStatus": 401,
+      "messageKey": "errors.invalid_credentials",
+      "summary": "Email or password is incorrect",
+      "developerAction": "Verify credentials or reset the password",
+      "service": "auth"
+    },
+    {
+      "code": "NOT_AN_ORGANIZATION_MEMBER",
+      "httpStatus": 403,
+      "messageKey": "errors.not_an_organization_member",
+      "summary": "User is not a member of the requested organization",
+      "developerAction": "Use an account with membership in the target organization",
+      "service": "auth"
+    },
+    {
+      "code": "PENDING_TOKEN_REQUIRED",
+      "httpStatus": 400,
+      "messageKey": "errors.pending_token_required",
+      "summary": "Pending token required to complete multi-step auth",
+      "developerAction": "Restart the sign-in flow from the password step",
+      "service": "auth"
+    },
+    {
+      "code": "TWO_FACTOR_SESSION_EXPIRED",
+      "httpStatus": 401,
+      "messageKey": "errors.two_factor_session_expired",
+      "summary": "Two-factor sign-in challenge has expired",
+      "developerAction": "Sign in again with email and password",
+      "service": "auth"
+    },
+    {
+      "code": "VALIDATION_FAILED",
+      "httpStatus": 400,
+      "messageKey": "validation.failed",
+      "summary": "Request body or query parameters failed validation",
+      "developerAction": "Fix the fields listed in `errors` and retry",
+      "service": "auth"
+    },
+    {
+      "code": "BILL_NOT_FOUND",
+      "httpStatus": 404,
+      "messageKey": "errors.bill_not_found",
+      "summary": "Bill not found",
+      "developerAction": "Verify the bill ID belongs to the active company",
+      "service": "books"
+    },
+    {
+      "code": "INTERNAL_ERROR",
+      "httpStatus": 500,
+      "messageKey": "common.unexpected_error",
+      "summary": "Unexpected server error",
+      "developerAction": "Retry with backoff; contact support with timestamp and request details",
+      "service": "books"
+    },
+    {
+      "code": "INVOICE_NOT_FOUND",
+      "httpStatus": 404,
+      "messageKey": "errors.invoice_not_found",
+      "summary": "Invoice not found",
+      "developerAction": "Verify the invoice ID belongs to the active company",
+      "service": "books"
+    },
+    {
+      "code": "JOURNAL_ENTRY_NOT_BALANCED",
+      "httpStatus": 400,
+      "messageKey": "errors.journal_entry_not_balanced",
+      "summary": "Journal entry debits and credits do not balance",
+      "developerAction": "Adjust line amounts so total debits equal total credits",
+      "service": "books"
+    },
+    {
+      "code": "JOURNAL_ENTRY_NOT_FOUND",
+      "httpStatus": 404,
+      "messageKey": "errors.journal_entry_not_found",
+      "summary": "Journal entry not found",
+      "developerAction": "Verify the journal entry ID and company scope",
+      "service": "books"
+    },
+    {
+      "code": "VALIDATION_FAILED",
+      "httpStatus": 400,
+      "messageKey": "validation.failed",
+      "summary": "Request body or query parameters failed validation",
+      "developerAction": "Fix the fields listed in `errors` and retry",
+      "service": "books"
+    },
+    {
+      "code": "ATTENDANCE_INVALID_DATE_RANGE",
+      "httpStatus": 400,
+      "messageKey": "errors.attendance_invalid_date_range",
+      "summary": "Attendance query has an invalid from/to date range",
+      "developerAction": "Use inclusive YYYY-MM-DD dates with from on or before to",
+      "service": "hr"
+    },
+    {
+      "code": "COMPANY_CONTEXT_MISSING",
+      "httpStatus": 400,
+      "messageKey": "errors.company_context_missing",
+      "summary": "Company context missing from session",
+      "developerAction": "Set X-Company-Id or select a company in the gateway session",
+      "service": "hr"
+    },
+    {
+      "code": "GATEWAY_AUTH_INVALID",
+      "httpStatus": 401,
+      "messageKey": "errors.gateway_auth_invalid",
+      "summary": "Invalid or expired X-User-Object payload",
+      "developerAction": "Re-authenticate and retry with a fresh JWT",
+      "service": "hr"
+    },
+    {
+      "code": "GATEWAY_AUTH_REQUIRED",
+      "httpStatus": 401,
+      "messageKey": "errors.gateway_auth_required",
+      "summary": "Missing X-User-Object gateway header",
+      "developerAction": "Call through the Fluide API gateway with a valid session",
+      "service": "hr"
+    },
+    {
+      "code": "INTERNAL_ERROR",
+      "httpStatus": 500,
+      "messageKey": "common.unexpected_error",
+      "summary": "Unexpected server error",
+      "developerAction": "Retry with backoff; contact support with timestamp and request details",
+      "service": "hr"
+    },
+    {
+      "code": "USER_NOT_FOUND",
+      "httpStatus": 404,
+      "messageKey": "errors.user_not_found",
+      "summary": "HR user record not found",
+      "developerAction": "Verify the employee or user ID exists in the tenant",
+      "service": "hr"
+    },
+    {
+      "code": "VALIDATION_FAILED",
+      "httpStatus": 400,
+      "messageKey": "validation.failed",
+      "summary": "Request body or query parameters failed validation",
+      "developerAction": "Fix the fields listed in `errors` and retry",
+      "service": "hr"
+    },
+    {
+      "code": "INTERNAL_ERROR",
+      "httpStatus": 500,
+      "messageKey": "common.unexpected_error",
+      "summary": "Unexpected server error",
+      "developerAction": "Retry with backoff; contact support with timestamp and request details",
+      "service": "pay"
+    },
+    {
+      "code": "PAYMENT_NOT_FOUND",
+      "httpStatus": 404,
+      "messageKey": "errors.payment_not_found",
+      "summary": "Payment record not found",
+      "developerAction": "Verify the payment ID and merchant context",
+      "service": "pay"
+    },
+    {
+      "code": "PAYMENT_PROVIDER_ERROR",
+      "httpStatus": 502,
+      "messageKey": "errors.payment_provider_error",
+      "summary": "Upstream payment provider returned an error",
+      "developerAction": "Retry with backoff; check provider status and credentials",
+      "service": "pay"
+    },
+    {
+      "code": "VALIDATION_FAILED",
+      "httpStatus": 400,
+      "messageKey": "validation.failed",
+      "summary": "Request body or query parameters failed validation",
+      "developerAction": "Fix the fields listed in `errors` and retry",
+      "service": "pay"
+    },
+    {
+      "code": "WALLET_INSUFFICIENT_BALANCE",
+      "httpStatus": 400,
+      "messageKey": "errors.wallet_insufficient_balance",
+      "summary": "Wallet balance too low for the requested operation",
+      "developerAction": "Fund the wallet or reduce the transaction amount",
+      "service": "pay"
+    },
+    {
+      "code": "INTERNAL_ERROR",
+      "httpStatus": 500,
+      "messageKey": "common.unexpected_error",
+      "summary": "Unexpected server error",
+      "developerAction": "Retry with backoff; contact support with timestamp and request details",
+      "service": "payroll"
+    },
+    {
+      "code": "PAYROLL_RUN_LOCKED",
+      "httpStatus": 409,
+      "messageKey": "errors.payroll_run_locked",
+      "summary": "Payroll run cannot be modified in its current status",
+      "developerAction": "Check run status; create a new run or use the allowed transition",
+      "service": "payroll"
+    },
+    {
+      "code": "PAYROLL_RUN_NOT_FOUND",
+      "httpStatus": 404,
+      "messageKey": "errors.payroll_run_not_found",
+      "summary": "Payroll run not found",
+      "developerAction": "Verify the payroll run ID and company scope",
+      "service": "payroll"
+    },
+    {
+      "code": "PAYROLL_SETTINGS_MISSING",
+      "httpStatus": 400,
+      "messageKey": "errors.payroll_settings_missing",
+      "summary": "Payroll settings not configured for the company",
+      "developerAction": "Configure payroll settings before creating runs",
+      "service": "payroll"
+    },
+    {
+      "code": "VALIDATION_FAILED",
+      "httpStatus": 400,
+      "messageKey": "validation.failed",
+      "summary": "Request body or query parameters failed validation",
+      "developerAction": "Fix the fields listed in `errors` and retry",
+      "service": "payroll"
+    }
+  ]
+}

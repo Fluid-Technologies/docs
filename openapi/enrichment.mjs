@@ -4,6 +4,12 @@
  * Edit here — then run `node export-openapi.mjs` or `node scripts/enrich-openapi.mjs`.
  */
 
+import {
+  DEFAULT_FLUIDE_API_BASE_URL,
+  DEFAULT_SERVER_DESCRIPTION,
+} from "./constants.mjs";
+import { injectCodeSamples } from "./code-samples.mjs";
+
 /** Tyk gateway + userFetcher contract for Fluide Connect developer integrations. */
 export const CONNECT_SECURITY_SCHEMES = {
   bearer: {
@@ -57,13 +63,13 @@ const PRODUCT_SERVICE_KEYS = new Set([
 ]);
 
 const TOKEN_EXCHANGE_PATHS = new Set([
-  "/api/v1/developer-access/token",
-  "/api/v1/developer-access/exchange",
+  "/api/v1/authorize/token",
+  "/api/v1/authorize/exchange",
 ]);
 
 const DEVELOPER_SESSION_PATHS = new Set([
-  "/api/v1/developer-access/current",
-  "/api/v1/developer-access/rotate-secret",
+  "/api/v1/authorize/current",
+  "/api/v1/authorize/rotate-secret",
 ]);
 
 const HTTP_METHODS = new Set([
@@ -181,7 +187,28 @@ export const OPERATION_PATCHES = {
     summary: "Utils service root",
     description: "Returns a simple greeting confirming the utils service is reachable.",
   },
+  "GET /api/v1/hr/attendance/events": {
+    summary: "List clock events",
+    description:
+      "List clock events in a date range. Optional IANA `timeZone` interprets `from`/`to` as local calendar days. Without `hr:attendance:write`, scope is self-only (`hr:attendance:self:write` only), direct reports (`hr:attendance:read`), or full reporting subtree (`hr:attendance:read` + `hr:attendance:team:read`).",
+  },
 };
+
+/** Mintlify slugifies summaries into filenames — keep them short to avoid ENAMETOOLONG. */
+const MAX_OPERATION_SUMMARY_LENGTH = 72;
+
+function clampOperationSummary(operation) {
+  const summary = operation.summary;
+  if (typeof summary !== "string" || summary.length <= MAX_OPERATION_SUMMARY_LENGTH) {
+    return operation;
+  }
+  const trimmed = summary.slice(0, MAX_OPERATION_SUMMARY_LENGTH - 1).trimEnd();
+  return {
+    ...operation,
+    description: operation.description ?? summary,
+    summary: `${trimmed}…`,
+  };
+}
 
 function mergeSecuritySchemes(existing) {
   const merged = { ...(existing ?? {}) };
@@ -276,12 +303,15 @@ export function enrichOpenApiSpec(doc, serviceKey) {
       if (!operation || typeof operation !== "object") continue;
       const patchKey = `${method.toUpperCase()} ${pathKey}`;
       const patch = OPERATION_PATCHES[patchKey];
-      if (!patch) continue;
-      nextPathItem[method] = {
-        ...operation,
-        summary: patch.summary ?? operation.summary,
-        description: patch.description ?? operation.description,
-      };
+      let nextOp = operation;
+      if (patch) {
+        nextOp = {
+          ...operation,
+          summary: patch.summary ?? operation.summary,
+          description: patch.description ?? operation.description,
+        };
+      }
+      nextPathItem[method] = clampOperationSummary(nextOp);
     }
     paths[pathKey] = nextPathItem;
   }
@@ -289,6 +319,12 @@ export function enrichOpenApiSpec(doc, serviceKey) {
   const withPaths = {
     ...doc,
     info,
+    servers: [
+      {
+        url: DEFAULT_FLUIDE_API_BASE_URL,
+        description: DEFAULT_SERVER_DESCRIPTION,
+      },
+    ],
     tags: Array.from(tagByName.values()),
     paths,
     "x-mint": {
@@ -298,5 +334,6 @@ export function enrichOpenApiSpec(doc, serviceKey) {
     },
   };
 
-  return injectGatewayAuth(withPaths, serviceKey);
+  const withAuth = injectGatewayAuth(withPaths, serviceKey);
+  return injectCodeSamples(withAuth);
 }

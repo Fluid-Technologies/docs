@@ -1,0 +1,11 @@
+{
+  "service": "pay",
+  "generatedAt": "2026-06-06T00:00:00.000Z",
+  "codes": [
+    { "code": "INTERNAL_ERROR", "httpStatus": 500, "messageKey": "common.unexpected_error", "summary": "Unexpected server error", "developerAction": "Retry with backoff; contact support with timestamp and request details" },
+    { "code": "PAYMENT_NOT_FOUND", "httpStatus": 404, "messageKey": "errors.payment_not_found", "summary": "Payment record not found", "developerAction": "Verify the payment ID and merchant context" },
+    { "code": "PAYMENT_PROVIDER_ERROR", "httpStatus": 502, "messageKey": "errors.payment_provider_error", "summary": "Upstream payment provider returned an error", "developerAction": "Retry with backoff; check provider status and credentials" },
+    { "code": "VALIDATION_FAILED", "httpStatus": 400, "messageKey": "validation.failed", "summary": "Request body or query parameters failed validation", "developerAction": "Fix the fields listed in `errors` and retry" },
+    { "code": "WALLET_INSUFFICIENT_BALANCE", "httpStatus": 400, "messageKey": "errors.wallet_insufficient_balance", "summary": "Wallet balance too low for the requested operation", "developerAction": "Fund the wallet or reduce the transaction amount" }
+  ]
+}

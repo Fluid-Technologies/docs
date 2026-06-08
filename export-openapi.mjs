@@ -1,15 +1,19 @@
 #!/usr/bin/env node
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
+import {
+  DEFAULT_FLUIDE_API_BASE_URL,
+  DEFAULT_SERVER_DESCRIPTION,
+} from "./openapi/constants.mjs";
 import { enrichOpenApiSpec } from "./openapi/enrichment.mjs";
 
 const ROOT = process.cwd();
 const OUT_DIR = path.join(ROOT, "openapi");
 const REQUEST_TIMEOUT_MS = Number(process.env.OPENAPI_FETCH_TIMEOUT_MS || 20000);
 
-/** Beta gateway — override with FLUIDE_API_BASE_URL for other environments. */
+/** Sandbox gateway by default — override with FLUIDE_API_BASE_URL for other environments. */
 const API_BASE_URL = (
-  process.env.FLUIDE_API_BASE_URL ?? "https://staging.api.fluidehr.com"
+  process.env.FLUIDE_API_BASE_URL ?? DEFAULT_FLUIDE_API_BASE_URL
 ).replace(/\/$/, "");
 
 const ALLOWED_HTTP_METHODS = new Set([
@@ -23,7 +27,7 @@ const ALLOWED_HTTP_METHODS = new Set([
 ]);
 
 const DEFAULT_SERVERS = [
-  { url: API_BASE_URL, description: "Beta (staging)" },
+  { url: API_BASE_URL, description: DEFAULT_SERVER_DESCRIPTION },
 ];
 
 /** Gateway Swagger UI segment under /api/v1/docs/{segment}/ */

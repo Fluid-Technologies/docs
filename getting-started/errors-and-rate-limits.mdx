@@ -1,25 +1,113 @@
 ---
 title: Errors and rate limits
-description: Common error responses and how to handle them.
+description: Common error responses, stable error codes, and how to handle them.
 ---
 
 # Errors and rate limits
 
+All Fluide Suite services return a **consistent JSON envelope**. Use the `code` field for programmatic handling; use `message` for display.
+
+## Success envelope
+
+```json
+{
+  "success": true,
+  "message": "Operation completed successfully",
+  "data": {}
+}
+```
+
+## Error envelope
+
+```json
+{
+  "success": false,
+  "message": "Human-readable, localized text",
+  "code": "VALIDATION_FAILED",
+  "errors": { "from": ["from must be a valid date"] },
+  "statusCode": 400,
+  "timestamp": "2026-06-03T12:00:00.000Z"
+}
+```
+
+| Field | Purpose |
+| --- | --- |
+| `code` | Stable machine-readable identifier — **use this in client logic** |
+| `message` | Localized text for humans (may change with locale) |
+| `errors` | Field-level validation details when `code` is `VALIDATION_FAILED` |
+| `statusCode` | HTTP status (duplicated in body for logging) |
+| `timestamp` | UTC ISO-8601 time of the error |
+
+## Safe 500 responses
+
+Server errors (`5xx`) always return a **generic** `message` and `code: INTERNAL_ERROR`. Internal details (stack traces, SQL, secrets) are never exposed in the response body. Include `timestamp` and endpoint details when contacting support.
+
+## Global error codes
+
+| Code | HTTP | Meaning | What to do |
+| --- | --- | --- | --- |
+| `VALIDATION_FAILED` | 400 | Request body or query failed validation | Fix fields in `errors` and retry |
+| `INTERNAL_ERROR` | 500 | Unexpected server error | Retry with backoff; contact support with timestamp |
+| `HTTP_ERROR` | varies | Generic HTTP error without a domain code | Read `message`; fix request or permissions |
+
 ## Authentication errors
 
-- **401 Unauthorized**: missing/invalid keys or secret
-- **403 Forbidden**: valid keys, but insufficient access for the endpoint
+| Code | HTTP | Meaning | What to do |
+| --- | --- | --- | --- |
+| `INVALID_CREDENTIALS` | 401 | Email or password incorrect | Verify credentials |
+| `DEVELOPER_KEYS_INVALID` | 401 | API key or secret invalid | Check `X-Fluide-Api-Key` and `X-Fluide-Api-Secret` |
+| `GATEWAY_AUTH_REQUIRED` | 401 | Missing gateway session header | Call through the Fluide API gateway |
+| `GATEWAY_AUTH_INVALID` | 401 | Invalid session payload | Re-authenticate |
+| `NOT_AN_ORGANIZATION_MEMBER` | 403 | User not in target organization | Use an account with membership |
+| `EMAIL_NOT_VERIFIED` | 403 | Email not verified | Complete verification flow |
+
+## Product-specific codes
+
+Each service maintains a registry in `src/errors/<service>.error-codes.ts`. After deploy, catalogs are merged into `openapi/error-codes-merged.json` via:
+
+```bash
+node scripts/merge-error-codes.mjs
+```
+
+### HR (examples)
+
+| Code | HTTP | Meaning |
+| --- | --- | --- |
+| `USER_NOT_FOUND` | 404 | HR user record not found |
+| `ATTENDANCE_INVALID_DATE_RANGE` | 400 | Invalid `from`/`to` date range |
+
+### Accounting / Books (examples)
+
+| Code | HTTP | Meaning |
+| --- | --- | --- |
+| `JOURNAL_ENTRY_NOT_FOUND` | 404 | Journal entry not found |
+| `JOURNAL_ENTRY_NOT_BALANCED` | 400 | Debits and credits do not balance |
+
+### Payroll (examples)
+
+| Code | HTTP | Meaning |
+| --- | --- | --- |
+| `PAYROLL_RUN_NOT_FOUND` | 404 | Payroll run not found |
+| `PAYROLL_RUN_LOCKED` | 409 | Run cannot be modified in current status |
+
+### Pay (examples)
+
+| Code | HTTP | Meaning |
+| --- | --- | --- |
+| `PAYMENT_NOT_FOUND` | 404 | Payment record not found |
+| `WALLET_INSUFFICIENT_BALANCE` | 400 | Wallet balance too low |
 
 ## Recommended handling
 
 - Never retry `401` blindly. Re-check headers and rotated secrets.
 - For `429 Too Many Requests`, back off and retry with jitter.
+- Log `code` + `timestamp` in your integration for support tickets.
 
 ## Support data
 
 When contacting support, include:
 
-- Timestamp (UTC)
+- Timestamp (UTC) from the error body
+- `code` and HTTP status
 - Endpoint + HTTP method
-- Response status + body
-- A request ID header if present
+- Request ID header if present

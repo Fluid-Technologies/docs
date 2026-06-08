@@ -17,11 +17,11 @@ This walkthrough verifies your Connect integration end-to-end.
 <CodeGroup>
 
 ```bash curl
-export FLUIDE_BASE_URL="https://staging.api.fluidehr.com"
+export FLUIDE_BASE_URL="https://sandbox.fluidehr.com"
 export FLUIDE_API_KEY="fl_dev_..."
 export FLUIDE_API_SECRET="..."
 
-TOKEN_RESPONSE=$(curl -sS -X POST "$FLUIDE_BASE_URL/api/v1/developer-access/token" \
+TOKEN_RESPONSE=$(curl -sS -X POST "$FLUIDE_BASE_URL/api/v1/authorize/token" \
   -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
   -H "X-Fluide-Api-Secret: $FLUIDE_API_SECRET" \
   -H "X-Fluide-Client-Id: fluide-developer")
@@ -32,7 +32,7 @@ export FLUIDE_ACCESS_TOKEN=$(echo "$TOKEN_RESPONSE" | jq -r '.accessToken')
 ```javascript Node.js
 const baseUrl = process.env.FLUIDE_BASE_URL;
 
-const tokenRes = await fetch(`${baseUrl}/api/v1/developer-access/token`, {
+const tokenRes = await fetch(`${baseUrl}/api/v1/authorize/token`, {
   method: 'POST',
   headers: {
     'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,

@@ -38,10 +38,10 @@
       "display": "interactive"
     },
     "examples": {
-      "languages": ["bash", "node"],
+      "languages": ["bash", "node", "python", "java", "php"],
       "defaults": "required",
       "prefill": false,
-      "autogenerate": true
+      "autogenerate": false
     }
   },
   "navigation": {

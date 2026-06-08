@@ -1,0 +1,13 @@
+{
+  "service": "hr",
+  "generatedAt": "2026-06-06T00:00:00.000Z",
+  "codes": [
+    { "code": "ATTENDANCE_INVALID_DATE_RANGE", "httpStatus": 400, "messageKey": "errors.attendance_invalid_date_range", "summary": "Attendance query has an invalid from/to date range", "developerAction": "Use inclusive YYYY-MM-DD dates with from on or before to" },
+    { "code": "COMPANY_CONTEXT_MISSING", "httpStatus": 400, "messageKey": "errors.company_context_missing", "summary": "Company context missing from session", "developerAction": "Set X-Company-Id or select a company in the gateway session" },
+    { "code": "GATEWAY_AUTH_INVALID", "httpStatus": 401, "messageKey": "errors.gateway_auth_invalid", "summary": "Invalid or expired X-User-Object payload", "developerAction": "Re-authenticate and retry with a fresh JWT" },
+    { "code": "GATEWAY_AUTH_REQUIRED", "httpStatus": 401, "messageKey": "errors.gateway_auth_required", "summary": "Missing X-User-Object gateway header", "developerAction": "Call through the Fluide API gateway with a valid session" },
+    { "code": "INTERNAL_ERROR", "httpStatus": 500, "messageKey": "common.unexpected_error", "summary": "Unexpected server error", "developerAction": "Retry with backoff; contact support with timestamp and request details" },
+    { "code": "USER_NOT_FOUND", "httpStatus": 404, "messageKey": "errors.user_not_found", "summary": "HR user record not found", "developerAction": "Verify the employee or user ID exists in the tenant" },
+    { "code": "VALIDATION_FAILED", "httpStatus": 400, "messageKey": "validation.failed", "summary": "Request body or query parameters failed validation", "developerAction": "Fix the fields listed in `errors` and retry" }
+  ]
+}

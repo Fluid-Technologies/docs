@@ -1,0 +1,11 @@
+{
+  "service": "payroll",
+  "generatedAt": "2026-06-06T00:00:00.000Z",
+  "codes": [
+    { "code": "INTERNAL_ERROR", "httpStatus": 500, "messageKey": "common.unexpected_error", "summary": "Unexpected server error", "developerAction": "Retry with backoff; contact support with timestamp and request details" },
+    { "code": "PAYROLL_RUN_LOCKED", "httpStatus": 409, "messageKey": "errors.payroll_run_locked", "summary": "Payroll run cannot be modified in its current status", "developerAction": "Check run status; create a new run or use the allowed transition" },
+    { "code": "PAYROLL_RUN_NOT_FOUND", "httpStatus": 404, "messageKey": "errors.payroll_run_not_found", "summary": "Payroll run not found", "developerAction": "Verify the payroll run ID and company scope" },
+    { "code": "PAYROLL_SETTINGS_MISSING", "httpStatus": 400, "messageKey": "errors.payroll_settings_missing", "summary": "Payroll settings not configured for the company", "developerAction": "Configure payroll settings before creating runs" },
+    { "code": "VALIDATION_FAILED", "httpStatus": 400, "messageKey": "validation.failed", "summary": "Request body or query parameters failed validation", "developerAction": "Fix the fields listed in `errors` and retry" }
+  ]
+}

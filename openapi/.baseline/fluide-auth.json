@@ -2893,9 +2893,9 @@
         ]
       }
     },
-    "/api/v1/developer-access/current": {
+    "/api/v1/authorize/current": {
       "get": {
-        "operationId": "DeveloperAccessController_current_v1",
+        "operationId": "AuthorizeController_current_v1",
         "parameters": [],
         "responses": {
           "200": {
@@ -2903,13 +2903,13 @@
           }
         },
         "tags": [
-          "DeveloperAccess"
+          "Authorize"
         ]
       }
     },
-    "/api/v1/developer-access/rotate-secret": {
+    "/api/v1/authorize/rotate-secret": {
       "post": {
-        "operationId": "DeveloperAccessController_rotateSecret_v1",
+        "operationId": "AuthorizeController_rotateSecret_v1",
         "parameters": [],
         "responses": {
           "201": {
@@ -2917,7 +2917,7 @@
           }
         },
         "tags": [
-          "DeveloperAccess"
+          "Authorize"
         ]
       }
     },
@@ -5415,7 +5415,7 @@
       "name": "org-master-data"
     },
     {
-      "name": "DeveloperAccess"
+      "name": "Authorize"
     },
     {
       "name": "org-rbac"

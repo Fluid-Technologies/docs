@@ -15,7 +15,7 @@ New to Fluide Connect? Complete email verification in the dashboard first. Your 
 
 | Variable | Example |
 | --- | --- |
-| `FLUIDE_BASE_URL` | `https://staging.api.fluidehr.com` |
+| `FLUIDE_BASE_URL` | `https://sandbox.fluidehr.com` |
 | `FLUIDE_API_KEY` | `fl_dev_...` |
 | `FLUIDE_API_SECRET` | From Connect at provisioning (store in a secret manager) |
 
@@ -28,18 +28,18 @@ Send your API key and secret **only** to the token endpoint. Never include the s
 <CodeGroup>
 
 ```bash curl
-export FLUIDE_BASE_URL="https://staging.api.fluidehr.com"
+export FLUIDE_BASE_URL="https://sandbox.fluidehr.com"
 
-curl -X POST "$FLUIDE_BASE_URL/api/v1/developer-access/token" \
+curl -X POST "$FLUIDE_BASE_URL/api/v1/authorize/token" \
   -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
   -H "X-Fluide-Api-Secret: $FLUIDE_API_SECRET" \
   -H "X-Fluide-Client-Id: fluide-developer"
 ```
 
 ```javascript Node.js
-const baseUrl = process.env.FLUIDE_BASE_URL ?? 'https://staging.api.fluidehr.com';
+const baseUrl = process.env.FLUIDE_BASE_URL ?? 'https://sandbox.fluidehr.com';
 
-const res = await fetch(`${baseUrl}/api/v1/developer-access/token`, {
+const res = await fetch(`${baseUrl}/api/v1/authorize/token`, {
   method: 'POST',
   headers: {
     'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY!,
@@ -63,13 +63,13 @@ With a valid token, fetch credential metadata (no secret is returned):
 <CodeGroup>
 
 ```bash curl
-curl -X GET "$FLUIDE_BASE_URL/api/v1/developer-access/current" \
+curl -X GET "$FLUIDE_BASE_URL/api/v1/authorize/current" \
   -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
   -H "X-Fluide-Client-Id: fluide-developer"
 ```
 
 ```javascript Node.js
-const res = await fetch(`${baseUrl}/api/v1/developer-access/current`, {
+const res = await fetch(`${baseUrl}/api/v1/authorize/current`, {
   headers: {
     Authorization: `Bearer ${accessToken}`,
     'X-Fluide-Client-Id': 'fluide-developer',

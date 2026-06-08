@@ -13,7 +13,7 @@ You already have a verified developer account and API credentials from the Conne
 - `apiSecret` — shown once at provisioning; store it in your secret manager
 
 <Note>
-If you need to view or rotate credentials, sign in to Connect. The API secret is never returned again from `GET /api/v1/developer-access/current`.
+If you need to view or rotate credentials, sign in to Connect. The API secret is never returned again from `GET /api/v1/authorize/current`.
 </Note>
 
 ## Exchange key + secret for an access token
@@ -23,7 +23,7 @@ Send your credentials only to the token endpoint. Never include the secret on HR
 <CodeGroup>
 
 ```bash curl
-curl -X POST "$FLUIDE_BASE_URL/api/v1/developer-access/token" \
+curl -X POST "$FLUIDE_BASE_URL/api/v1/authorize/token" \
   -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
   -H "X-Fluide-Api-Secret: $FLUIDE_API_SECRET" \
   -H "X-Fluide-Client-Id: fluide-developer"
@@ -32,7 +32,7 @@ curl -X POST "$FLUIDE_BASE_URL/api/v1/developer-access/token" \
 ```javascript Node.js
 const baseUrl = process.env.FLUIDE_BASE_URL;
 
-const res = await fetch(`${baseUrl}/api/v1/developer-access/token`, {
+const res = await fetch(`${baseUrl}/api/v1/authorize/token`, {
   method: 'POST',
   headers: {
     'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,
@@ -139,13 +139,13 @@ If a secret is exposed, rotate it from the Connect dashboard or with a valid Bea
 <CodeGroup>
 
 ```bash curl
-curl -X POST "$FLUIDE_BASE_URL/api/v1/developer-access/rotate-secret" \
+curl -X POST "$FLUIDE_BASE_URL/api/v1/authorize/rotate-secret" \
   -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
   -H "X-Fluide-Client-Id: fluide-developer"
 ```
 
 ```javascript Node.js
-const res = await fetch(`${baseUrl}/api/v1/developer-access/rotate-secret`, {
+const res = await fetch(`${baseUrl}/api/v1/authorize/rotate-secret`, {
   method: 'POST',
   headers: {
     Authorization: `Bearer ${sessionToken}`,
