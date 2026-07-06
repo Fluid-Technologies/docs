@@ -1704,6 +1704,72 @@
         ]
       }
     },
+    "/api/v1/app/internal/files/{id}": {
+      "delete": {
+        "operationId": "InternalFileController_remove",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "organizationId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
+        ],
+        "summary": "Delete a managed file for an organization (service-to-service)",
+        "tags": [
+          "Internal Files"
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X DELETE \"$FLUIDE_BASE_URL/api/v1/app/internal/files/string?organizationId=string\" \\\n  -H \"Authorization: Bearer $FLUIDE_ACCESS_TOKEN\" \\\n  -H \"X-Fluide-Api-Key: $FLUIDE_API_KEY\" \\\n  -H \"X-Fluide-Client-Id: fluide-developer\""
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/app/internal/files/string?organizationId=string`, {\n  method: 'DELETE',\n  headers: {\n    Authorization: `Bearer ${process.env.FLUIDE_ACCESS_TOKEN}`,\n    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,\n    'X-Fluide-Client-Id': 'fluide-developer',\n  },\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n        \"Authorization\": f\"Bearer {os.environ['FLUIDE_ACCESS_TOKEN']}\",\n        \"X-Fluide-Api-Key\": os.environ[\"FLUIDE_API_KEY\"],\n        \"X-Fluide-Client-Id\": \"fluide-developer\",\n}\n\nresponse = requests.delete(\n    f\"{base_url}/api/v1/app/internal/files/string?organizationId=string\",\n    headers=headers,\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/app/internal/files/string?organizationId=string\"))\n    .header(\"Authorization\", \"Bearer \" + System.getenv(\"FLUIDE_ACCESS_TOKEN\"))\n    .header(\"X-Fluide-Api-Key\", System.getenv(\"FLUIDE_API_KEY\"))\n    .header(\"X-Fluide-Client-Id\", \"fluide-developer\")\n    .DELETE(HttpRequest.BodyPublishers.noBody())\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/app/internal/files/string?organizationId=string\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'DELETE',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'X-Fluide-Api-Key: ' . getenv('FLUIDE_API_KEY'),\n        'X-Fluide-Client-Id: fluide-developer',\n    ],\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
     "/api/v1/app/documents/payslips": {
       "post": {
         "description": "Idempotent per organization + payslipId when payload hash matches. Pass force=true to overwrite after payroll corrections.",
@@ -4605,6 +4671,892 @@
         ]
       }
     },
+    "/api/v1/app/internal/artifacts/tabular-report": {
+      "post": {
+        "description": "Requires FLUIDE_INTERNAL_FILE_TOKEN on caller and callee.",
+        "operationId": "InternalArtifactsController_tabularReport",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateTabularReportDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Render a tabular report (service-to-service from fluide-reporting)",
+        "tags": [
+          "Internal Artifacts"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X POST \"$FLUIDE_BASE_URL/api/v1/app/internal/artifacts/tabular-report\" \\\n  -H \"Authorization: Bearer $FLUIDE_ACCESS_TOKEN\" \\\n  -H \"X-Fluide-Api-Key: $FLUIDE_API_KEY\" \\\n  -H \"X-Fluide-Client-Id: fluide-developer\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}'"
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/app/internal/artifacts/tabular-report`, {\n  method: 'POST',\n  headers: {\n    Authorization: `Bearer ${process.env.FLUIDE_ACCESS_TOKEN}`,\n    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,\n    'X-Fluide-Client-Id': 'fluide-developer',\n    'Content-Type': 'application/json',\n  },\n  body: JSON.stringify({}),\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n        \"Authorization\": f\"Bearer {os.environ['FLUIDE_ACCESS_TOKEN']}\",\n        \"X-Fluide-Api-Key\": os.environ[\"FLUIDE_API_KEY\"],\n        \"X-Fluide-Client-Id\": \"fluide-developer\",\n}\n\nresponse = requests.post(\n    f\"{base_url}/api/v1/app/internal/artifacts/tabular-report\",\n    headers=headers,\n    json={},\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/app/internal/artifacts/tabular-report\"))\n    .header(\"Authorization\", \"Bearer \" + System.getenv(\"FLUIDE_ACCESS_TOKEN\"))\n    .header(\"X-Fluide-Api-Key\", System.getenv(\"FLUIDE_API_KEY\"))\n    .header(\"X-Fluide-Client-Id\", \"fluide-developer\")\n    .header(\"Content-Type\", \"application/json\")\n    .POST(HttpRequest.BodyPublishers.ofString(\"{}\"))\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/app/internal/artifacts/tabular-report\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'POST',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'X-Fluide-Api-Key: ' . getenv('FLUIDE_API_KEY'),\n        'X-Fluide-Client-Id: fluide-developer',\n        'Content-Type: application/json',\n    ],\n    CURLOPT_POSTFIELDS => \"{}\",\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
+    "/api/v1/app/internal/artifacts/hr/employee-cv": {
+      "post": {
+        "operationId": "InternalArtifactsController_employeeCv",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateEmployeeCvDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Render employee CV PDF/DOCX (internal reporting)",
+        "tags": [
+          "Internal Artifacts"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X POST \"$FLUIDE_BASE_URL/api/v1/app/internal/artifacts/hr/employee-cv\" \\\n  -H \"Authorization: Bearer $FLUIDE_ACCESS_TOKEN\" \\\n  -H \"X-Fluide-Api-Key: $FLUIDE_API_KEY\" \\\n  -H \"X-Fluide-Client-Id: fluide-developer\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}'"
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/app/internal/artifacts/hr/employee-cv`, {\n  method: 'POST',\n  headers: {\n    Authorization: `Bearer ${process.env.FLUIDE_ACCESS_TOKEN}`,\n    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,\n    'X-Fluide-Client-Id': 'fluide-developer',\n    'Content-Type': 'application/json',\n  },\n  body: JSON.stringify({}),\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n        \"Authorization\": f\"Bearer {os.environ['FLUIDE_ACCESS_TOKEN']}\",\n        \"X-Fluide-Api-Key\": os.environ[\"FLUIDE_API_KEY\"],\n        \"X-Fluide-Client-Id\": \"fluide-developer\",\n}\n\nresponse = requests.post(\n    f\"{base_url}/api/v1/app/internal/artifacts/hr/employee-cv\",\n    headers=headers,\n    json={},\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/app/internal/artifacts/hr/employee-cv\"))\n    .header(\"Authorization\", \"Bearer \" + System.getenv(\"FLUIDE_ACCESS_TOKEN\"))\n    .header(\"X-Fluide-Api-Key\", System.getenv(\"FLUIDE_API_KEY\"))\n    .header(\"X-Fluide-Client-Id\", \"fluide-developer\")\n    .header(\"Content-Type\", \"application/json\")\n    .POST(HttpRequest.BodyPublishers.ofString(\"{}\"))\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/app/internal/artifacts/hr/employee-cv\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'POST',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'X-Fluide-Api-Key: ' . getenv('FLUIDE_API_KEY'),\n        'X-Fluide-Client-Id: fluide-developer',\n        'Content-Type: application/json',\n    ],\n    CURLOPT_POSTFIELDS => \"{}\",\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
+    "/api/v1/app/internal/artifacts/dashboard-report": {
+      "post": {
+        "operationId": "InternalArtifactsController_dashboardReport",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GenerateDashboardReportDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Render analytics dashboard PDF with charts (internal reporting)",
+        "tags": [
+          "Internal Artifacts"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X POST \"$FLUIDE_BASE_URL/api/v1/app/internal/artifacts/dashboard-report\" \\\n  -H \"Authorization: Bearer $FLUIDE_ACCESS_TOKEN\" \\\n  -H \"X-Fluide-Api-Key: $FLUIDE_API_KEY\" \\\n  -H \"X-Fluide-Client-Id: fluide-developer\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}'"
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/app/internal/artifacts/dashboard-report`, {\n  method: 'POST',\n  headers: {\n    Authorization: `Bearer ${process.env.FLUIDE_ACCESS_TOKEN}`,\n    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,\n    'X-Fluide-Client-Id': 'fluide-developer',\n    'Content-Type': 'application/json',\n  },\n  body: JSON.stringify({}),\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n        \"Authorization\": f\"Bearer {os.environ['FLUIDE_ACCESS_TOKEN']}\",\n        \"X-Fluide-Api-Key\": os.environ[\"FLUIDE_API_KEY\"],\n        \"X-Fluide-Client-Id\": \"fluide-developer\",\n}\n\nresponse = requests.post(\n    f\"{base_url}/api/v1/app/internal/artifacts/dashboard-report\",\n    headers=headers,\n    json={},\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/app/internal/artifacts/dashboard-report\"))\n    .header(\"Authorization\", \"Bearer \" + System.getenv(\"FLUIDE_ACCESS_TOKEN\"))\n    .header(\"X-Fluide-Api-Key\", System.getenv(\"FLUIDE_API_KEY\"))\n    .header(\"X-Fluide-Client-Id\", \"fluide-developer\")\n    .header(\"Content-Type\", \"application/json\")\n    .POST(HttpRequest.BodyPublishers.ofString(\"{}\"))\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/app/internal/artifacts/dashboard-report\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'POST',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'X-Fluide-Api-Key: ' . getenv('FLUIDE_API_KEY'),\n        'X-Fluide-Client-Id: fluide-developer',\n        'Content-Type: application/json',\n    ],\n    CURLOPT_POSTFIELDS => \"{}\",\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
+    "/api/v1/app/internal/artifacts/financial/income-statement": {
+      "post": {
+        "operationId": "InternalArtifactsController_financialIncomeStatementPdf",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InternalIncomeStatementPdfDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Render income statement PDF (internal reporting)",
+        "tags": [
+          "Internal Artifacts"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X POST \"$FLUIDE_BASE_URL/api/v1/app/internal/artifacts/financial/income-statement\" \\\n  -H \"Authorization: Bearer $FLUIDE_ACCESS_TOKEN\" \\\n  -H \"X-Fluide-Api-Key: $FLUIDE_API_KEY\" \\\n  -H \"X-Fluide-Client-Id: fluide-developer\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}'"
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/app/internal/artifacts/financial/income-statement`, {\n  method: 'POST',\n  headers: {\n    Authorization: `Bearer ${process.env.FLUIDE_ACCESS_TOKEN}`,\n    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,\n    'X-Fluide-Client-Id': 'fluide-developer',\n    'Content-Type': 'application/json',\n  },\n  body: JSON.stringify({}),\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n        \"Authorization\": f\"Bearer {os.environ['FLUIDE_ACCESS_TOKEN']}\",\n        \"X-Fluide-Api-Key\": os.environ[\"FLUIDE_API_KEY\"],\n        \"X-Fluide-Client-Id\": \"fluide-developer\",\n}\n\nresponse = requests.post(\n    f\"{base_url}/api/v1/app/internal/artifacts/financial/income-statement\",\n    headers=headers,\n    json={},\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/app/internal/artifacts/financial/income-statement\"))\n    .header(\"Authorization\", \"Bearer \" + System.getenv(\"FLUIDE_ACCESS_TOKEN\"))\n    .header(\"X-Fluide-Api-Key\", System.getenv(\"FLUIDE_API_KEY\"))\n    .header(\"X-Fluide-Client-Id\", \"fluide-developer\")\n    .header(\"Content-Type\", \"application/json\")\n    .POST(HttpRequest.BodyPublishers.ofString(\"{}\"))\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/app/internal/artifacts/financial/income-statement\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'POST',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'X-Fluide-Api-Key: ' . getenv('FLUIDE_API_KEY'),\n        'X-Fluide-Client-Id: fluide-developer',\n        'Content-Type: application/json',\n    ],\n    CURLOPT_POSTFIELDS => \"{}\",\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
+    "/api/v1/app/internal/artifacts/financial/income-statement.xlsx": {
+      "post": {
+        "operationId": "InternalArtifactsController_financialIncomeStatementXlsx",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InternalIncomeStatementPdfDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Render income statement XLSX (internal reporting)",
+        "tags": [
+          "Internal Artifacts"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X POST \"$FLUIDE_BASE_URL/api/v1/app/internal/artifacts/financial/income-statement.xlsx\" \\\n  -H \"Authorization: Bearer $FLUIDE_ACCESS_TOKEN\" \\\n  -H \"X-Fluide-Api-Key: $FLUIDE_API_KEY\" \\\n  -H \"X-Fluide-Client-Id: fluide-developer\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}'"
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/app/internal/artifacts/financial/income-statement.xlsx`, {\n  method: 'POST',\n  headers: {\n    Authorization: `Bearer ${process.env.FLUIDE_ACCESS_TOKEN}`,\n    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,\n    'X-Fluide-Client-Id': 'fluide-developer',\n    'Content-Type': 'application/json',\n  },\n  body: JSON.stringify({}),\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n        \"Authorization\": f\"Bearer {os.environ['FLUIDE_ACCESS_TOKEN']}\",\n        \"X-Fluide-Api-Key\": os.environ[\"FLUIDE_API_KEY\"],\n        \"X-Fluide-Client-Id\": \"fluide-developer\",\n}\n\nresponse = requests.post(\n    f\"{base_url}/api/v1/app/internal/artifacts/financial/income-statement.xlsx\",\n    headers=headers,\n    json={},\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/app/internal/artifacts/financial/income-statement.xlsx\"))\n    .header(\"Authorization\", \"Bearer \" + System.getenv(\"FLUIDE_ACCESS_TOKEN\"))\n    .header(\"X-Fluide-Api-Key\", System.getenv(\"FLUIDE_API_KEY\"))\n    .header(\"X-Fluide-Client-Id\", \"fluide-developer\")\n    .header(\"Content-Type\", \"application/json\")\n    .POST(HttpRequest.BodyPublishers.ofString(\"{}\"))\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/app/internal/artifacts/financial/income-statement.xlsx\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'POST',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'X-Fluide-Api-Key: ' . getenv('FLUIDE_API_KEY'),\n        'X-Fluide-Client-Id: fluide-developer',\n        'Content-Type: application/json',\n    ],\n    CURLOPT_POSTFIELDS => \"{}\",\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
+    "/api/v1/app/internal/artifacts/financial/balance-sheet": {
+      "post": {
+        "operationId": "InternalArtifactsController_financialBalanceSheetPdf",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InternalBalanceSheetPdfDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Render balance sheet PDF (internal reporting)",
+        "tags": [
+          "Internal Artifacts"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X POST \"$FLUIDE_BASE_URL/api/v1/app/internal/artifacts/financial/balance-sheet\" \\\n  -H \"Authorization: Bearer $FLUIDE_ACCESS_TOKEN\" \\\n  -H \"X-Fluide-Api-Key: $FLUIDE_API_KEY\" \\\n  -H \"X-Fluide-Client-Id: fluide-developer\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}'"
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/app/internal/artifacts/financial/balance-sheet`, {\n  method: 'POST',\n  headers: {\n    Authorization: `Bearer ${process.env.FLUIDE_ACCESS_TOKEN}`,\n    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,\n    'X-Fluide-Client-Id': 'fluide-developer',\n    'Content-Type': 'application/json',\n  },\n  body: JSON.stringify({}),\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n        \"Authorization\": f\"Bearer {os.environ['FLUIDE_ACCESS_TOKEN']}\",\n        \"X-Fluide-Api-Key\": os.environ[\"FLUIDE_API_KEY\"],\n        \"X-Fluide-Client-Id\": \"fluide-developer\",\n}\n\nresponse = requests.post(\n    f\"{base_url}/api/v1/app/internal/artifacts/financial/balance-sheet\",\n    headers=headers,\n    json={},\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/app/internal/artifacts/financial/balance-sheet\"))\n    .header(\"Authorization\", \"Bearer \" + System.getenv(\"FLUIDE_ACCESS_TOKEN\"))\n    .header(\"X-Fluide-Api-Key\", System.getenv(\"FLUIDE_API_KEY\"))\n    .header(\"X-Fluide-Client-Id\", \"fluide-developer\")\n    .header(\"Content-Type\", \"application/json\")\n    .POST(HttpRequest.BodyPublishers.ofString(\"{}\"))\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/app/internal/artifacts/financial/balance-sheet\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'POST',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'X-Fluide-Api-Key: ' . getenv('FLUIDE_API_KEY'),\n        'X-Fluide-Client-Id: fluide-developer',\n        'Content-Type: application/json',\n    ],\n    CURLOPT_POSTFIELDS => \"{}\",\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
+    "/api/v1/app/internal/artifacts/financial/balance-sheet.xlsx": {
+      "post": {
+        "operationId": "InternalArtifactsController_financialBalanceSheetXlsx",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InternalBalanceSheetPdfDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Render balance sheet XLSX (internal reporting)",
+        "tags": [
+          "Internal Artifacts"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X POST \"$FLUIDE_BASE_URL/api/v1/app/internal/artifacts/financial/balance-sheet.xlsx\" \\\n  -H \"Authorization: Bearer $FLUIDE_ACCESS_TOKEN\" \\\n  -H \"X-Fluide-Api-Key: $FLUIDE_API_KEY\" \\\n  -H \"X-Fluide-Client-Id: fluide-developer\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}'"
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/app/internal/artifacts/financial/balance-sheet.xlsx`, {\n  method: 'POST',\n  headers: {\n    Authorization: `Bearer ${process.env.FLUIDE_ACCESS_TOKEN}`,\n    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,\n    'X-Fluide-Client-Id': 'fluide-developer',\n    'Content-Type': 'application/json',\n  },\n  body: JSON.stringify({}),\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n        \"Authorization\": f\"Bearer {os.environ['FLUIDE_ACCESS_TOKEN']}\",\n        \"X-Fluide-Api-Key\": os.environ[\"FLUIDE_API_KEY\"],\n        \"X-Fluide-Client-Id\": \"fluide-developer\",\n}\n\nresponse = requests.post(\n    f\"{base_url}/api/v1/app/internal/artifacts/financial/balance-sheet.xlsx\",\n    headers=headers,\n    json={},\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/app/internal/artifacts/financial/balance-sheet.xlsx\"))\n    .header(\"Authorization\", \"Bearer \" + System.getenv(\"FLUIDE_ACCESS_TOKEN\"))\n    .header(\"X-Fluide-Api-Key\", System.getenv(\"FLUIDE_API_KEY\"))\n    .header(\"X-Fluide-Client-Id\", \"fluide-developer\")\n    .header(\"Content-Type\", \"application/json\")\n    .POST(HttpRequest.BodyPublishers.ofString(\"{}\"))\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/app/internal/artifacts/financial/balance-sheet.xlsx\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'POST',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'X-Fluide-Api-Key: ' . getenv('FLUIDE_API_KEY'),\n        'X-Fluide-Client-Id: fluide-developer',\n        'Content-Type: application/json',\n    ],\n    CURLOPT_POSTFIELDS => \"{}\",\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
+    "/api/v1/app/internal/artifacts/financial/cash-flow": {
+      "post": {
+        "operationId": "InternalArtifactsController_financialCashFlowPdf",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InternalCashFlowPdfDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Render cash flow PDF (internal reporting)",
+        "tags": [
+          "Internal Artifacts"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X POST \"$FLUIDE_BASE_URL/api/v1/app/internal/artifacts/financial/cash-flow\" \\\n  -H \"Authorization: Bearer $FLUIDE_ACCESS_TOKEN\" \\\n  -H \"X-Fluide-Api-Key: $FLUIDE_API_KEY\" \\\n  -H \"X-Fluide-Client-Id: fluide-developer\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}'"
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/app/internal/artifacts/financial/cash-flow`, {\n  method: 'POST',\n  headers: {\n    Authorization: `Bearer ${process.env.FLUIDE_ACCESS_TOKEN}`,\n    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,\n    'X-Fluide-Client-Id': 'fluide-developer',\n    'Content-Type': 'application/json',\n  },\n  body: JSON.stringify({}),\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n        \"Authorization\": f\"Bearer {os.environ['FLUIDE_ACCESS_TOKEN']}\",\n        \"X-Fluide-Api-Key\": os.environ[\"FLUIDE_API_KEY\"],\n        \"X-Fluide-Client-Id\": \"fluide-developer\",\n}\n\nresponse = requests.post(\n    f\"{base_url}/api/v1/app/internal/artifacts/financial/cash-flow\",\n    headers=headers,\n    json={},\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/app/internal/artifacts/financial/cash-flow\"))\n    .header(\"Authorization\", \"Bearer \" + System.getenv(\"FLUIDE_ACCESS_TOKEN\"))\n    .header(\"X-Fluide-Api-Key\", System.getenv(\"FLUIDE_API_KEY\"))\n    .header(\"X-Fluide-Client-Id\", \"fluide-developer\")\n    .header(\"Content-Type\", \"application/json\")\n    .POST(HttpRequest.BodyPublishers.ofString(\"{}\"))\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/app/internal/artifacts/financial/cash-flow\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'POST',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'X-Fluide-Api-Key: ' . getenv('FLUIDE_API_KEY'),\n        'X-Fluide-Client-Id: fluide-developer',\n        'Content-Type: application/json',\n    ],\n    CURLOPT_POSTFIELDS => \"{}\",\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
+    "/api/v1/app/internal/artifacts/financial/cash-flow.xlsx": {
+      "post": {
+        "operationId": "InternalArtifactsController_financialCashFlowXlsx",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InternalCashFlowPdfDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Render cash flow XLSX (internal reporting)",
+        "tags": [
+          "Internal Artifacts"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X POST \"$FLUIDE_BASE_URL/api/v1/app/internal/artifacts/financial/cash-flow.xlsx\" \\\n  -H \"Authorization: Bearer $FLUIDE_ACCESS_TOKEN\" \\\n  -H \"X-Fluide-Api-Key: $FLUIDE_API_KEY\" \\\n  -H \"X-Fluide-Client-Id: fluide-developer\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}'"
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/app/internal/artifacts/financial/cash-flow.xlsx`, {\n  method: 'POST',\n  headers: {\n    Authorization: `Bearer ${process.env.FLUIDE_ACCESS_TOKEN}`,\n    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,\n    'X-Fluide-Client-Id': 'fluide-developer',\n    'Content-Type': 'application/json',\n  },\n  body: JSON.stringify({}),\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n        \"Authorization\": f\"Bearer {os.environ['FLUIDE_ACCESS_TOKEN']}\",\n        \"X-Fluide-Api-Key\": os.environ[\"FLUIDE_API_KEY\"],\n        \"X-Fluide-Client-Id\": \"fluide-developer\",\n}\n\nresponse = requests.post(\n    f\"{base_url}/api/v1/app/internal/artifacts/financial/cash-flow.xlsx\",\n    headers=headers,\n    json={},\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/app/internal/artifacts/financial/cash-flow.xlsx\"))\n    .header(\"Authorization\", \"Bearer \" + System.getenv(\"FLUIDE_ACCESS_TOKEN\"))\n    .header(\"X-Fluide-Api-Key\", System.getenv(\"FLUIDE_API_KEY\"))\n    .header(\"X-Fluide-Client-Id\", \"fluide-developer\")\n    .header(\"Content-Type\", \"application/json\")\n    .POST(HttpRequest.BodyPublishers.ofString(\"{}\"))\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/app/internal/artifacts/financial/cash-flow.xlsx\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'POST',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'X-Fluide-Api-Key: ' . getenv('FLUIDE_API_KEY'),\n        'X-Fluide-Client-Id: fluide-developer',\n        'Content-Type: application/json',\n    ],\n    CURLOPT_POSTFIELDS => \"{}\",\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
+    "/api/v1/app/internal/artifacts/financial/trial-balance": {
+      "post": {
+        "operationId": "InternalArtifactsController_financialTrialBalancePdf",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InternalTrialBalancePdfDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Render trial balance PDF (internal reporting)",
+        "tags": [
+          "Internal Artifacts"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X POST \"$FLUIDE_BASE_URL/api/v1/app/internal/artifacts/financial/trial-balance\" \\\n  -H \"Authorization: Bearer $FLUIDE_ACCESS_TOKEN\" \\\n  -H \"X-Fluide-Api-Key: $FLUIDE_API_KEY\" \\\n  -H \"X-Fluide-Client-Id: fluide-developer\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}'"
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/app/internal/artifacts/financial/trial-balance`, {\n  method: 'POST',\n  headers: {\n    Authorization: `Bearer ${process.env.FLUIDE_ACCESS_TOKEN}`,\n    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,\n    'X-Fluide-Client-Id': 'fluide-developer',\n    'Content-Type': 'application/json',\n  },\n  body: JSON.stringify({}),\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n        \"Authorization\": f\"Bearer {os.environ['FLUIDE_ACCESS_TOKEN']}\",\n        \"X-Fluide-Api-Key\": os.environ[\"FLUIDE_API_KEY\"],\n        \"X-Fluide-Client-Id\": \"fluide-developer\",\n}\n\nresponse = requests.post(\n    f\"{base_url}/api/v1/app/internal/artifacts/financial/trial-balance\",\n    headers=headers,\n    json={},\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/app/internal/artifacts/financial/trial-balance\"))\n    .header(\"Authorization\", \"Bearer \" + System.getenv(\"FLUIDE_ACCESS_TOKEN\"))\n    .header(\"X-Fluide-Api-Key\", System.getenv(\"FLUIDE_API_KEY\"))\n    .header(\"X-Fluide-Client-Id\", \"fluide-developer\")\n    .header(\"Content-Type\", \"application/json\")\n    .POST(HttpRequest.BodyPublishers.ofString(\"{}\"))\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/app/internal/artifacts/financial/trial-balance\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'POST',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'X-Fluide-Api-Key: ' . getenv('FLUIDE_API_KEY'),\n        'X-Fluide-Client-Id: fluide-developer',\n        'Content-Type: application/json',\n    ],\n    CURLOPT_POSTFIELDS => \"{}\",\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
+    "/api/v1/app/internal/artifacts/financial/trial-balance.xlsx": {
+      "post": {
+        "operationId": "InternalArtifactsController_financialTrialBalanceXlsx",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InternalTrialBalancePdfDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Render trial balance XLSX (internal reporting)",
+        "tags": [
+          "Internal Artifacts"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X POST \"$FLUIDE_BASE_URL/api/v1/app/internal/artifacts/financial/trial-balance.xlsx\" \\\n  -H \"Authorization: Bearer $FLUIDE_ACCESS_TOKEN\" \\\n  -H \"X-Fluide-Api-Key: $FLUIDE_API_KEY\" \\\n  -H \"X-Fluide-Client-Id: fluide-developer\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}'"
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/app/internal/artifacts/financial/trial-balance.xlsx`, {\n  method: 'POST',\n  headers: {\n    Authorization: `Bearer ${process.env.FLUIDE_ACCESS_TOKEN}`,\n    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,\n    'X-Fluide-Client-Id': 'fluide-developer',\n    'Content-Type': 'application/json',\n  },\n  body: JSON.stringify({}),\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n        \"Authorization\": f\"Bearer {os.environ['FLUIDE_ACCESS_TOKEN']}\",\n        \"X-Fluide-Api-Key\": os.environ[\"FLUIDE_API_KEY\"],\n        \"X-Fluide-Client-Id\": \"fluide-developer\",\n}\n\nresponse = requests.post(\n    f\"{base_url}/api/v1/app/internal/artifacts/financial/trial-balance.xlsx\",\n    headers=headers,\n    json={},\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/app/internal/artifacts/financial/trial-balance.xlsx\"))\n    .header(\"Authorization\", \"Bearer \" + System.getenv(\"FLUIDE_ACCESS_TOKEN\"))\n    .header(\"X-Fluide-Api-Key\", System.getenv(\"FLUIDE_API_KEY\"))\n    .header(\"X-Fluide-Client-Id\", \"fluide-developer\")\n    .header(\"Content-Type\", \"application/json\")\n    .POST(HttpRequest.BodyPublishers.ofString(\"{}\"))\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/app/internal/artifacts/financial/trial-balance.xlsx\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'POST',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'X-Fluide-Api-Key: ' . getenv('FLUIDE_API_KEY'),\n        'X-Fluide-Client-Id: fluide-developer',\n        'Content-Type: application/json',\n    ],\n    CURLOPT_POSTFIELDS => \"{}\",\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
+    "/api/v1/app/internal/artifacts/financial/general-ledger": {
+      "post": {
+        "operationId": "InternalArtifactsController_financialGeneralLedgerPdf",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InternalGeneralLedgerPdfDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Render general ledger PDF (internal reporting)",
+        "tags": [
+          "Internal Artifacts"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X POST \"$FLUIDE_BASE_URL/api/v1/app/internal/artifacts/financial/general-ledger\" \\\n  -H \"Authorization: Bearer $FLUIDE_ACCESS_TOKEN\" \\\n  -H \"X-Fluide-Api-Key: $FLUIDE_API_KEY\" \\\n  -H \"X-Fluide-Client-Id: fluide-developer\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}'"
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/app/internal/artifacts/financial/general-ledger`, {\n  method: 'POST',\n  headers: {\n    Authorization: `Bearer ${process.env.FLUIDE_ACCESS_TOKEN}`,\n    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,\n    'X-Fluide-Client-Id': 'fluide-developer',\n    'Content-Type': 'application/json',\n  },\n  body: JSON.stringify({}),\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n        \"Authorization\": f\"Bearer {os.environ['FLUIDE_ACCESS_TOKEN']}\",\n        \"X-Fluide-Api-Key\": os.environ[\"FLUIDE_API_KEY\"],\n        \"X-Fluide-Client-Id\": \"fluide-developer\",\n}\n\nresponse = requests.post(\n    f\"{base_url}/api/v1/app/internal/artifacts/financial/general-ledger\",\n    headers=headers,\n    json={},\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/app/internal/artifacts/financial/general-ledger\"))\n    .header(\"Authorization\", \"Bearer \" + System.getenv(\"FLUIDE_ACCESS_TOKEN\"))\n    .header(\"X-Fluide-Api-Key\", System.getenv(\"FLUIDE_API_KEY\"))\n    .header(\"X-Fluide-Client-Id\", \"fluide-developer\")\n    .header(\"Content-Type\", \"application/json\")\n    .POST(HttpRequest.BodyPublishers.ofString(\"{}\"))\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/app/internal/artifacts/financial/general-ledger\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'POST',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'X-Fluide-Api-Key: ' . getenv('FLUIDE_API_KEY'),\n        'X-Fluide-Client-Id: fluide-developer',\n        'Content-Type: application/json',\n    ],\n    CURLOPT_POSTFIELDS => \"{}\",\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
+    "/api/v1/app/internal/artifacts/financial/general-ledger.xlsx": {
+      "post": {
+        "operationId": "InternalArtifactsController_financialGeneralLedgerXlsx",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InternalGeneralLedgerPdfDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Render general ledger XLSX (internal reporting)",
+        "tags": [
+          "Internal Artifacts"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X POST \"$FLUIDE_BASE_URL/api/v1/app/internal/artifacts/financial/general-ledger.xlsx\" \\\n  -H \"Authorization: Bearer $FLUIDE_ACCESS_TOKEN\" \\\n  -H \"X-Fluide-Api-Key: $FLUIDE_API_KEY\" \\\n  -H \"X-Fluide-Client-Id: fluide-developer\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}'"
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/app/internal/artifacts/financial/general-ledger.xlsx`, {\n  method: 'POST',\n  headers: {\n    Authorization: `Bearer ${process.env.FLUIDE_ACCESS_TOKEN}`,\n    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,\n    'X-Fluide-Client-Id': 'fluide-developer',\n    'Content-Type': 'application/json',\n  },\n  body: JSON.stringify({}),\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n        \"Authorization\": f\"Bearer {os.environ['FLUIDE_ACCESS_TOKEN']}\",\n        \"X-Fluide-Api-Key\": os.environ[\"FLUIDE_API_KEY\"],\n        \"X-Fluide-Client-Id\": \"fluide-developer\",\n}\n\nresponse = requests.post(\n    f\"{base_url}/api/v1/app/internal/artifacts/financial/general-ledger.xlsx\",\n    headers=headers,\n    json={},\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/app/internal/artifacts/financial/general-ledger.xlsx\"))\n    .header(\"Authorization\", \"Bearer \" + System.getenv(\"FLUIDE_ACCESS_TOKEN\"))\n    .header(\"X-Fluide-Api-Key\", System.getenv(\"FLUIDE_API_KEY\"))\n    .header(\"X-Fluide-Client-Id\", \"fluide-developer\")\n    .header(\"Content-Type\", \"application/json\")\n    .POST(HttpRequest.BodyPublishers.ofString(\"{}\"))\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/app/internal/artifacts/financial/general-ledger.xlsx\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'POST',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'X-Fluide-Api-Key: ' . getenv('FLUIDE_API_KEY'),\n        'X-Fluide-Client-Id: fluide-developer',\n        'Content-Type: application/json',\n    ],\n    CURLOPT_POSTFIELDS => \"{}\",\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
+    "/api/v1/app/internal/artifacts/financial/chart-of-accounts": {
+      "post": {
+        "operationId": "InternalArtifactsController_financialChartOfAccountsPdf",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InternalChartOfAccountsPdfDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Render chart of accounts PDF (internal reporting)",
+        "tags": [
+          "Internal Artifacts"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X POST \"$FLUIDE_BASE_URL/api/v1/app/internal/artifacts/financial/chart-of-accounts\" \\\n  -H \"Authorization: Bearer $FLUIDE_ACCESS_TOKEN\" \\\n  -H \"X-Fluide-Api-Key: $FLUIDE_API_KEY\" \\\n  -H \"X-Fluide-Client-Id: fluide-developer\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}'"
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/app/internal/artifacts/financial/chart-of-accounts`, {\n  method: 'POST',\n  headers: {\n    Authorization: `Bearer ${process.env.FLUIDE_ACCESS_TOKEN}`,\n    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,\n    'X-Fluide-Client-Id': 'fluide-developer',\n    'Content-Type': 'application/json',\n  },\n  body: JSON.stringify({}),\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n        \"Authorization\": f\"Bearer {os.environ['FLUIDE_ACCESS_TOKEN']}\",\n        \"X-Fluide-Api-Key\": os.environ[\"FLUIDE_API_KEY\"],\n        \"X-Fluide-Client-Id\": \"fluide-developer\",\n}\n\nresponse = requests.post(\n    f\"{base_url}/api/v1/app/internal/artifacts/financial/chart-of-accounts\",\n    headers=headers,\n    json={},\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/app/internal/artifacts/financial/chart-of-accounts\"))\n    .header(\"Authorization\", \"Bearer \" + System.getenv(\"FLUIDE_ACCESS_TOKEN\"))\n    .header(\"X-Fluide-Api-Key\", System.getenv(\"FLUIDE_API_KEY\"))\n    .header(\"X-Fluide-Client-Id\", \"fluide-developer\")\n    .header(\"Content-Type\", \"application/json\")\n    .POST(HttpRequest.BodyPublishers.ofString(\"{}\"))\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/app/internal/artifacts/financial/chart-of-accounts\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'POST',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'X-Fluide-Api-Key: ' . getenv('FLUIDE_API_KEY'),\n        'X-Fluide-Client-Id: fluide-developer',\n        'Content-Type: application/json',\n    ],\n    CURLOPT_POSTFIELDS => \"{}\",\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
+    "/api/v1/app/internal/artifacts/financial/chart-of-accounts.xlsx": {
+      "post": {
+        "operationId": "InternalArtifactsController_financialChartOfAccountsXlsx",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InternalChartOfAccountsPdfDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Render chart of accounts XLSX (internal reporting)",
+        "tags": [
+          "Internal Artifacts"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X POST \"$FLUIDE_BASE_URL/api/v1/app/internal/artifacts/financial/chart-of-accounts.xlsx\" \\\n  -H \"Authorization: Bearer $FLUIDE_ACCESS_TOKEN\" \\\n  -H \"X-Fluide-Api-Key: $FLUIDE_API_KEY\" \\\n  -H \"X-Fluide-Client-Id: fluide-developer\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}'"
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/app/internal/artifacts/financial/chart-of-accounts.xlsx`, {\n  method: 'POST',\n  headers: {\n    Authorization: `Bearer ${process.env.FLUIDE_ACCESS_TOKEN}`,\n    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,\n    'X-Fluide-Client-Id': 'fluide-developer',\n    'Content-Type': 'application/json',\n  },\n  body: JSON.stringify({}),\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n        \"Authorization\": f\"Bearer {os.environ['FLUIDE_ACCESS_TOKEN']}\",\n        \"X-Fluide-Api-Key\": os.environ[\"FLUIDE_API_KEY\"],\n        \"X-Fluide-Client-Id\": \"fluide-developer\",\n}\n\nresponse = requests.post(\n    f\"{base_url}/api/v1/app/internal/artifacts/financial/chart-of-accounts.xlsx\",\n    headers=headers,\n    json={},\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/app/internal/artifacts/financial/chart-of-accounts.xlsx\"))\n    .header(\"Authorization\", \"Bearer \" + System.getenv(\"FLUIDE_ACCESS_TOKEN\"))\n    .header(\"X-Fluide-Api-Key\", System.getenv(\"FLUIDE_API_KEY\"))\n    .header(\"X-Fluide-Client-Id\", \"fluide-developer\")\n    .header(\"Content-Type\", \"application/json\")\n    .POST(HttpRequest.BodyPublishers.ofString(\"{}\"))\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/app/internal/artifacts/financial/chart-of-accounts.xlsx\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'POST',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'X-Fluide-Api-Key: ' . getenv('FLUIDE_API_KEY'),\n        'X-Fluide-Client-Id: fluide-developer',\n        'Content-Type: application/json',\n    ],\n    CURLOPT_POSTFIELDS => \"{}\",\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
     "/api/v1/app/document-jobs": {
       "post": {
         "description": "Produces a stub JSON manifest today; extend with real renderers. Use correlationId = producer row id for idempotency.",
@@ -5601,6 +6553,9 @@
       "name": "Internal Documents"
     },
     {
+      "name": "Internal Artifacts"
+    },
+    {
       "name": "Document jobs"
     },
     {
@@ -5609,8 +6564,8 @@
   ],
   "servers": [
     {
-      "url": "https://sandbox.fluidehr.com",
-      "description": "Sandbox"
+      "url": "https://test.api.fluidehr.com",
+      "description": "API"
     }
   ],
   "components": {
@@ -7195,6 +8150,583 @@
           "paymentDate",
           "paymentMethod",
           "transactionReference"
+        ]
+      },
+      "TabularReportColumnDto": {
+        "type": "object",
+        "properties": {
+          "key": {
+            "type": "string",
+            "maxLength": 128,
+            "description": "Row object key for this column"
+          },
+          "label": {
+            "type": "string",
+            "maxLength": 256,
+            "description": "Column header label"
+          }
+        },
+        "required": [
+          "key",
+          "label"
+        ]
+      },
+      "GenerateTabularReportDto": {
+        "type": "object",
+        "properties": {
+          "organizationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 512
+          },
+          "format": {
+            "type": "string",
+            "enum": [
+              "pdf",
+              "xlsx",
+              "csv"
+            ]
+          },
+          "columns": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TabularReportColumnDto"
+            }
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        },
+        "required": [
+          "organizationId",
+          "title",
+          "format",
+          "columns",
+          "rows"
+        ]
+      },
+      "GenerateEmployeeCvDto": {
+        "type": "object",
+        "properties": {
+          "organizationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "format": {
+            "type": "string",
+            "enum": [
+              "pdf",
+              "docx"
+            ]
+          },
+          "model": {
+            "type": "object",
+            "description": "Serialized CV model from fluide-hr internal API"
+          }
+        },
+        "required": [
+          "organizationId",
+          "format",
+          "model"
+        ]
+      },
+      "DashboardChartSeriesDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          }
+        },
+        "required": [
+          "name",
+          "values"
+        ]
+      },
+      "DashboardChartDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "maxLength": 64
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "bar",
+              "line",
+              "pie",
+              "funnel"
+            ]
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 256
+          },
+          "labels": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "series": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DashboardChartSeriesDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "type",
+          "title",
+          "labels",
+          "series"
+        ]
+      },
+      "DashboardTableSectionDto": {
+        "type": "object",
+        "properties": {
+          "columns": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TabularReportColumnDto"
+            }
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": true
+            }
+          }
+        },
+        "required": [
+          "columns",
+          "rows"
+        ]
+      },
+      "GenerateDashboardReportDto": {
+        "type": "object",
+        "properties": {
+          "organizationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "title": {
+            "type": "string",
+            "maxLength": 512
+          },
+          "charts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/DashboardChartDto"
+            }
+          },
+          "table": {
+            "$ref": "#/components/schemas/DashboardTableSectionDto"
+          }
+        },
+        "required": [
+          "organizationId",
+          "title",
+          "charts"
+        ]
+      },
+      "InternalIncomeStatementPdfDto": {
+        "type": "object",
+        "properties": {
+          "correlationId": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "organizationName": {
+            "type": "string",
+            "maxLength": 512
+          },
+          "presentationCurrency": {
+            "type": "string",
+            "maxLength": 8
+          },
+          "periodFrom": {
+            "type": "string",
+            "maxLength": 32
+          },
+          "periodTo": {
+            "type": "string",
+            "maxLength": 32
+          },
+          "basis": {
+            "type": "string",
+            "maxLength": 32
+          },
+          "revenue": {
+            "$ref": "#/components/schemas/FinancialPlSectionDto"
+          },
+          "expense": {
+            "$ref": "#/components/schemas/FinancialPlSectionDto"
+          },
+          "netIncome": {
+            "type": "number"
+          },
+          "reportFramework": {
+            "type": "string",
+            "description": "IFRS | OHADA | GAAP — drives localized report titles.",
+            "maxLength": 32
+          },
+          "companyLegal": {
+            "$ref": "#/components/schemas/CompanyLegalBlockDto"
+          },
+          "reportMetadata": {
+            "$ref": "#/components/schemas/ReportMetadataDto"
+          },
+          "notes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "organizationId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "correlationId",
+          "periodFrom",
+          "periodTo",
+          "revenue",
+          "expense",
+          "netIncome",
+          "organizationId"
+        ]
+      },
+      "InternalBalanceSheetPdfDto": {
+        "type": "object",
+        "properties": {
+          "correlationId": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "reportFramework": {
+            "type": "string",
+            "description": "IFRS | OHADA | GAAP — drives localized report titles (template pack v1).",
+            "maxLength": 32
+          },
+          "organizationName": {
+            "type": "string",
+            "maxLength": 512
+          },
+          "presentationCurrency": {
+            "type": "string",
+            "maxLength": 8
+          },
+          "asOf": {
+            "type": "string",
+            "maxLength": 32
+          },
+          "balanced": {
+            "type": "boolean"
+          },
+          "basisNote": {
+            "type": "string",
+            "maxLength": 2000
+          },
+          "assets": {
+            "$ref": "#/components/schemas/FinancialBalanceSheetSectionDto"
+          },
+          "liabilities": {
+            "$ref": "#/components/schemas/FinancialBalanceSheetSectionDto"
+          },
+          "equity": {
+            "$ref": "#/components/schemas/FinancialBalanceSheetSectionDto"
+          },
+          "companyLegal": {
+            "$ref": "#/components/schemas/CompanyLegalBlockDto"
+          },
+          "reportMetadata": {
+            "$ref": "#/components/schemas/ReportMetadataDto"
+          },
+          "notes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "organizationId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "correlationId",
+          "asOf",
+          "balanced",
+          "assets",
+          "liabilities",
+          "equity",
+          "organizationId"
+        ]
+      },
+      "InternalCashFlowPdfDto": {
+        "type": "object",
+        "properties": {
+          "correlationId": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "organizationName": {
+            "type": "string",
+            "maxLength": 512
+          },
+          "presentationCurrency": {
+            "type": "string",
+            "maxLength": 8
+          },
+          "periodFrom": {
+            "type": "string",
+            "maxLength": 32
+          },
+          "periodTo": {
+            "type": "string",
+            "maxLength": 32
+          },
+          "methodologyNote": {
+            "type": "string",
+            "maxLength": 4000
+          },
+          "cash": {
+            "$ref": "#/components/schemas/CashFlowCashDto"
+          },
+          "operating": {
+            "$ref": "#/components/schemas/CashFlowOperatingDto"
+          },
+          "investing": {
+            "$ref": "#/components/schemas/CashFlowInvestFinDto"
+          },
+          "financing": {
+            "$ref": "#/components/schemas/CashFlowInvestFinDto"
+          },
+          "reportFramework": {
+            "type": "string",
+            "description": "IFRS | OHADA | GAAP — drives localized report titles.",
+            "maxLength": 32
+          },
+          "companyLegal": {
+            "$ref": "#/components/schemas/CompanyLegalBlockDto"
+          },
+          "reportMetadata": {
+            "$ref": "#/components/schemas/ReportMetadataDto"
+          },
+          "notes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "organizationId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "correlationId",
+          "periodFrom",
+          "periodTo",
+          "methodologyNote",
+          "cash",
+          "operating",
+          "investing",
+          "financing",
+          "organizationId"
+        ]
+      },
+      "InternalTrialBalancePdfDto": {
+        "type": "object",
+        "properties": {
+          "correlationId": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "reportFramework": {
+            "type": "string",
+            "description": "IFRS | OHADA — drives titles (template pack v1).",
+            "maxLength": 32
+          },
+          "organizationName": {
+            "type": "string",
+            "maxLength": 512
+          },
+          "presentationCurrency": {
+            "type": "string",
+            "maxLength": 8
+          },
+          "periodFrom": {
+            "type": "string",
+            "maxLength": 32
+          },
+          "periodTo": {
+            "type": "string",
+            "maxLength": 32
+          },
+          "meta": {
+            "$ref": "#/components/schemas/TrialBalanceReportMetaDto"
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrialBalanceRowDto"
+            }
+          },
+          "companyLegal": {
+            "$ref": "#/components/schemas/CompanyLegalBlockDto"
+          },
+          "reportMetadata": {
+            "$ref": "#/components/schemas/ReportMetadataDto"
+          },
+          "frameworkDiffersFromCompany": {
+            "type": "boolean"
+          },
+          "notes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "organizationId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "correlationId",
+          "meta",
+          "rows",
+          "organizationId"
+        ]
+      },
+      "InternalGeneralLedgerPdfDto": {
+        "type": "object",
+        "properties": {
+          "correlationId": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "organizationName": {
+            "type": "string",
+            "maxLength": 512
+          },
+          "presentationCurrency": {
+            "type": "string",
+            "maxLength": 8
+          },
+          "periodFrom": {
+            "type": "string",
+            "maxLength": 32
+          },
+          "periodTo": {
+            "type": "string",
+            "maxLength": 32
+          },
+          "sections": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GeneralLedgerSectionDto"
+            }
+          },
+          "reportFramework": {
+            "type": "string",
+            "description": "IFRS | OHADA | GAAP — drives localized report titles.",
+            "maxLength": 32
+          },
+          "companyLegal": {
+            "$ref": "#/components/schemas/CompanyLegalBlockDto"
+          },
+          "reportMetadata": {
+            "$ref": "#/components/schemas/ReportMetadataDto"
+          },
+          "notes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "organizationId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "correlationId",
+          "periodFrom",
+          "periodTo",
+          "sections",
+          "organizationId"
+        ]
+      },
+      "InternalChartOfAccountsPdfDto": {
+        "type": "object",
+        "properties": {
+          "correlationId": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "organizationName": {
+            "type": "string",
+            "maxLength": 512
+          },
+          "rows": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CoaRowDto"
+            }
+          },
+          "reportFramework": {
+            "type": "string",
+            "description": "IFRS | OHADA | GAAP — drives localized report titles.",
+            "maxLength": 32
+          },
+          "presentationCurrency": {
+            "type": "string",
+            "maxLength": 8
+          },
+          "companyLegal": {
+            "$ref": "#/components/schemas/CompanyLegalBlockDto"
+          },
+          "reportMetadata": {
+            "$ref": "#/components/schemas/ReportMetadataDto"
+          },
+          "notes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "organizationId": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "required": [
+          "correlationId",
+          "rows",
+          "organizationId"
         ]
       },
       "CreateDocumentJobDto": {

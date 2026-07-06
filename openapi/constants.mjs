@@ -1,4 +1,8 @@
-/** Default gateway base URL for OpenAPI export and Mintlify playground (no trailing slash). */
-export const DEFAULT_FLUIDE_API_BASE_URL = "https://sandbox.fluidehr.com";
+import { resolveFluideApiBaseUrl } from "../lib/fluide-api-url.mjs";
 
-export const DEFAULT_SERVER_DESCRIPTION = "Sandbox";
+export { resolveFluideApiBaseUrl };
+
+export const DEFAULT_SERVER_DESCRIPTION = "API";
+
+/** Gateway origin used in enriched OpenAPI `servers` and code samples. */
+export const DEFAULT_FLUIDE_API_BASE_URL = resolveFluideApiBaseUrl();

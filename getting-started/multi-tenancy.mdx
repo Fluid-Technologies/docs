@@ -1,0 +1,198 @@
+---
+title: Multi-tenancy
+description: How organization tenants, partner workspaces, and acting-client headers work across Fluide APIs.
+---
+
+# Multi-tenancy
+
+Fluide APIs are **multi-tenant by design**. Every product route (HR, Payroll, Pay, Books, Utils) scopes data to a tenant context resolved by the **Tyk gateway** from your JWT and headers.
+
+This page explains the two tenancy models Connect developers need to understand, when to use each, and which APIs to call.
+
+## Two tenancy models
+
+| Model | Who uses it | Tenant unit | How context is set |
+| --- | --- | --- | --- |
+| **Organization tenant** | Fluide Business users and direct integrations | One **organization** per customer | JWT `tenantId` + active org membership |
+| **Partner / ISV** | Fluide Connect developers serving many merchants | **Workspace** → **client company** | Machine JWT + `X-Workspace-Id` + `X-Acting-Company-Id` |
+
+<Note>
+These models can coexist. A SERVICE_PARTNER org has its own organization record **and** manages separate client companies under workspaces.
+</Note>
+
+## Organization tenancy (direct)
+
+Use this when your integration acts **inside a single Fluide organization** — for example automating HR for one business that owns the API credentials.
+
+### How it works
+
+1. A user or machine token is bound to an **active organization** (`tenantId` in the JWT).
+2. The gateway forwards requests with enriched user context (`X-User-Object`, RBAC permissions).
+3. Product services filter all reads and writes to that organization.
+
+### Key Auth APIs
+
+| API | Purpose |
+| --- | --- |
+| `GET/POST /api/v1/organizations` | List and create organizations |
+| `POST /api/v1/organizations/active` | Switch the active organization on the current session |
+| `GET /api/v1/organizations/{id}/members` | Org membership and roles |
+| `GET /api/v1/auth/me` | Current user, session, `orgMemberRole`, permissions |
+
+Org roles include `owner`, `admin`, `member`, and `viewer`. Custom org roles with permission strings are also supported. See [RBAC](/auth/rbac).
+
+### Token response
+
+After sign-in or token exchange, the access token envelope includes `tenantId`:
+
+```json
+{
+  "accessToken": "eyJ...",
+  "exp": 1710000000,
+  "tenantId": "09cb501e-865b-4092-978c-dbb7b30841bd",
+  "fluideClientId": "fluide-developer"
+}
+```
+
+<Warning>
+If a user belongs to multiple organizations, call `POST /api/v1/organizations/active` before product API calls that should target a specific org. The JWT always reflects the **active** organization.
+</Warning>
+
+### Required headers (direct)
+
+| Header | Value |
+| --- | --- |
+| `Authorization` | `Bearer <accessToken>` |
+| `X-Fluide-Api-Key` | Your `fl_dev_...` developer key |
+| `X-Fluide-Client-Id` | `fluide-developer` |
+
+See [Authorization](/getting-started/authorization) for the full machine-token flow.
+
+---
+
+## Partner tenancy (ISV / multi-merchant)
+
+Use this when **your product serves many end-customers** (merchants, employers, payers) and you call Fluide APIs on their behalf.
+
+Developers onboard as **SERVICE_PARTNER** organizations in Fluide Connect. You do **not** register a separate OAuth app per merchant. Instead you use:
+
+1. **One developer API key** (`fl_dev_...`) and machine JWT
+2. **Workspaces** — logical containers for your integration (e.g. production vs sandbox, or per region)
+3. **Client companies** — each merchant you onboard under a workspace
+4. **Acting-client headers** — tell the gateway which company each request targets
+
+### Setup flow
+
+<Steps>
+
+<Step title="Complete developer onboarding">
+Sign in to Connect, verify your developer account, and provision API credentials via `POST /api/v1/auth/developer/ensure`.
+</Step>
+
+<Step title="Create a workspace">
+`POST /api/v1/workspaces` with a name. List workspaces with `GET /api/v1/workspaces`.
+</Step>
+
+<Step title="Add client companies">
+`POST /api/v1/workspaces/{workspaceId}/companies` with company name, country, and currency. Each company is a distinct tenant context for product APIs.
+</Step>
+
+<Step title="Submit client KYB (when required)">
+For regulated products, upload documents and submit via `POST .../workspaces/{workspaceId}/companies/{companyId}/kyb/submit`. Super-admin reviews partner-mediated KYB separately from direct-tenant KYB.
+</Step>
+
+<Step title="Call product APIs with acting-client headers">
+Exchange your API key for a machine token, then pass workspace and company on every gateway request (see below).
+</Step>
+
+</Steps>
+
+### Acting-client headers
+
+After `POST /api/v1/authorize/token`, include these on **every** product API call when acting for a specific merchant:
+
+| Header | Value |
+| --- | --- |
+| `Authorization` | `Bearer <machine-jwt>` |
+| `X-Fluide-Api-Key` | Your `fl_dev_...` key |
+| `X-Fluide-Client-Id` | `fluide-developer` |
+| `X-Workspace-Id` | Workspace UUID |
+| `X-Acting-Company-Id` | Client company UUID |
+
+The gateway resolves the effective tenant via `GET /api/v1/auth-context/{jti}` and forwards the correct org context to downstream services.
+
+<CodeGroup>
+
+```bash curl
+curl -X GET "$FLUIDE_BASE_URL/api/v1/hr/employees" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer" \
+  -H "X-Workspace-Id: $FLUIDE_WORKSPACE_ID" \
+  -H "X-Acting-Company-Id: $FLUIDE_COMPANY_ID"
+```
+
+```javascript Node.js
+const res = await fetch(`${baseUrl}/api/v1/hr/employees`, {
+  headers: {
+    Authorization: `Bearer ${accessToken}`,
+    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,
+    'X-Fluide-Client-Id': 'fluide-developer',
+    'X-Workspace-Id': workspaceId,
+    'X-Acting-Company-Id': companyId,
+  },
+});
+```
+
+</CodeGroup>
+
+<Tip>
+Store the active `workspaceId` and `companyId` in your integration layer (or pass them from your UI when an admin switches merchant). Missing acting-client headers on partner tokens will not scope requests to the intended end-customer.
+</Tip>
+
+### Workspace and company APIs
+
+| API | Method | Purpose |
+| --- | --- | --- |
+| `/api/v1/workspaces` | `GET`, `POST` | List and create workspaces |
+| `/api/v1/workspaces/{workspaceId}` | `PATCH` | Update workspace metadata |
+| `/api/v1/workspaces/{workspaceId}/companies` | `GET`, `POST` | List and create client companies |
+| `/api/v1/workspaces/{workspaceId}/companies/{companyId}` | `GET`, `PATCH`, `DELETE` | Manage a single company |
+| `.../companies/{companyId}/kyb/submit` | `POST` | Submit client KYB for review |
+
+Browse full request and response schemas in the [Auth API reference](/api-reference/auth).
+
+---
+
+## Choosing a model
+
+| Your integration | Use |
+| --- | --- |
+| Internal tool for **one** Fluide Business org | Organization tenancy only |
+| SaaS product onboarding **many merchants** | Partner tenancy (workspaces + companies + acting headers) |
+| Testing in sandbox before going live | Same model as production; use a dedicated workspace for test companies |
+
+## What is not supported (today)
+
+| Expectation | Current Connect model |
+| --- | --- |
+| Separate OAuth client per end-customer | One developer API key per Connect account (`fluide-developer`) |
+| Product API calls without tenant context | All business routes require Bearer auth; partners need acting-client headers |
+| Dynamic marketplace app installs via Connect docs | Marketplace install APIs are separate from the Connect developer credential flow |
+
+## Related docs
+
+<CardGroup cols={2}>
+  <Card title="Authorization" icon="key" href="/getting-started/authorization">
+    Token exchange and required headers for machine tokens.
+  </Card>
+  <Card title="RBAC" icon="shield" href="/auth/rbac">
+    Organization roles, permissions, and validate-session payload.
+  </Card>
+  <Card title="Gateway and auth" icon="route" href="/platform/gateway-and-auth">
+    Tyk routing, JWKS validation, and gateway user enrichment.
+  </Card>
+  <Card title="Cross-service flows" icon="arrow-right-left" href="/platform/cross-service-flows">
+    Partner KYB, HR → Payroll mirror, and payroll → Books GL.
+  </Card>
+</CardGroup>

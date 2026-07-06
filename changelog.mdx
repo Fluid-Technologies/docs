@@ -7,6 +7,16 @@ description: API and documentation changes for Fluide Connect integrators.
 
 Subscribe to updates via RSS: append `/rss.xml` to this page URL.
 
+<Update label="July 2026" description="Sandbox URL" rss={{ title: "July 2026 — Sandbox URL", description: "Sandbox API host moved to test.api.fluidehr.com." }}>
+
+## Integrations
+
+- Sandbox base URL is now **`https://test.api.fluidehr.com`** (replaces `sandbox.fluidehr.com`)
+- Set `FLUIDE_BASE_URL` or `NEXT_PUBLIC_FLUIDE_API_URL` to the new host for token exchange and product API calls
+- Re-export OpenAPI when the gateway is live: `NEXT_PUBLIC_FLUIDE_API_URL=https://test.api.fluidehr.com node export-openapi.mjs`
+
+</Update>
+
 <Update label="June 2025" description="Beta docs pipeline" rss={{ title: "June 2025 — Beta docs pipeline", description: "Staging gateway, OpenAPI export, Utils product, and API change diff tooling." }}>
 
 ## Documentation platform

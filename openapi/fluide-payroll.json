@@ -6074,8 +6074,8 @@
   ],
   "servers": [
     {
-      "url": "https://sandbox.fluidehr.com",
-      "description": "Sandbox"
+      "url": "https://test.api.fluidehr.com",
+      "description": "API"
     }
   ],
   "components": {

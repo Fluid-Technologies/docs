@@ -2,8 +2,8 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import path from "node:path";
 import {
-  DEFAULT_FLUIDE_API_BASE_URL,
   DEFAULT_SERVER_DESCRIPTION,
+  resolveFluideApiBaseUrl,
 } from "./openapi/constants.mjs";
 import { enrichOpenApiSpec } from "./openapi/enrichment.mjs";
 
@@ -11,10 +11,8 @@ const ROOT = process.cwd();
 const OUT_DIR = path.join(ROOT, "openapi");
 const REQUEST_TIMEOUT_MS = Number(process.env.OPENAPI_FETCH_TIMEOUT_MS || 20000);
 
-/** Sandbox gateway by default — override with FLUIDE_API_BASE_URL for other environments. */
-const API_BASE_URL = (
-  process.env.FLUIDE_API_BASE_URL ?? DEFAULT_FLUIDE_API_BASE_URL
-).replace(/\/$/, "");
+/** Gateway origin — set NEXT_PUBLIC_FLUIDE_API_URL. */
+const API_BASE_URL = resolveFluideApiBaseUrl();
 
 const ALLOWED_HTTP_METHODS = new Set([
   "get",

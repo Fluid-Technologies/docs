@@ -15,7 +15,7 @@ New to Fluide Connect? Complete email verification in the dashboard first. Your 
 
 | Variable | Example |
 | --- | --- |
-| `FLUIDE_BASE_URL` | `https://sandbox.fluidehr.com` |
+| `FLUIDE_BASE_URL` | `https://test.api.fluidehr.com` |
 | `FLUIDE_API_KEY` | `fl_dev_...` |
 | `FLUIDE_API_SECRET` | From Connect at provisioning (store in a secret manager) |
 
@@ -28,7 +28,7 @@ Send your API key and secret **only** to the token endpoint. Never include the s
 <CodeGroup>
 
 ```bash curl
-export FLUIDE_BASE_URL="https://sandbox.fluidehr.com"
+export FLUIDE_BASE_URL="https://test.api.fluidehr.com"
 
 curl -X POST "$FLUIDE_BASE_URL/api/v1/authorize/token" \
   -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
@@ -37,7 +37,7 @@ curl -X POST "$FLUIDE_BASE_URL/api/v1/authorize/token" \
 ```
 
 ```javascript Node.js
-const baseUrl = process.env.FLUIDE_BASE_URL ?? 'https://sandbox.fluidehr.com';
+const baseUrl = process.env.FLUIDE_BASE_URL ?? 'https://test.api.fluidehr.com';
 
 const res = await fetch(`${baseUrl}/api/v1/authorize/token`, {
   method: 'POST',

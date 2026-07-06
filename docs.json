@@ -54,6 +54,7 @@
             "pages": [
               "introduction",
               "getting-started/authorization",
+              "getting-started/multi-tenancy",
               "getting-started/environments",
               "getting-started/first-request",
               "getting-started/errors-and-rate-limits",

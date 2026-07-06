@@ -483,7 +483,7 @@
         ],
         "summary": "Get current session",
         "tags": [
-          "Auth"
+          "auth-v1"
         ],
         "x-codeSamples": [
           {
@@ -597,7 +597,7 @@
         ],
         "summary": "Update profile",
         "tags": [
-          "Auth"
+          "auth-v1"
         ],
         "x-codeSamples": [
           {
@@ -713,7 +713,7 @@
         ],
         "summary": "Create a user + send verification OTP",
         "tags": [
-          "Auth"
+          "auth-v1"
         ],
         "x-codeSamples": [
           {
@@ -746,7 +746,7 @@
     },
     "/api/v1/auth/sign-in": {
       "post": {
-        "description": "On success returns user and accessToken. The SPA stores `accessToken.accessToken` in localStorage.",
+        "description": "On success returns user, accessToken, refreshToken, and expiry metadata. SPAs persist the access token in session state and renew it with POST /api/v1/auth/refresh-token.",
         "operationId": "AuthV1Controller_signIn_v1",
         "parameters": [],
         "requestBody": {
@@ -829,7 +829,7 @@
         ],
         "summary": "Sign in with password",
         "tags": [
-          "Auth"
+          "auth-v1"
         ],
         "x-codeSamples": [
           {
@@ -862,7 +862,7 @@
     },
     "/api/v1/auth/two-factor/verify-sign-in": {
       "post": {
-        "description": "Call after POST /auth/sign-in returned `{ twoFactorRequired: true, pendingToken }`. Mints the same RS256 access JWT shape as a normal sign-in.",
+        "description": "Call after POST /auth/sign-in returned `{ twoFactorRequired: true, pendingToken }`. Mints the same renewable auth grant shape as a normal sign-in.",
         "operationId": "AuthV1Controller_verifyTwoFactorSignIn_v1",
         "parameters": [],
         "requestBody": {
@@ -955,7 +955,7 @@
         ],
         "summary": "Complete password sign-in after TOTP second step (Option C JWT only)",
         "tags": [
-          "Auth"
+          "auth-v1"
         ],
         "x-codeSamples": [
           {
@@ -1074,7 +1074,7 @@
         ],
         "summary": "Begin MFA (TOTP) enrollment for the authenticated user",
         "tags": [
-          "Auth"
+          "auth-v1"
         ],
         "x-codeSamples": [
           {
@@ -1192,7 +1192,7 @@
         ],
         "summary": "Confirm MFA enrollment with a valid TOTP code",
         "tags": [
-          "Auth"
+          "auth-v1"
         ],
         "x-codeSamples": [
           {
@@ -1310,7 +1310,7 @@
         ],
         "summary": "Send a one-time code to the user via email",
         "tags": [
-          "Auth"
+          "auth-v1"
         ],
         "x-codeSamples": [
           {
@@ -1343,7 +1343,7 @@
     },
     "/api/v1/auth/email-otp/verify": {
       "post": {
-        "description": "Flips `emailVerified=true`, ensures the default organization exists, then mints an access JWT bound to the supplied `fluideClientId`.",
+        "description": "Flips `emailVerified=true`, ensures the default organization exists, then mints a renewable auth grant bound to the supplied `fluideClientId`.",
         "operationId": "AuthV1Controller_verifyEmailOtp_v1",
         "parameters": [],
         "requestBody": {
@@ -1436,7 +1436,7 @@
         ],
         "summary": "Verify post-signup email OTP and mint the first JWT",
         "tags": [
-          "Auth"
+          "auth-v1"
         ],
         "x-codeSamples": [
           {
@@ -1561,7 +1561,7 @@
         ],
         "summary": "Passwordless sign-in via emailed OTP",
         "tags": [
-          "Auth"
+          "auth-v1"
         ],
         "x-codeSamples": [
           {
@@ -1588,6 +1588,122 @@
             "lang": "php",
             "label": "PHP",
             "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/auth/email-otp/sign-in\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'POST',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'Content-Type: application/json',\n    ],\n    CURLOPT_POSTFIELDS => \"{}\",\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
+    "/api/v1/auth/refresh-token": {
+      "post": {
+        "description": "Used by NextAuth-backed first-party SPAs when the Fluide bearer token is near expiry or has just expired.",
+        "operationId": "AuthV1Controller_refreshToken_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshTokenDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Rotated access token and refresh token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponseDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "description": "Endpoint-specific payload"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed or invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid JWT / API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Token valid but insufficient permission for this operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside caller scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Rotate a refresh token and mint a fresh access token",
+        "tags": [
+          "auth-v1"
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X POST \"$FLUIDE_BASE_URL/api/v1/auth/refresh-token\" \\\n  -H \"Authorization: Bearer $FLUIDE_ACCESS_TOKEN\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}'"
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/auth/refresh-token`, {\n  method: 'POST',\n  headers: {\n    Authorization: `Bearer ${process.env.FLUIDE_ACCESS_TOKEN}`,\n    'Content-Type': 'application/json',\n  },\n  body: JSON.stringify({}),\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n        \"Authorization\": f\"Bearer {os.environ['FLUIDE_ACCESS_TOKEN']}\",\n}\n\nresponse = requests.post(\n    f\"{base_url}/api/v1/auth/refresh-token\",\n    headers=headers,\n    json={},\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/auth/refresh-token\"))\n    .header(\"Authorization\", \"Bearer \" + System.getenv(\"FLUIDE_ACCESS_TOKEN\"))\n    .header(\"Content-Type\", \"application/json\")\n    .POST(HttpRequest.BodyPublishers.ofString(\"{}\"))\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/auth/refresh-token\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'POST',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'Content-Type: application/json',\n    ],\n    CURLOPT_POSTFIELDS => \"{}\",\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
           }
         ]
       }
@@ -1679,7 +1795,7 @@
         ],
         "summary": "Send a password reset email with a one-time link",
         "tags": [
-          "Auth"
+          "auth-v1"
         ],
         "x-codeSamples": [
           {
@@ -1798,7 +1914,7 @@
         ],
         "summary": "Reset password with a one-time token and bump app_perm_ver",
         "tags": [
-          "Auth"
+          "auth-v1"
         ],
         "x-codeSamples": [
           {
@@ -1917,7 +2033,7 @@
         ],
         "summary": "Complete HR staff first-access setup (single-use token + initial passwo…",
         "tags": [
-          "Auth"
+          "auth-v1"
         ],
         "x-codeSamples": [
           {
@@ -1944,6 +2060,460 @@
             "lang": "php",
             "label": "PHP",
             "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/auth/staff-first-access/complete\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'POST',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'Content-Type: application/json',\n    ],\n    CURLOPT_POSTFIELDS => \"{}\",\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
+    "/api/v1/auth/developer/ensure": {
+      "post": {
+        "description": "Promotes the user to `developer` when signing in via `fluide-developer` (e.g. Google OAuth). Returns apiKey+apiSecret only on first provision.",
+        "operationId": "AuthV1Controller_ensureDeveloperAccount_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Developer account ensured",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponseDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "description": "Endpoint-specific payload"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed or invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid JWT / API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Token valid but insufficient permission for this operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside caller scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Ensure Fluide Connect developer account and API credentials",
+        "tags": [
+          "auth-v1"
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X POST \"$FLUIDE_BASE_URL/api/v1/auth/developer/ensure\" \\\n  -H \"Authorization: Bearer $FLUIDE_ACCESS_TOKEN\""
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/auth/developer/ensure`, {\n  method: 'POST',\n  headers: {\n    Authorization: `Bearer ${process.env.FLUIDE_ACCESS_TOKEN}`,\n  },\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n        \"Authorization\": f\"Bearer {os.environ['FLUIDE_ACCESS_TOKEN']}\",\n}\n\nresponse = requests.post(\n    f\"{base_url}/api/v1/auth/developer/ensure\",\n    headers=headers,\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/auth/developer/ensure\"))\n    .header(\"Authorization\", \"Bearer \" + System.getenv(\"FLUIDE_ACCESS_TOKEN\"))\n    .POST(HttpRequest.BodyPublishers.noBody())\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/auth/developer/ensure\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'POST',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n    ],\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
+    "/api/v1/auth/exchange-client": {
+      "post": {
+        "description": "Used after platform onboarding product handoff (e.g. fluide-onboarding → fluide-pay). Revokes the current JWT and issues a new one bound to the target client.",
+        "operationId": "AuthV1Controller_exchangeClient_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ExchangeClientDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "New access token for target client",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponseDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "description": "Endpoint-specific payload"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed or invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid JWT / API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Token valid but insufficient permission for this operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside caller scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Remint JWT for a different first-party product client",
+        "tags": [
+          "auth-v1"
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X POST \"$FLUIDE_BASE_URL/api/v1/auth/exchange-client\" \\\n  -H \"Authorization: Bearer $FLUIDE_ACCESS_TOKEN\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}'"
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/auth/exchange-client`, {\n  method: 'POST',\n  headers: {\n    Authorization: `Bearer ${process.env.FLUIDE_ACCESS_TOKEN}`,\n    'Content-Type': 'application/json',\n  },\n  body: JSON.stringify({}),\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n        \"Authorization\": f\"Bearer {os.environ['FLUIDE_ACCESS_TOKEN']}\",\n}\n\nresponse = requests.post(\n    f\"{base_url}/api/v1/auth/exchange-client\",\n    headers=headers,\n    json={},\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/auth/exchange-client\"))\n    .header(\"Authorization\", \"Bearer \" + System.getenv(\"FLUIDE_ACCESS_TOKEN\"))\n    .header(\"Content-Type\", \"application/json\")\n    .POST(HttpRequest.BodyPublishers.ofString(\"{}\"))\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/auth/exchange-client\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'POST',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'Content-Type: application/json',\n    ],\n    CURLOPT_POSTFIELDS => \"{}\",\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
+    "/api/v1/auth/handoff": {
+      "post": {
+        "description": "Remints the JWT for the target client (same as exchange-client) but returns a short-lived code instead of the raw token. Used by Fluide Home when opening Pay, Business, Capital, or Connect.",
+        "operationId": "AuthV1Controller_createHandoff_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateHandoffDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Handoff code for target product",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponseDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "description": "Endpoint-specific payload"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed or invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid JWT / API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Token valid but insufficient permission for this operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside caller scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Create a one-time handoff code for launching another Fluide product",
+        "tags": [
+          "auth-v1"
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X POST \"$FLUIDE_BASE_URL/api/v1/auth/handoff\" \\\n  -H \"Authorization: Bearer $FLUIDE_ACCESS_TOKEN\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}'"
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/auth/handoff`, {\n  method: 'POST',\n  headers: {\n    Authorization: `Bearer ${process.env.FLUIDE_ACCESS_TOKEN}`,\n    'Content-Type': 'application/json',\n  },\n  body: JSON.stringify({}),\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n        \"Authorization\": f\"Bearer {os.environ['FLUIDE_ACCESS_TOKEN']}\",\n}\n\nresponse = requests.post(\n    f\"{base_url}/api/v1/auth/handoff\",\n    headers=headers,\n    json={},\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/auth/handoff\"))\n    .header(\"Authorization\", \"Bearer \" + System.getenv(\"FLUIDE_ACCESS_TOKEN\"))\n    .header(\"Content-Type\", \"application/json\")\n    .POST(HttpRequest.BodyPublishers.ofString(\"{}\"))\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/auth/handoff\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'POST',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'Content-Type: application/json',\n    ],\n    CURLOPT_POSTFIELDS => \"{}\",\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
+    "/api/v1/auth/consume-handoff": {
+      "post": {
+        "description": "Called by a product SPA on `/post-auth?code=…`. Requires `X-Fluide-Client-Id` to match the code audience.",
+        "operationId": "AuthV1Controller_consumeHandoff_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConsumeHandoffDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Access token for the target product",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponseDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "description": "Endpoint-specific payload"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed or invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid JWT / API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Token valid but insufficient permission for this operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside caller scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": []
+          }
+        ],
+        "summary": "Exchange a one-time handoff code for an access token",
+        "tags": [
+          "auth-v1"
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X POST \"$FLUIDE_BASE_URL/api/v1/auth/consume-handoff\" \\\n  -H \"Authorization: Bearer $FLUIDE_ACCESS_TOKEN\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}'"
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/auth/consume-handoff`, {\n  method: 'POST',\n  headers: {\n    Authorization: `Bearer ${process.env.FLUIDE_ACCESS_TOKEN}`,\n    'Content-Type': 'application/json',\n  },\n  body: JSON.stringify({}),\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n        \"Authorization\": f\"Bearer {os.environ['FLUIDE_ACCESS_TOKEN']}\",\n}\n\nresponse = requests.post(\n    f\"{base_url}/api/v1/auth/consume-handoff\",\n    headers=headers,\n    json={},\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/auth/consume-handoff\"))\n    .header(\"Authorization\", \"Bearer \" + System.getenv(\"FLUIDE_ACCESS_TOKEN\"))\n    .header(\"Content-Type\", \"application/json\")\n    .POST(HttpRequest.BodyPublishers.ofString(\"{}\"))\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/auth/consume-handoff\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'POST',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'Content-Type: application/json',\n    ],\n    CURLOPT_POSTFIELDS => \"{}\",\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
           }
         ]
       }
@@ -2026,7 +2596,7 @@
         ],
         "summary": "Revoke the current JWT (jti goes onto the Redis denylist)",
         "tags": [
-          "Auth"
+          "auth-v1"
         ],
         "x-codeSamples": [
           {
@@ -2882,6 +3452,295 @@
         ]
       }
     },
+    "/api/auth/reset-password": {
+      "get": {
+        "operationId": "BetterAuthOAuthBridgeController_proxyResetPassword_get",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Password reset link from legacy Better Auth emails (`GET /api/auth/rese…",
+        "tags": [
+          "BetterAuthOAuthBridge"
+        ],
+        "description": "Password reset link from legacy Better Auth emails (`GET /api/auth/reset-password/:token`).",
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X GET \"$FLUIDE_BASE_URL/api/auth/reset-password\""
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/auth/reset-password`, {\n  method: 'GET',\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n}\n\nresponse = requests.get(\n    f\"{base_url}/api/auth/reset-password\",\n    headers=headers,\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/auth/reset-password\"))\n    .GET(HttpRequest.BodyPublishers.noBody())\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/auth/reset-password\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'GET',\n    CURLOPT_HTTPHEADER => [\n    ],\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      },
+      "post": {
+        "operationId": "BetterAuthOAuthBridgeController_proxyResetPassword_post",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Password reset link from legacy Better Auth emails (`GET /api/auth/rese…",
+        "tags": [
+          "BetterAuthOAuthBridge"
+        ],
+        "description": "Password reset link from legacy Better Auth emails (`GET /api/auth/reset-password/:token`).",
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X POST \"$FLUIDE_BASE_URL/api/auth/reset-password\""
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/auth/reset-password`, {\n  method: 'POST',\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n}\n\nresponse = requests.post(\n    f\"{base_url}/api/auth/reset-password\",\n    headers=headers,\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/auth/reset-password\"))\n    .POST(HttpRequest.BodyPublishers.noBody())\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/auth/reset-password\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'POST',\n    CURLOPT_HTTPHEADER => [\n    ],\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      },
+      "put": {
+        "operationId": "BetterAuthOAuthBridgeController_proxyResetPassword_put",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Password reset link from legacy Better Auth emails (`GET /api/auth/rese…",
+        "tags": [
+          "BetterAuthOAuthBridge"
+        ],
+        "description": "Password reset link from legacy Better Auth emails (`GET /api/auth/reset-password/:token`).",
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X PUT \"$FLUIDE_BASE_URL/api/auth/reset-password\""
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/auth/reset-password`, {\n  method: 'PUT',\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n}\n\nresponse = requests.put(\n    f\"{base_url}/api/auth/reset-password\",\n    headers=headers,\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/auth/reset-password\"))\n    .PUT(HttpRequest.BodyPublishers.noBody())\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/auth/reset-password\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'PUT',\n    CURLOPT_HTTPHEADER => [\n    ],\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      },
+      "delete": {
+        "operationId": "BetterAuthOAuthBridgeController_proxyResetPassword_delete",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Password reset link from legacy Better Auth emails (`GET /api/auth/rese…",
+        "tags": [
+          "BetterAuthOAuthBridge"
+        ],
+        "description": "Password reset link from legacy Better Auth emails (`GET /api/auth/reset-password/:token`).",
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X DELETE \"$FLUIDE_BASE_URL/api/auth/reset-password\""
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/auth/reset-password`, {\n  method: 'DELETE',\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n}\n\nresponse = requests.delete(\n    f\"{base_url}/api/auth/reset-password\",\n    headers=headers,\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/auth/reset-password\"))\n    .DELETE(HttpRequest.BodyPublishers.noBody())\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/auth/reset-password\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'DELETE',\n    CURLOPT_HTTPHEADER => [\n    ],\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "BetterAuthOAuthBridgeController_proxyResetPassword_patch",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Password reset link from legacy Better Auth emails (`GET /api/auth/rese…",
+        "tags": [
+          "BetterAuthOAuthBridge"
+        ],
+        "description": "Password reset link from legacy Better Auth emails (`GET /api/auth/reset-password/:token`).",
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X PATCH \"$FLUIDE_BASE_URL/api/auth/reset-password\""
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/auth/reset-password`, {\n  method: 'PATCH',\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n}\n\nresponse = requests.patch(\n    f\"{base_url}/api/auth/reset-password\",\n    headers=headers,\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/auth/reset-password\"))\n    .PATCH(HttpRequest.BodyPublishers.noBody())\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/auth/reset-password\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'PATCH',\n    CURLOPT_HTTPHEADER => [\n    ],\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      },
+      "options": {
+        "operationId": "BetterAuthOAuthBridgeController_proxyResetPassword_options",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Password reset link from legacy Better Auth emails (`GET /api/auth/rese…",
+        "tags": [
+          "BetterAuthOAuthBridge"
+        ],
+        "description": "Password reset link from legacy Better Auth emails (`GET /api/auth/reset-password/:token`).",
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X OPTIONS \"$FLUIDE_BASE_URL/api/auth/reset-password\""
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/auth/reset-password`, {\n  method: 'OPTIONS',\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n}\n\nresponse = requests.options(\n    f\"{base_url}/api/auth/reset-password\",\n    headers=headers,\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/auth/reset-password\"))\n    .OPTIONS(HttpRequest.BodyPublishers.noBody())\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/auth/reset-password\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'OPTIONS',\n    CURLOPT_HTTPHEADER => [\n    ],\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      },
+      "head": {
+        "operationId": "BetterAuthOAuthBridgeController_proxyResetPassword_head",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Password reset link from legacy Better Auth emails (`GET /api/auth/rese…",
+        "tags": [
+          "BetterAuthOAuthBridge"
+        ],
+        "description": "Password reset link from legacy Better Auth emails (`GET /api/auth/reset-password/:token`).",
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X HEAD \"$FLUIDE_BASE_URL/api/auth/reset-password\""
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/auth/reset-password`, {\n  method: 'HEAD',\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n}\n\nresponse = requests.head(\n    f\"{base_url}/api/auth/reset-password\",\n    headers=headers,\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/auth/reset-password\"))\n    .HEAD(HttpRequest.BodyPublishers.noBody())\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/auth/reset-password\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'HEAD',\n    CURLOPT_HTTPHEADER => [\n    ],\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
     "/api/auth/social/callback/{provider}": {
       "get": {
         "operationId": "BetterAuthOAuthBridgeController_socialCallback",
@@ -3504,22 +4363,22 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "Jwks",
+            "description": "RFC 7517 JWKS document (unwrapped — consumed by Tyk gateway JWT middleware).",
             "content": {
               "application/json": {
                 "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/ApiResponseDto"
-                    },
-                    {
-                      "properties": {
-                        "data": {
-                          "description": "Endpoint-specific payload"
-                        }
+                  "type": "object",
+                  "required": [
+                    "keys"
+                  ],
+                  "properties": {
+                    "keys": {
+                      "type": "array",
+                      "items": {
+                        "type": "object"
                       }
                     }
-                  ]
+                  }
                 }
               }
             }
@@ -3701,6 +4560,406 @@
             "lang": "php",
             "label": "PHP",
             "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/authorize/current\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'GET',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'X-Fluide-Api-Key: ' . getenv('FLUIDE_API_KEY'),\n        'X-Fluide-Client-Id: fluide-developer',\n    ],\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
+    "/api/v1/authorize/usage": {
+      "get": {
+        "operationId": "AuthorizeController_usage_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Developer API usage meters and quota progress",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponseDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "description": "Endpoint-specific payload"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed or invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid JWT / API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Token valid but insufficient permission for this operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside caller scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get developer API usage for the current billing period",
+        "tags": [
+          "Authorize"
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X GET \"$FLUIDE_BASE_URL/api/v1/authorize/usage\""
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/authorize/usage`, {\n  method: 'GET',\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n}\n\nresponse = requests.get(\n    f\"{base_url}/api/v1/authorize/usage\",\n    headers=headers,\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/authorize/usage\"))\n    .GET(HttpRequest.BodyPublishers.noBody())\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/authorize/usage\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'GET',\n    CURLOPT_HTTPHEADER => [\n    ],\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
+    "/api/v1/authorize/billing/status": {
+      "get": {
+        "operationId": "AuthorizeController_billingStatus_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Developer API billing status",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponseDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "description": "Endpoint-specific payload"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed or invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid JWT / API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Token valid but insufficient permission for this operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside caller scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get developer API billing and production access status",
+        "tags": [
+          "Authorize"
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X GET \"$FLUIDE_BASE_URL/api/v1/authorize/billing/status\""
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/authorize/billing/status`, {\n  method: 'GET',\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n}\n\nresponse = requests.get(\n    f\"{base_url}/api/v1/authorize/billing/status\",\n    headers=headers,\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/authorize/billing/status\"))\n    .GET(HttpRequest.BodyPublishers.noBody())\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/authorize/billing/status\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'GET',\n    CURLOPT_HTTPHEADER => [\n    ],\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
+    "/api/v1/authorize/billing/checkout": {
+      "post": {
+        "operationId": "AuthorizeController_billingCheckout_v1",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Hosted checkout session for API plan subscription",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponseDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "description": "Endpoint-specific payload"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed or invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid JWT / API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Token valid but insufficient permission for this operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside caller scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Start hosted checkout for API Starter subscription (25,000 XAF/mo)",
+        "tags": [
+          "Authorize"
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X POST \"$FLUIDE_BASE_URL/api/v1/authorize/billing/checkout\""
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/authorize/billing/checkout`, {\n  method: 'POST',\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n}\n\nresponse = requests.post(\n    f\"{base_url}/api/v1/authorize/billing/checkout\",\n    headers=headers,\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/authorize/billing/checkout\"))\n    .POST(HttpRequest.BodyPublishers.noBody())\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/authorize/billing/checkout\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'POST',\n    CURLOPT_HTTPHEADER => [\n    ],\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
+    "/api/v1/authorize/billing/checkout/overage": {
+      "post": {
+        "operationId": "AuthorizeController_billingOverageCheckout_v1",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": "Hosted checkout session for usage overage",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponseDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "description": "Endpoint-specific payload"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed or invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid JWT / API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Token valid but insufficient permission for this operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside caller scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Start hosted checkout for API usage overage invoice",
+        "tags": [
+          "Authorize"
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X POST \"$FLUIDE_BASE_URL/api/v1/authorize/billing/checkout/overage\""
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/authorize/billing/checkout/overage`, {\n  method: 'POST',\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n}\n\nresponse = requests.post(\n    f\"{base_url}/api/v1/authorize/billing/checkout/overage\",\n    headers=headers,\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/authorize/billing/checkout/overage\"))\n    .POST(HttpRequest.BodyPublishers.noBody())\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/authorize/billing/checkout/overage\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'POST',\n    CURLOPT_HTTPHEADER => [\n    ],\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
           }
         ]
       }
@@ -4046,7 +5305,14 @@
         },
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
           },
           "201": {
             "description": "Created successfully",
@@ -4270,7 +5536,7 @@
         },
         "responses": {
           "200": {
-            "description": "Patch active organization locale and timezone preferences",
+            "description": "Patch active organization locale, timezone, and billing profile preferences",
             "content": {
               "application/json": {
                 "schema": {
@@ -4336,10 +5602,11 @@
             "bearer": []
           }
         ],
-        "summary": "Patch active organization locale and timezone preferences",
+        "summary": "Patch active organization locale, timezone, and billing profile prefere…",
         "tags": [
           "Organizations"
         ],
+        "description": "Patch active organization locale, timezone, and billing profile preferences",
         "x-codeSamples": [
           {
             "lang": "bash",
@@ -5332,7 +6599,14 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
           },
           "201": {
             "description": "Created successfully",
@@ -13197,7 +14471,165 @@
         ]
       }
     },
-    "/api/v1/marketplace/virtual-managers/{organizationId}/verify": {
+    "/api/v1/partner-verifications": {
+      "get": {
+        "operationId": "MarketplaceAdminController_listPartnerVerifications_v1",
+        "parameters": [
+          {
+            "name": "subtype",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "VIRTUAL_MANAGER",
+                "COMPLIANCE_EXPERT"
+              ]
+            }
+          },
+          {
+            "name": "status",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "NOT_SUBMITTED",
+                "PENDING_REVIEW",
+                "CHANGES_REQUESTED",
+                "APPROVED",
+                "REJECTED"
+              ]
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maxLength": 200,
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "default": 20,
+              "type": "number"
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 0,
+              "default": 0,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Super-admin: list VM/CE partner KYC submissions for review (queue).",
+        "tags": [
+          "marketplace-admin"
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X GET \"$FLUIDE_BASE_URL/api/v1/partner-verifications\""
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/partner-verifications`, {\n  method: 'GET',\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n}\n\nresponse = requests.get(\n    f\"{base_url}/api/v1/partner-verifications\",\n    headers=headers,\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/partner-verifications\"))\n    .GET(HttpRequest.BodyPublishers.noBody())\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/partner-verifications\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'GET',\n    CURLOPT_HTTPHEADER => [\n    ],\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
+    "/api/v1/partner-verifications/{organizationId}": {
+      "get": {
+        "operationId": "MarketplaceAdminController_getPartnerVerification_v1",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Super-admin: get a single VM/CE partner KYC case detail.",
+        "tags": [
+          "marketplace-admin"
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X GET \"$FLUIDE_BASE_URL/api/v1/partner-verifications/string\""
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/partner-verifications/string`, {\n  method: 'GET',\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n}\n\nresponse = requests.get(\n    f\"{base_url}/api/v1/partner-verifications/string\",\n    headers=headers,\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/partner-verifications/string\"))\n    .GET(HttpRequest.BodyPublishers.noBody())\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/partner-verifications/string\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'GET',\n    CURLOPT_HTTPHEADER => [\n    ],\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
+    "/api/v1/partner-verifications/virtual-managers/{organizationId}/verify": {
       "post": {
         "operationId": "MarketplaceAdminController_verifyVirtualManager_v1",
         "parameters": [
@@ -13205,7 +14637,6 @@
             "name": "organizationId",
             "required": true,
             "in": "path",
-            "description": "organizationId identifier",
             "schema": {
               "type": "string"
             }
@@ -13213,96 +14644,162 @@
         ],
         "responses": {
           "201": {
-            "description": "Verify Virtual Manager — created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/ApiResponseDto"
-                    },
-                    {
-                      "properties": {
-                        "data": {
-                          "description": "Endpoint-specific payload"
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation failed or invalid request parameters",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponseDto"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Missing or invalid JWT / API key",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponseDto"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Token valid but insufficient permission for this operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponseDto"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Resource not found or outside caller scope",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponseDto"
-                }
-              }
-            }
+            "description": ""
           }
         },
-        "summary": "Verify Virtual Manager",
+        "summary": "Super-admin: approve (verify) a Virtual Manager KYC.",
         "tags": [
-          "marketplace admin"
+          "marketplace-admin"
         ],
         "x-codeSamples": [
           {
             "lang": "bash",
             "label": "cURL",
-            "source": "curl -sS -X POST \"$FLUIDE_BASE_URL/api/v1/marketplace/virtual-managers/string/verify\""
+            "source": "curl -sS -X POST \"$FLUIDE_BASE_URL/api/v1/partner-verifications/virtual-managers/string/verify\""
           },
           {
             "lang": "node",
             "label": "Node.js",
-            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/marketplace/virtual-managers/string/verify`, {\n  method: 'POST',\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/partner-verifications/virtual-managers/string/verify`, {\n  method: 'POST',\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
           },
           {
             "lang": "python",
             "label": "Python",
-            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n}\n\nresponse = requests.post(\n    f\"{base_url}/api/v1/marketplace/virtual-managers/string/verify\",\n    headers=headers,\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n}\n\nresponse = requests.post(\n    f\"{base_url}/api/v1/partner-verifications/virtual-managers/string/verify\",\n    headers=headers,\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
           },
           {
             "lang": "java",
             "label": "Java",
-            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/marketplace/virtual-managers/string/verify\"))\n    .POST(HttpRequest.BodyPublishers.noBody())\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/partner-verifications/virtual-managers/string/verify\"))\n    .POST(HttpRequest.BodyPublishers.noBody())\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
           },
           {
             "lang": "php",
             "label": "PHP",
-            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/marketplace/virtual-managers/string/verify\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'POST',\n    CURLOPT_HTTPHEADER => [\n    ],\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/partner-verifications/virtual-managers/string/verify\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'POST',\n    CURLOPT_HTTPHEADER => [\n    ],\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
+    "/api/v1/partner-verifications/virtual-managers/{organizationId}/review": {
+      "post": {
+        "operationId": "MarketplaceAdminController_reviewVirtualManager_v1",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PartnerReviewDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Super-admin: approve / reject / request changes on a Virtual Manager KY…",
+        "tags": [
+          "marketplace-admin"
+        ],
+        "description": "Super-admin: approve / reject / request changes on a Virtual Manager KYC.",
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X POST \"$FLUIDE_BASE_URL/api/v1/partner-verifications/virtual-managers/string/review\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}'"
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/partner-verifications/virtual-managers/string/review`, {\n  method: 'POST',\n  headers: {\n    'Content-Type': 'application/json',\n  },\n  body: JSON.stringify({}),\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n}\n\nresponse = requests.post(\n    f\"{base_url}/api/v1/partner-verifications/virtual-managers/string/review\",\n    headers=headers,\n    json={},\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/partner-verifications/virtual-managers/string/review\"))\n    .header(\"Content-Type\", \"application/json\")\n    .POST(HttpRequest.BodyPublishers.ofString(\"{}\"))\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/partner-verifications/virtual-managers/string/review\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'POST',\n    CURLOPT_HTTPHEADER => [\n        'Content-Type: application/json',\n    ],\n    CURLOPT_POSTFIELDS => \"{}\",\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
+    "/api/v1/partner-verifications/compliance-experts/{organizationId}/review": {
+      "post": {
+        "operationId": "MarketplaceAdminController_reviewComplianceExpert_v1",
+        "parameters": [
+          {
+            "name": "organizationId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PartnerReviewDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Super-admin: approve / reject / request changes on a Compliance Expert…",
+        "tags": [
+          "marketplace-admin"
+        ],
+        "description": "Super-admin: approve / reject / request changes on a Compliance Expert KYC.",
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X POST \"$FLUIDE_BASE_URL/api/v1/partner-verifications/compliance-experts/string/review\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}'"
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/partner-verifications/compliance-experts/string/review`, {\n  method: 'POST',\n  headers: {\n    'Content-Type': 'application/json',\n  },\n  body: JSON.stringify({}),\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n}\n\nresponse = requests.post(\n    f\"{base_url}/api/v1/partner-verifications/compliance-experts/string/review\",\n    headers=headers,\n    json={},\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/partner-verifications/compliance-experts/string/review\"))\n    .header(\"Content-Type\", \"application/json\")\n    .POST(HttpRequest.BodyPublishers.ofString(\"{}\"))\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/partner-verifications/compliance-experts/string/review\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'POST',\n    CURLOPT_HTTPHEADER => [\n        'Content-Type: application/json',\n    ],\n    CURLOPT_POSTFIELDS => \"{}\",\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
           }
         ]
       }
@@ -13611,6 +15108,222 @@
             "lang": "php",
             "label": "PHP",
             "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/virtual-manager/profile/submit-verification\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'POST',\n    CURLOPT_HTTPHEADER => [\n    ],\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
+    "/api/v1/compliance-expert/profile": {
+      "get": {
+        "operationId": "ComplianceExpertProfileController_getProfile_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Get the active Compliance Expert org profile",
+        "tags": [
+          "compliance-expert"
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X GET \"$FLUIDE_BASE_URL/api/v1/compliance-expert/profile\""
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/compliance-expert/profile`, {\n  method: 'GET',\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n}\n\nresponse = requests.get(\n    f\"{base_url}/api/v1/compliance-expert/profile\",\n    headers=headers,\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/compliance-expert/profile\"))\n    .GET(HttpRequest.BodyPublishers.noBody())\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/compliance-expert/profile\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'GET',\n    CURLOPT_HTTPHEADER => [\n    ],\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "ComplianceExpertProfileController_patchProfile_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchComplianceExpertProfileDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "Update the active Compliance Expert org profile",
+        "tags": [
+          "compliance-expert"
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X PATCH \"$FLUIDE_BASE_URL/api/v1/compliance-expert/profile\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}'"
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/compliance-expert/profile`, {\n  method: 'PATCH',\n  headers: {\n    'Content-Type': 'application/json',\n  },\n  body: JSON.stringify({}),\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n}\n\nresponse = requests.patch(\n    f\"{base_url}/api/v1/compliance-expert/profile\",\n    headers=headers,\n    json={},\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/compliance-expert/profile\"))\n    .header(\"Content-Type\", \"application/json\")\n    .PATCH(HttpRequest.BodyPublishers.ofString(\"{}\"))\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/compliance-expert/profile\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'PATCH',\n    CURLOPT_HTTPHEADER => [\n        'Content-Type: application/json',\n    ],\n    CURLOPT_POSTFIELDS => \"{}\",\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
+    "/api/v1/compliance-expert/profile/submit-verification": {
+      "post": {
+        "operationId": "ComplianceExpertProfileController_submitVerification_v1",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Submit Compliance Expert KYC documents for super-admin review",
+        "tags": [
+          "compliance-expert"
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X POST \"$FLUIDE_BASE_URL/api/v1/compliance-expert/profile/submit-verification\""
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/compliance-expert/profile/submit-verification`, {\n  method: 'POST',\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n}\n\nresponse = requests.post(\n    f\"{base_url}/api/v1/compliance-expert/profile/submit-verification\",\n    headers=headers,\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/compliance-expert/profile/submit-verification\"))\n    .POST(HttpRequest.BodyPublishers.noBody())\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/compliance-expert/profile/submit-verification\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'POST',\n    CURLOPT_HTTPHEADER => [\n    ],\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
+    "/api/v1/partner-marketplace/partners": {
+      "get": {
+        "operationId": "MarketplaceDiscoveryController_listPartners_v1",
+        "parameters": [
+          {
+            "name": "subtype",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "VIRTUAL_MANAGER",
+                "COMPLIANCE_EXPERT"
+              ]
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "maximum": 100,
+              "default": 50,
+              "type": "number"
+            }
+          },
+          {
+            "name": "offset",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "default": 0,
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "summary": "List verified + active Virtual Managers and Compliance Experts",
+        "tags": [
+          "Partner Marketplace"
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X GET \"$FLUIDE_BASE_URL/api/v1/partner-marketplace/partners\""
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/partner-marketplace/partners`, {\n  method: 'GET',\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n}\n\nresponse = requests.get(\n    f\"{base_url}/api/v1/partner-marketplace/partners\",\n    headers=headers,\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/partner-marketplace/partners\"))\n    .GET(HttpRequest.BodyPublishers.noBody())\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/partner-marketplace/partners\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'GET',\n    CURLOPT_HTTPHEADER => [\n    ],\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
           }
         ]
       }
@@ -16235,7 +17948,7 @@
         },
         "summary": "Get Overview",
         "tags": [
-          "partner hub"
+          "partner-hub"
         ],
         "x-codeSamples": [
           {
@@ -16262,148 +17975,6 @@
             "lang": "php",
             "label": "PHP",
             "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/partner/overview\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'GET',\n    CURLOPT_HTTPHEADER => [\n    ],\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
-          }
-        ]
-      }
-    },
-    "/api/v1/partner/clients/export": {
-      "get": {
-        "operationId": "PartnerHubController_exportClients_v1",
-        "parameters": [
-          {
-            "name": "q",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "status",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "enum": [
-                "all",
-                "active",
-                "paused",
-                "at_risk"
-              ]
-            }
-          },
-          {
-            "name": "page",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "minimum": 1,
-              "type": "number"
-            }
-          },
-          {
-            "name": "limit",
-            "required": false,
-            "in": "query",
-            "schema": {
-              "minimum": 1,
-              "maximum": 100,
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Export Clients",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/ApiResponseDto"
-                    },
-                    {
-                      "properties": {
-                        "data": {
-                          "description": "Endpoint-specific payload"
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation failed or invalid request parameters",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponseDto"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Missing or invalid JWT / API key",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponseDto"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Token valid but insufficient permission for this operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponseDto"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Resource not found or outside caller scope",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponseDto"
-                }
-              }
-            }
-          }
-        },
-        "summary": "Export Clients",
-        "tags": [
-          "partner hub"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "bash",
-            "label": "cURL",
-            "source": "curl -sS -X GET \"$FLUIDE_BASE_URL/api/v1/partner/clients/export\""
-          },
-          {
-            "lang": "node",
-            "label": "Node.js",
-            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/partner/clients/export`, {\n  method: 'GET',\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
-          },
-          {
-            "lang": "python",
-            "label": "Python",
-            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n}\n\nresponse = requests.get(\n    f\"{base_url}/api/v1/partner/clients/export\",\n    headers=headers,\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
-          },
-          {
-            "lang": "java",
-            "label": "Java",
-            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/partner/clients/export\"))\n    .GET(HttpRequest.BodyPublishers.noBody())\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
-          },
-          {
-            "lang": "php",
-            "label": "PHP",
-            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/partner/clients/export\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'GET',\n    CURLOPT_HTTPHEADER => [\n    ],\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
           }
         ]
       }
@@ -16519,7 +18090,7 @@
         },
         "summary": "List Clients",
         "tags": [
-          "partner hub"
+          "partner-hub"
         ],
         "x-codeSamples": [
           {
@@ -16629,7 +18200,7 @@
         },
         "summary": "Get Workspace Home",
         "tags": [
-          "partner hub"
+          "partner-hub"
         ],
         "x-codeSamples": [
           {
@@ -16748,7 +18319,7 @@
         },
         "summary": "Get Client Home",
         "tags": [
-          "partner hub"
+          "partner-hub"
         ],
         "x-codeSamples": [
           {
@@ -16848,7 +18419,7 @@
         },
         "summary": "Get Workspace Policy",
         "tags": [
-          "partner hub"
+          "partner-hub"
         ],
         "x-codeSamples": [
           {
@@ -16956,7 +18527,7 @@
         },
         "summary": "Patch Workspace Policy",
         "tags": [
-          "partner hub"
+          "partner-hub"
         ],
         "x-codeSamples": [
           {
@@ -21645,6 +23216,415 @@
         ]
       }
     },
+    "/api/v1/workflows/tasks": {
+      "get": {
+        "operationId": "WorkflowController_listTasks_v1",
+        "parameters": [
+          {
+            "name": "folder",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "pending",
+                "approved",
+                "declined",
+                "delegated",
+                "all"
+              ]
+            }
+          },
+          {
+            "name": "domain",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "minimum": 1,
+              "type": "number"
+            }
+          },
+          {
+            "name": "cursor",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "since",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "until",
+            "required": false,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "workflow"
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X GET \"$FLUIDE_BASE_URL/api/v1/workflows/tasks\""
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/workflows/tasks`, {\n  method: 'GET',\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n}\n\nresponse = requests.get(\n    f\"{base_url}/api/v1/workflows/tasks\",\n    headers=headers,\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/workflows/tasks\"))\n    .GET(HttpRequest.BodyPublishers.noBody())\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/workflows/tasks\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'GET',\n    CURLOPT_HTTPHEADER => [\n    ],\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
+    "/api/v1/workflows/tasks/{taskId}": {
+      "get": {
+        "operationId": "WorkflowController_getTask_v1",
+        "parameters": [
+          {
+            "name": "taskId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "workflow"
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X GET \"$FLUIDE_BASE_URL/api/v1/workflows/tasks/string\""
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/workflows/tasks/string`, {\n  method: 'GET',\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n}\n\nresponse = requests.get(\n    f\"{base_url}/api/v1/workflows/tasks/string\",\n    headers=headers,\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/workflows/tasks/string\"))\n    .GET(HttpRequest.BodyPublishers.noBody())\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/workflows/tasks/string\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'GET',\n    CURLOPT_HTTPHEADER => [\n    ],\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
+    "/api/v1/workflows/tasks/{taskId}/inbox-state": {
+      "patch": {
+        "operationId": "WorkflowController_patchTaskInboxState_v1",
+        "parameters": [
+          {
+            "name": "taskId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchWorkflowInboxTaskStateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "workflow"
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X PATCH \"$FLUIDE_BASE_URL/api/v1/workflows/tasks/string/inbox-state\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}'"
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/workflows/tasks/string/inbox-state`, {\n  method: 'PATCH',\n  headers: {\n    'Content-Type': 'application/json',\n  },\n  body: JSON.stringify({}),\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n}\n\nresponse = requests.patch(\n    f\"{base_url}/api/v1/workflows/tasks/string/inbox-state\",\n    headers=headers,\n    json={},\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/workflows/tasks/string/inbox-state\"))\n    .header(\"Content-Type\", \"application/json\")\n    .PATCH(HttpRequest.BodyPublishers.ofString(\"{}\"))\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/workflows/tasks/string/inbox-state\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'PATCH',\n    CURLOPT_HTTPHEADER => [\n        'Content-Type: application/json',\n    ],\n    CURLOPT_POSTFIELDS => \"{}\",\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
+    "/api/v1/workflows/inbox/policy": {
+      "get": {
+        "operationId": "WorkflowController_getInboxPolicy_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "workflow"
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X GET \"$FLUIDE_BASE_URL/api/v1/workflows/inbox/policy\""
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/workflows/inbox/policy`, {\n  method: 'GET',\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n}\n\nresponse = requests.get(\n    f\"{base_url}/api/v1/workflows/inbox/policy\",\n    headers=headers,\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/workflows/inbox/policy\"))\n    .GET(HttpRequest.BodyPublishers.noBody())\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/workflows/inbox/policy\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'GET',\n    CURLOPT_HTTPHEADER => [\n    ],\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "WorkflowController_patchInboxPolicy_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchWorkflowInboxPolicyDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "workflow"
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X PATCH \"$FLUIDE_BASE_URL/api/v1/workflows/inbox/policy\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}'"
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/workflows/inbox/policy`, {\n  method: 'PATCH',\n  headers: {\n    'Content-Type': 'application/json',\n  },\n  body: JSON.stringify({}),\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n}\n\nresponse = requests.patch(\n    f\"{base_url}/api/v1/workflows/inbox/policy\",\n    headers=headers,\n    json={},\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/workflows/inbox/policy\"))\n    .header(\"Content-Type\", \"application/json\")\n    .PATCH(HttpRequest.BodyPublishers.ofString(\"{}\"))\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/workflows/inbox/policy\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'PATCH',\n    CURLOPT_HTTPHEADER => [\n        'Content-Type: application/json',\n    ],\n    CURLOPT_POSTFIELDS => \"{}\",\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
+    "/api/v1/workflows/inbox/preferences": {
+      "get": {
+        "operationId": "WorkflowController_getInboxPreferences_v1",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "workflow"
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X GET \"$FLUIDE_BASE_URL/api/v1/workflows/inbox/preferences\""
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/workflows/inbox/preferences`, {\n  method: 'GET',\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n}\n\nresponse = requests.get(\n    f\"{base_url}/api/v1/workflows/inbox/preferences\",\n    headers=headers,\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/workflows/inbox/preferences\"))\n    .GET(HttpRequest.BodyPublishers.noBody())\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/workflows/inbox/preferences\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'GET',\n    CURLOPT_HTTPHEADER => [\n    ],\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "WorkflowController_patchInboxPreferences_v1",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PatchWorkflowInboxPreferencesDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "workflow"
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X PATCH \"$FLUIDE_BASE_URL/api/v1/workflows/inbox/preferences\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}'"
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/workflows/inbox/preferences`, {\n  method: 'PATCH',\n  headers: {\n    'Content-Type': 'application/json',\n  },\n  body: JSON.stringify({}),\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n}\n\nresponse = requests.patch(\n    f\"{base_url}/api/v1/workflows/inbox/preferences\",\n    headers=headers,\n    json={},\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/workflows/inbox/preferences\"))\n    .header(\"Content-Type\", \"application/json\")\n    .PATCH(HttpRequest.BodyPublishers.ofString(\"{}\"))\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/workflows/inbox/preferences\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'PATCH',\n    CURLOPT_HTTPHEADER => [\n        'Content-Type: application/json',\n    ],\n    CURLOPT_POSTFIELDS => \"{}\",\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
     "/api/v1/workflows/tasks/{taskId}/delegate": {
       "post": {
         "operationId": "WorkflowController_delegateTask_v1",
@@ -22379,10 +24359,13 @@
       "x-group": "Operations"
     },
     {
-      "name": "Auth"
+      "name": "auth-v1"
     },
     {
       "name": "BetterAuthOAuthBridge"
+    },
+    {
+      "name": "Auth"
     },
     {
       "name": "Authorize"
@@ -22409,10 +24392,16 @@
       "name": "engagement"
     },
     {
-      "name": "marketplace admin"
+      "name": "marketplace-admin"
     },
     {
       "name": "virtual manager"
+    },
+    {
+      "name": "compliance-expert"
+    },
+    {
+      "name": "Partner Marketplace"
     },
     {
       "name": "delegation audit"
@@ -22424,7 +24413,7 @@
       "name": "client-onboarding"
     },
     {
-      "name": "partner hub"
+      "name": "partner-hub"
     },
     {
       "name": "cohort"
@@ -22444,8 +24433,8 @@
   ],
   "servers": [
     {
-      "url": "https://sandbox.fluidehr.com",
-      "description": "Sandbox"
+      "url": "https://test.api.fluidehr.com",
+      "description": "API"
     }
   ],
   "components": {
@@ -22607,7 +24596,9 @@
               "fluide-admin",
               "fluide-capital-admin",
               "fluide-super",
-              "fluide-developer"
+              "fluide-developer",
+              "fluide-onboarding",
+              "fluide-pay"
             ]
           },
           "firstName": {
@@ -22663,7 +24654,9 @@
               "fluide-admin",
               "fluide-capital-admin",
               "fluide-super",
-              "fluide-developer"
+              "fluide-developer",
+              "fluide-onboarding",
+              "fluide-pay"
             ]
           },
           "rememberMe": {
@@ -22702,7 +24695,9 @@
               "fluide-admin",
               "fluide-capital-admin",
               "fluide-super",
-              "fluide-developer"
+              "fluide-developer",
+              "fluide-onboarding",
+              "fluide-pay"
             ]
           }
         },
@@ -22786,7 +24781,9 @@
               "fluide-admin",
               "fluide-capital-admin",
               "fluide-super",
-              "fluide-developer"
+              "fluide-developer",
+              "fluide-onboarding",
+              "fluide-pay"
             ]
           }
         },
@@ -22816,13 +24813,41 @@
               "fluide-admin",
               "fluide-capital-admin",
               "fluide-super",
-              "fluide-developer"
+              "fluide-developer",
+              "fluide-onboarding",
+              "fluide-pay"
             ]
           }
         },
         "required": [
           "email",
           "otp",
+          "fluideClientId"
+        ]
+      },
+      "RefreshTokenDto": {
+        "type": "object",
+        "properties": {
+          "refreshToken": {
+            "type": "string",
+            "minLength": 16,
+            "maxLength": 512,
+            "description": "Opaque refresh token previously issued by Fluide Auth."
+          },
+          "fluideClientId": {
+            "type": "string",
+            "enum": [
+              "fluide-admin",
+              "fluide-capital-admin",
+              "fluide-super",
+              "fluide-developer",
+              "fluide-onboarding",
+              "fluide-pay"
+            ]
+          }
+        },
+        "required": [
+          "refreshToken",
           "fluideClientId"
         ]
       },
@@ -22879,6 +24904,77 @@
           "newPassword"
         ]
       },
+      "ExchangeClientDto": {
+        "type": "object",
+        "properties": {
+          "fluideClientId": {
+            "type": "string",
+            "enum": [
+              "fluide-admin",
+              "fluide-capital-admin",
+              "fluide-super",
+              "fluide-developer",
+              "fluide-onboarding",
+              "fluide-pay"
+            ]
+          }
+        },
+        "required": [
+          "fluideClientId"
+        ]
+      },
+      "CreateHandoffDto": {
+        "type": "object",
+        "properties": {
+          "fluideClientId": {
+            "type": "string",
+            "enum": [
+              "fluide-admin",
+              "fluide-capital-admin",
+              "fluide-super",
+              "fluide-developer",
+              "fluide-onboarding",
+              "fluide-pay"
+            ]
+          },
+          "next": {
+            "type": "string",
+            "maxLength": 512,
+            "pattern": "/^\\/(?!\\/).*/",
+            "description": "Relative in-app path after the target product consumes the handoff code.",
+            "example": "/dashboard"
+          }
+        },
+        "required": [
+          "fluideClientId"
+        ]
+      },
+      "ConsumeHandoffDto": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "string",
+            "minLength": 16,
+            "maxLength": 256,
+            "description": "One-time handoff code from Fluide Home product launch."
+          },
+          "fluideClientId": {
+            "type": "string",
+            "enum": [
+              "fluide-admin",
+              "fluide-capital-admin",
+              "fluide-super",
+              "fluide-developer",
+              "fluide-onboarding",
+              "fluide-pay"
+            ]
+          }
+        },
+        "required": [
+          "code",
+          "fluideClientId"
+        ]
+      },
       "AuthorizeSocialDto": {
         "type": "object",
         "properties": {
@@ -22896,7 +24992,9 @@
               "fluide-admin",
               "fluide-capital-admin",
               "fluide-super",
-              "fluide-developer"
+              "fluide-developer",
+              "fluide-onboarding",
+              "fluide-pay"
             ]
           },
           "callbackURL": {
@@ -22924,7 +25022,9 @@
               "fluide-admin",
               "fluide-capital-admin",
               "fluide-super",
-              "fluide-developer"
+              "fluide-developer",
+              "fluide-onboarding",
+              "fluide-pay"
             ]
           },
           "providerId": {
@@ -23030,6 +25130,23 @@
             "maxLength": 64,
             "example": "Africa/Douala",
             "description": "IANA timezone identifier"
+          },
+          "billingRegion": {
+            "type": "string",
+            "enum": [
+              "GLOBAL",
+              "EU",
+              "US"
+            ],
+            "example": "GLOBAL",
+            "description": "Billing region for price book resolution"
+          },
+          "billingCurrency": {
+            "type": "string",
+            "minLength": 3,
+            "maxLength": 3,
+            "example": "XAF",
+            "description": "ISO 4217 billing currency"
           }
         }
       },
@@ -23143,7 +25260,9 @@
               "fluide-admin",
               "fluide-capital-admin",
               "fluide-super",
-              "fluide-developer"
+              "fluide-developer",
+              "fluide-onboarding",
+              "fluide-pay"
             ],
             "description": "First-party SPA the invitee is claiming the invite on behalf of."
           },
@@ -23680,15 +25799,7 @@
           "countryCode",
           "currency",
           "businessCreatedAt",
-          "businessSize",
-          "organizationStructure",
-          "paydays",
-          "bankConnection",
-          "mobileMoneyWallet",
-          "signatures",
-          "payrollSetup",
-          "employeeNumberFormat",
-          "notificationSettings"
+          "businessSize"
         ]
       },
       "PatchCompanyActivationDto": {
@@ -23923,6 +26034,10 @@
           "documentUrl": {
             "type": "string",
             "maxLength": 2048
+          },
+          "documentFileId": {
+            "type": "string",
+            "format": "uuid"
           }
         }
       },
@@ -23938,6 +26053,10 @@
             "type": "string",
             "minLength": 1,
             "maxLength": 2048
+          },
+          "fileId": {
+            "type": "string",
+            "format": "uuid"
           },
           "issuedAt": {
             "type": "string"
@@ -24095,6 +26214,10 @@
           "documentUrl": {
             "type": "string",
             "maxLength": 2048
+          },
+          "documentFileId": {
+            "type": "string",
+            "format": "uuid"
           },
           "jurisdiction": {
             "type": "string"
@@ -24320,12 +26443,23 @@
           "selectedPlan": {
             "type": "string",
             "minLength": 1,
-            "description": "Plan slug stored on organization.plan (e.g. startup, essential, growth, enterprise).",
-            "example": "startup"
+            "description": "Plan slug stored on organization.plan (e.g. flex, starter, business, growth, enterprise).",
+            "example": "business"
           },
           "skipped": {
             "type": "boolean",
             "description": "User chose “skip for later” on billing step."
+          },
+          "referralPartnerOrganizationId": {
+            "type": "string",
+            "format": "uuid",
+            "description": "Referring partner organization id (stored on organization.metadata for commission accrual)."
+          },
+          "partnerProgramSlug": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Partner program slug (default referral_partner).",
+            "example": "referral_partner"
           }
         }
       },
@@ -24420,6 +26554,124 @@
           }
         }
       },
+      "ProductIntentDto": {
+        "type": "object",
+        "properties": {
+          "primary": {
+            "type": "string",
+            "enum": [
+              "fluide-pay",
+              "fluide-admin",
+              "fluide-capital-admin",
+              "fluide-developer"
+            ]
+          },
+          "selectedAt": {
+            "type": "string"
+          }
+        }
+      },
+      "CheckoutWorkflowFieldDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "text",
+              "select",
+              "number",
+              "date",
+              "email",
+              "phone"
+            ]
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "options": {
+            "maxItems": 50,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "placeholder": {
+            "type": "string",
+            "maxLength": 200
+          }
+        }
+      },
+      "CheckoutWorkflowBrandingDto": {
+        "type": "object",
+        "properties": {
+          "displayName": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "primaryColor": {
+            "type": "string",
+            "maxLength": 32
+          }
+        }
+      },
+      "CheckoutWorkflowDto": {
+        "type": "object",
+        "properties": {
+          "vertical": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "example": "school"
+          },
+          "templateId": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "example": "school_tuition"
+          },
+          "displayName": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "fields": {
+            "maxItems": 40,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CheckoutWorkflowFieldDto"
+            }
+          },
+          "defaultMethods": {
+            "type": "array",
+            "enum": [
+              "card",
+              "mobile_money",
+              "bank_transfer"
+            ],
+            "maxItems": 4,
+            "items": {
+              "type": "string",
+              "enum": [
+                "card",
+                "mobile_money",
+                "bank_transfer"
+              ]
+            }
+          },
+          "branding": {
+            "$ref": "#/components/schemas/CheckoutWorkflowBrandingDto"
+          }
+        }
+      },
       "PatchOnboardingSetupDto": {
         "type": "object",
         "properties": {
@@ -24500,6 +26752,80 @@
               "INVITE_FIRST"
             ],
             "description": "HR_FIRST: create HR employee then optional invite. INVITE_FIRST: store HR draft then invite; HR row created when user accepts."
+          },
+          "ecosystemPath": {
+            "type": "string",
+            "enum": [
+              "run_organization",
+              "raise_capital",
+              "deploy_capital",
+              "support_organizations",
+              "build_solutions",
+              "grow_partnership"
+            ]
+          },
+          "operationalPriorities": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "currentTools": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "readinessScore": {
+            "type": "object",
+            "properties": {
+              "score": {
+                "type": "number"
+              },
+              "missingRequirements": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "score"
+            ]
+          },
+          "partnershipApplication": {
+            "type": "object"
+          },
+          "developerProfile": {
+            "type": "object"
+          },
+          "profileSetup": {
+            "type": "object"
+          },
+          "productIntent": {
+            "$ref": "#/components/schemas/ProductIntentDto"
+          },
+          "activatedProducts": {
+            "type": "array",
+            "enum": [
+              "fluide-pay",
+              "fluide-admin",
+              "fluide-capital-admin",
+              "fluide-developer"
+            ],
+            "description": "Hub product tiles enabled for this org. Overrides ecosystem path defaults when set.",
+            "items": {
+              "type": "string",
+              "enum": [
+                "fluide-pay",
+                "fluide-admin",
+                "fluide-capital-admin",
+                "fluide-developer"
+              ]
+            }
+          },
+          "checkoutWorkflow": {
+            "$ref": "#/components/schemas/CheckoutWorkflowDto"
           }
         }
       },
@@ -25111,6 +27437,27 @@
           }
         }
       },
+      "PartnerReviewDto": {
+        "type": "object",
+        "properties": {
+          "decision": {
+            "enum": [
+              "APPROVE",
+              "REJECT",
+              "REQUEST_CHANGE"
+            ],
+            "type": "string"
+          },
+          "note": {
+            "type": "string",
+            "maxLength": 2000,
+            "description": "Reviewer note. Required when rejecting or requesting changes."
+          }
+        },
+        "required": [
+          "decision"
+        ]
+      },
       "VmAvailabilityDto": {
         "type": "object",
         "properties": {
@@ -25162,6 +27509,10 @@
           "documentUrl": {
             "type": "string",
             "maxLength": 2048
+          },
+          "documentFileId": {
+            "type": "string",
+            "maxLength": 128
           }
         },
         "required": [
@@ -25178,6 +27529,10 @@
           "url": {
             "type": "string",
             "maxLength": 2048
+          },
+          "fileId": {
+            "type": "string",
+            "maxLength": 128
           },
           "issuedAt": {
             "type": "string",
@@ -25253,6 +27608,108 @@
           "shortBio": {
             "type": "string",
             "maxLength": 2000
+          }
+        }
+      },
+      "CeCertificationDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "issuer": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "issuedAt": {
+            "type": "string",
+            "maxLength": 32
+          },
+          "expiresAt": {
+            "type": "string",
+            "maxLength": 32
+          },
+          "referenceNumber": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "documentUrl": {
+            "type": "string",
+            "maxLength": 2048
+          },
+          "documentFileId": {
+            "type": "string",
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "CeKycDocumentDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "url": {
+            "type": "string",
+            "maxLength": 2048
+          },
+          "fileId": {
+            "type": "string",
+            "maxLength": 128
+          },
+          "issuedAt": {
+            "type": "string",
+            "maxLength": 32
+          },
+          "expiresAt": {
+            "type": "string",
+            "maxLength": 32
+          },
+          "issuer": {
+            "type": "string",
+            "maxLength": 200
+          }
+        },
+        "required": [
+          "name",
+          "url"
+        ]
+      },
+      "PatchComplianceExpertProfileDto": {
+        "type": "object",
+        "properties": {
+          "shortBio": {
+            "type": "string",
+            "maxLength": 2000
+          },
+          "headlineRole": {
+            "type": "string",
+            "maxLength": 200
+          },
+          "currentCountry": {
+            "type": "string"
+          },
+          "worksAcrossRegions": {
+            "type": "boolean"
+          },
+          "certifications": {
+            "maxItems": 20,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CeCertificationDto"
+            }
+          },
+          "kycDocuments": {
+            "maxItems": 20,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CeKycDocumentDto"
+            }
           }
         }
       },
@@ -26053,6 +28510,68 @@
         "required": [
           "decision"
         ]
+      },
+      "PatchWorkflowInboxTaskStateDto": {
+        "type": "object",
+        "properties": {
+          "read": {
+            "type": "boolean"
+          },
+          "archive": {
+            "type": "boolean"
+          }
+        }
+      },
+      "WorkflowInboxNotifyPolicyDto": {
+        "type": "object",
+        "properties": {
+          "inApp": {
+            "type": "boolean"
+          },
+          "email": {
+            "type": "boolean"
+          },
+          "push": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PatchWorkflowInboxPolicyDto": {
+        "type": "object",
+        "properties": {
+          "retentionDays": {
+            "type": "number",
+            "minimum": 1
+          },
+          "autoArchiveAfterDays": {
+            "type": "number",
+            "minimum": 0
+          },
+          "notifyOnNewTask": {
+            "$ref": "#/components/schemas/WorkflowInboxNotifyPolicyDto"
+          },
+          "allowUserPushOverride": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PatchWorkflowInboxPreferencesDto": {
+        "type": "object",
+        "properties": {
+          "defaultFolder": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "all"
+            ]
+          },
+          "pushEnabled": {
+            "type": "boolean"
+          },
+          "emailDigest": {
+            "type": "boolean"
+          }
+        }
       },
       "DelegateWorkflowTaskDto": {
         "type": "object",

@@ -4761,6 +4761,74 @@
         ]
       }
     },
+    "/api/v1/public/invoices/{token}/checkout-session": {
+      "post": {
+        "operationId": "PublicInvoicesController_createCheckoutSession",
+        "parameters": [
+          {
+            "name": "token",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PublicInvoiceCheckoutSessionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "summary": "Create fluide-checkout session for this invoice (hosted pay)",
+        "tags": [
+          "Public Invoices"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X POST \"$FLUIDE_BASE_URL/api/v1/public/invoices/string/checkout-session\" \\\n  -H \"Authorization: Bearer $FLUIDE_ACCESS_TOKEN\" \\\n  -H \"X-Fluide-Api-Key: $FLUIDE_API_KEY\" \\\n  -H \"X-Fluide-Client-Id: fluide-developer\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}'"
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/public/invoices/string/checkout-session`, {\n  method: 'POST',\n  headers: {\n    Authorization: `Bearer ${process.env.FLUIDE_ACCESS_TOKEN}`,\n    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,\n    'X-Fluide-Client-Id': 'fluide-developer',\n    'Content-Type': 'application/json',\n  },\n  body: JSON.stringify({}),\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n        \"Authorization\": f\"Bearer {os.environ['FLUIDE_ACCESS_TOKEN']}\",\n        \"X-Fluide-Api-Key\": os.environ[\"FLUIDE_API_KEY\"],\n        \"X-Fluide-Client-Id\": \"fluide-developer\",\n}\n\nresponse = requests.post(\n    f\"{base_url}/api/v1/public/invoices/string/checkout-session\",\n    headers=headers,\n    json={},\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/public/invoices/string/checkout-session\"))\n    .header(\"Authorization\", \"Bearer \" + System.getenv(\"FLUIDE_ACCESS_TOKEN\"))\n    .header(\"X-Fluide-Api-Key\", System.getenv(\"FLUIDE_API_KEY\"))\n    .header(\"X-Fluide-Client-Id\", \"fluide-developer\")\n    .header(\"Content-Type\", \"application/json\")\n    .POST(HttpRequest.BodyPublishers.ofString(\"{}\"))\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/public/invoices/string/checkout-session\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'POST',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'X-Fluide-Api-Key: ' . getenv('FLUIDE_API_KEY'),\n        'X-Fluide-Client-Id: fluide-developer',\n        'Content-Type: application/json',\n    ],\n    CURLOPT_POSTFIELDS => \"{}\",\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
     "/api/v1/public/invoices/{token}/checkout": {
       "post": {
         "operationId": "PublicInvoicesController_checkout",
@@ -20526,8 +20594,8 @@
   ],
   "servers": [
     {
-      "url": "https://sandbox.fluidehr.com",
-      "description": "Sandbox"
+      "url": "https://test.api.fluidehr.com",
+      "description": "API"
     }
   ],
   "components": {
@@ -21619,6 +21687,18 @@
           "createdAt",
           "updatedAt"
         ]
+      },
+      "PublicInvoiceCheckoutSessionDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "customerName": {
+            "type": "string"
+          }
+        }
       },
       "PublicInvoiceCheckoutDto": {
         "type": "object",

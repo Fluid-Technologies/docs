@@ -15186,6 +15186,79 @@
       }
     },
     "/api/v1/hr/expenses/claims/{id}": {
+      "patch": {
+        "operationId": "ExpensesController_updateClaim",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateExpenseClaimDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExpenseClaim"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
+        ],
+        "summary": "Update draft expense claim",
+        "tags": [
+          "Expenses"
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X PATCH \"$FLUIDE_BASE_URL/api/v1/hr/expenses/claims/string\" \\\n  -H \"Authorization: Bearer $FLUIDE_ACCESS_TOKEN\" \\\n  -H \"X-Fluide-Api-Key: $FLUIDE_API_KEY\" \\\n  -H \"X-Fluide-Client-Id: fluide-developer\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}'"
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/hr/expenses/claims/string`, {\n  method: 'PATCH',\n  headers: {\n    Authorization: `Bearer ${process.env.FLUIDE_ACCESS_TOKEN}`,\n    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,\n    'X-Fluide-Client-Id': 'fluide-developer',\n    'Content-Type': 'application/json',\n  },\n  body: JSON.stringify({}),\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n        \"Authorization\": f\"Bearer {os.environ['FLUIDE_ACCESS_TOKEN']}\",\n        \"X-Fluide-Api-Key\": os.environ[\"FLUIDE_API_KEY\"],\n        \"X-Fluide-Client-Id\": \"fluide-developer\",\n}\n\nresponse = requests.patch(\n    f\"{base_url}/api/v1/hr/expenses/claims/string\",\n    headers=headers,\n    json={},\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/hr/expenses/claims/string\"))\n    .header(\"Authorization\", \"Bearer \" + System.getenv(\"FLUIDE_ACCESS_TOKEN\"))\n    .header(\"X-Fluide-Api-Key\", System.getenv(\"FLUIDE_API_KEY\"))\n    .header(\"X-Fluide-Client-Id\", \"fluide-developer\")\n    .header(\"Content-Type\", \"application/json\")\n    .PATCH(HttpRequest.BodyPublishers.ofString(\"{}\"))\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/hr/expenses/claims/string\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'PATCH',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'X-Fluide-Api-Key: ' . getenv('FLUIDE_API_KEY'),\n        'X-Fluide-Client-Id: fluide-developer',\n        'Content-Type: application/json',\n    ],\n    CURLOPT_POSTFIELDS => \"{}\",\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      },
       "get": {
         "operationId": "ExpensesController_getClaim",
         "parameters": [
@@ -15298,6 +15371,81 @@
             "lang": "php",
             "label": "PHP",
             "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/hr/expenses/claims/string\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'GET',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'X-Fluide-Api-Key: ' . getenv('FLUIDE_API_KEY'),\n        'X-Fluide-Client-Id: fluide-developer',\n    ],\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
+    "/api/v1/hr/expenses/claims/{id}/mark-paid": {
+      "post": {
+        "operationId": "ExpensesController_markClaimPaid",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MarkExpenseClaimPaidDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ExpenseClaim"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
+        ],
+        "summary": "Mark approved expense claim as reimbursed (paid)",
+        "tags": [
+          "Expenses"
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X POST \"$FLUIDE_BASE_URL/api/v1/hr/expenses/claims/string/mark-paid\" \\\n  -H \"Authorization: Bearer $FLUIDE_ACCESS_TOKEN\" \\\n  -H \"X-Fluide-Api-Key: $FLUIDE_API_KEY\" \\\n  -H \"X-Fluide-Client-Id: fluide-developer\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}'"
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/hr/expenses/claims/string/mark-paid`, {\n  method: 'POST',\n  headers: {\n    Authorization: `Bearer ${process.env.FLUIDE_ACCESS_TOKEN}`,\n    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,\n    'X-Fluide-Client-Id': 'fluide-developer',\n    'Content-Type': 'application/json',\n  },\n  body: JSON.stringify({}),\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n        \"Authorization\": f\"Bearer {os.environ['FLUIDE_ACCESS_TOKEN']}\",\n        \"X-Fluide-Api-Key\": os.environ[\"FLUIDE_API_KEY\"],\n        \"X-Fluide-Client-Id\": \"fluide-developer\",\n}\n\nresponse = requests.post(\n    f\"{base_url}/api/v1/hr/expenses/claims/string/mark-paid\",\n    headers=headers,\n    json={},\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/hr/expenses/claims/string/mark-paid\"))\n    .header(\"Authorization\", \"Bearer \" + System.getenv(\"FLUIDE_ACCESS_TOKEN\"))\n    .header(\"X-Fluide-Api-Key\", System.getenv(\"FLUIDE_API_KEY\"))\n    .header(\"X-Fluide-Client-Id\", \"fluide-developer\")\n    .header(\"Content-Type\", \"application/json\")\n    .POST(HttpRequest.BodyPublishers.ofString(\"{}\"))\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/hr/expenses/claims/string/mark-paid\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'POST',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'X-Fluide-Api-Key: ' . getenv('FLUIDE_API_KEY'),\n        'X-Fluide-Client-Id: fluide-developer',\n        'Content-Type: application/json',\n    ],\n    CURLOPT_POSTFIELDS => \"{}\",\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
           }
         ]
       }
@@ -19255,8 +19403,8 @@
   ],
   "servers": [
     {
-      "url": "https://sandbox.fluidehr.com",
-      "description": "Sandbox"
+      "url": "https://test.api.fluidehr.com",
+      "description": "API"
     }
   ],
   "components": {
@@ -20946,6 +21094,207 @@
         "required": [
           "decision"
         ]
+      },
+      "UpdateExpenseClaimDto": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string",
+            "example": "XAF"
+          },
+          "notes": {
+            "type": "string"
+          },
+          "lines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExpenseClaimLineDto"
+            }
+          }
+        }
+      },
+      "Employee": {
+        "type": "object",
+        "properties": {}
+      },
+      "ExpenseClaim": {
+        "type": "object",
+        "properties": {
+          "organizationId": {
+            "type": "string"
+          },
+          "companyId": {
+            "type": "string"
+          },
+          "hrEmployeeId": {
+            "type": "string"
+          },
+          "employee": {
+            "$ref": "#/components/schemas/Employee"
+          },
+          "claimNumber": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "currency": {
+            "type": "string"
+          },
+          "totalAmount": {
+            "type": "number"
+          },
+          "status": {
+            "enum": [
+              "DRAFT",
+              "SUBMITTED",
+              "APPROVED",
+              "REJECTED",
+              "PAID",
+              "CANCELLED"
+            ],
+            "type": "string"
+          },
+          "submittedAt": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          },
+          "approvedAt": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          },
+          "paidAt": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          },
+          "notes": {
+            "type": "string",
+            "nullable": true
+          },
+          "lines": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExpenseClaimLine"
+            }
+          },
+          "id": {
+            "type": "string"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "deletedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "organizationId",
+          "companyId",
+          "hrEmployeeId",
+          "employee",
+          "claimNumber",
+          "title",
+          "currency",
+          "totalAmount",
+          "status",
+          "submittedAt",
+          "approvedAt",
+          "paidAt",
+          "notes",
+          "lines",
+          "id",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "ExpenseClaimLine": {
+        "type": "object",
+        "properties": {
+          "claimId": {
+            "type": "string"
+          },
+          "claim": {
+            "$ref": "#/components/schemas/ExpenseClaim"
+          },
+          "expenseDate": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "category": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "amount": {
+            "type": "number"
+          },
+          "receiptArtifactId": {
+            "type": "string",
+            "nullable": true
+          },
+          "costCenterId": {
+            "type": "string",
+            "nullable": true
+          },
+          "id": {
+            "type": "string"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "deletedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "claimId",
+          "claim",
+          "expenseDate",
+          "category",
+          "description",
+          "amount",
+          "receiptArtifactId",
+          "costCenterId",
+          "id",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "MarkExpenseClaimPaidDto": {
+        "type": "object",
+        "properties": {
+          "paidAt": {
+            "type": "string",
+            "description": "ISO date; defaults to now"
+          },
+          "paymentReference": {
+            "type": "string",
+            "description": "Payroll run id, bank transfer ref, etc."
+          },
+          "notes": {
+            "type": "string"
+          }
+        }
       },
       "CreateBenefitPlanDto": {
         "type": "object",

@@ -97,6 +97,30 @@ node scripts/merge-error-codes.mjs
 | `PAYMENT_NOT_FOUND` | 404 | Payment record not found |
 | `WALLET_INSUFFICIENT_BALANCE` | 400 | Wallet balance too low |
 
+## API plan rate limits
+
+Limits apply per API product. Your active plan is returned on `GET /api/v1/authorize/current` in the `rateLimits` object. Current-period usage (API requests and webhook retries) is on `GET /api/v1/authorize/usage` and in the Connect dashboard **API Keys** page.
+
+| Plan | Price (XAF) | Burst (req/s) | Monthly quota | Webhook retries included | Environment |
+| --- | --- | --- | --- | --- | --- |
+| Developer Sandbox | Free | 5 | 2,000 | 50 | Sandbox (`test.api.fluidehr.com`) |
+| API Starter | 25,000 / month | 10 | 10,000 | 200 | Production |
+| API Business | 100,000–300,000 / month | 40 | 100,000 | 2,000 | Production |
+| API Enterprise | Custom | 200 | 1,000,000+ | Custom | Production |
+
+Monthly quotas reset every 30 days. Webhook retries are counted from the **second** delivery attempt onward. Enterprise limits are negotiated per contract.
+
+### Usage-based fees (beyond included limits)
+
+| Usage | Suggested fee |
+| --- | --- |
+| Successful payment event | Included in transaction fee |
+| Non-payment API event | 25–100 XAF / event |
+| Webhook retry beyond plan limit | Usage-based |
+| High-volume API package | Custom |
+| Dedicated environment | Custom |
+| Custom integration | Setup fee |
+
 ## Recommended handling
 
 - Never retry `401` blindly. Re-check headers and rotated secrets.
