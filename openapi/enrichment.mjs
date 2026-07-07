@@ -72,6 +72,30 @@ const DEVELOPER_SESSION_PATHS = new Set([
   "/api/v1/authorize/rotate-secret",
 ]);
 
+/** Auth routes that require Bearer + X-Fluide-Api-Key + X-Fluide-Client-Id (prefix match). */
+const AUTH_CONNECT_SESSION_PREFIXES = [
+  "/api/v1/workspaces",
+  "/api/v1/onboarding",
+  "/api/v1/webhooks",
+  "/api/v1/organizations",
+];
+
+/** Credential / health routes that stay unauthenticated in the playground. */
+const PUBLIC_AUTH_PATH_PREFIXES = [
+  "/api/v1/health",
+  "/api/v1/auth/sign",
+  "/api/v1/auth/email",
+  "/api/v1/auth/forgot",
+  "/api/v1/auth/reset",
+  "/api/v1/auth/social",
+  "/api/v1/auth/sso",
+  "/api/v1/auth/.well-known",
+  "/api/v1/auth/consume-handoff",
+  "/api/v1/auth/handoff",
+  "/api/v1/auth/refresh-token",
+  "/api/v1/auth/developer/ensure",
+];
+
 const HTTP_METHODS = new Set([
   "get",
   "post",
@@ -337,14 +361,30 @@ function mergeSecuritySchemes(existing) {
   return merged;
 }
 
+function isPublicAuthPath(pathKey) {
+  return PUBLIC_AUTH_PATH_PREFIXES.some(
+    (prefix) => pathKey === prefix || pathKey.startsWith(`${prefix}/`) || pathKey.startsWith(prefix),
+  );
+}
+
+function requiresAuthConnectSecurity(serviceKey, pathKey) {
+  if (TOKEN_EXCHANGE_PATHS.has(pathKey)) return false;
+  if (PRODUCT_SERVICE_KEYS.has(serviceKey)) return true;
+  if (serviceKey !== "fluide-auth") return false;
+  if (isPublicAuthPath(pathKey)) return false;
+  if (DEVELOPER_SESSION_PATHS.has(pathKey)) return true;
+  if (AUTH_CONNECT_SESSION_PREFIXES.some((prefix) => pathKey.startsWith(prefix))) {
+    return true;
+  }
+  if (pathKey.startsWith("/api/v1/authorize/")) return true;
+  return false;
+}
+
 function resolveConnectSecurity(serviceKey, pathKey) {
   if (TOKEN_EXCHANGE_PATHS.has(pathKey)) {
     return TOKEN_EXCHANGE_SECURITY;
   }
-  if (PRODUCT_SERVICE_KEYS.has(serviceKey)) {
-    return CONNECT_PRODUCT_SECURITY;
-  }
-  if (serviceKey === "fluide-auth" && DEVELOPER_SESSION_PATHS.has(pathKey)) {
+  if (requiresAuthConnectSecurity(serviceKey, pathKey)) {
     return CONNECT_PRODUCT_SECURITY;
   }
   return null;
@@ -371,7 +411,9 @@ function injectGatewayAuth(doc, serviceKey) {
   }
 
   const security =
-    PRODUCT_SERVICE_KEYS.has(serviceKey) ? CONNECT_PRODUCT_SECURITY : doc.security;
+    PRODUCT_SERVICE_KEYS.has(serviceKey) || serviceKey === "fluide-auth"
+      ? CONNECT_PRODUCT_SECURITY
+      : doc.security;
 
   return { ...doc, components, paths, security };
 }
@@ -383,7 +425,10 @@ export function enrichOpenApiSpec(doc, serviceKey) {
   const info = { ...(doc.info ?? {}) };
   info.title = meta.title;
   info.description = meta.description;
-  if (PRODUCT_SERVICE_KEYS.has(serviceKey) && !info.description?.includes("API playground")) {
+  if (
+    (PRODUCT_SERVICE_KEYS.has(serviceKey) || serviceKey === "fluide-auth") &&
+    !info.description?.includes("API playground")
+  ) {
     info.description = `${meta.description}${PLAYGROUND_AUTH_NOTE}`;
   }
 
