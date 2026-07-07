@@ -24332,6 +24332,186 @@
           }
         ]
       }
+    },
+    "/api/v1/authorize/token": {
+      "post": {
+        "operationId": "AuthorizeController_token_v1",
+        "summary": "Exchange API key for access token",
+        "description": "Exchanges a developer API key and secret for a short-lived machine JWT. Send credentials via `X-Fluide-Api-Key`, `X-Fluide-Api-Secret`, and `X-Fluide-Client-Id: fluide-developer` headers. Use the secret only on this route — never on product APIs. See [Authorization](/getting-started/authorization).",
+        "tags": [
+          "Authorize"
+        ],
+        "parameters": [
+          {
+            "name": "X-Fluide-Api-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Developer API key (`fl_dev_...`)."
+          },
+          {
+            "name": "X-Fluide-Api-Secret",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "API secret — use only on this route, never on product APIs."
+          },
+          {
+            "name": "X-Fluide-Client-Id",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "fluide-developer"
+            },
+            "description": "Must be `fluide-developer` for Connect integrations."
+          }
+        ],
+        "requestBody": {
+          "required": false,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "apiKey": {
+                    "type": "string",
+                    "description": "Optional if sent via header."
+                  },
+                  "apiSecret": {
+                    "type": "string",
+                    "description": "Optional if sent via header."
+                  },
+                  "organizationId": {
+                    "type": "string",
+                    "format": "uuid",
+                    "description": "Optional active organization override for the issued token."
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Access token issued",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponseDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "type": "object",
+                          "properties": {
+                            "accessToken": {
+                              "type": "string",
+                              "description": "RS256 JWT."
+                            },
+                            "jti": {
+                              "type": "string"
+                            },
+                            "tenantId": {
+                              "type": "string",
+                              "format": "uuid"
+                            },
+                            "fluideClientId": {
+                              "type": "string",
+                              "example": "fluide-developer"
+                            },
+                            "exp": {
+                              "type": "integer",
+                              "description": "Expiry (Unix seconds)."
+                            },
+                            "iat": {
+                              "type": "integer"
+                            },
+                            "authContextPath": {
+                              "type": "string",
+                              "example": "/api/v1/auth-context/{jti}"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed or invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid API key or secret",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Developer account not eligible for token exchange",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "fluideApiKey": [],
+            "fluideApiSecret": [],
+            "fluideClientId": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X POST \"$FLUIDE_BASE_URL/api/v1/authorize/token\" \\\n  -H \"X-Fluide-Api-Key: $FLUIDE_API_KEY\" \\\n  -H \"X-Fluide-Api-Secret: $FLUIDE_API_SECRET\" \\\n  -H \"X-Fluide-Client-Id: fluide-developer\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}'"
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/authorize/token`, {\n  method: 'POST',\n  headers: {\n    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,\n    'X-Fluide-Api-Secret': process.env.FLUIDE_API_SECRET,\n    'X-Fluide-Client-Id': 'fluide-developer',\n    'Content-Type': 'application/json',\n  },\n  body: JSON.stringify({}),\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n        \"X-Fluide-Api-Key\": os.environ[\"FLUIDE_API_KEY\"],\n        \"X-Fluide-Api-Secret\": os.environ[\"FLUIDE_API_SECRET\"],\n        \"X-Fluide-Client-Id\": \"fluide-developer\",\n}\n\nresponse = requests.post(\n    f\"{base_url}/api/v1/authorize/token\",\n    headers=headers,\n    json={},\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/authorize/token\"))\n    .header(\"X-Fluide-Api-Key\", System.getenv(\"FLUIDE_API_KEY\"))\n    .header(\"X-Fluide-Api-Secret\", System.getenv(\"FLUIDE_API_SECRET\"))\n    .header(\"X-Fluide-Client-Id\", \"fluide-developer\")\n    .header(\"Content-Type\", \"application/json\")\n    .POST(HttpRequest.BodyPublishers.ofString(\"{}\"))\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/authorize/token\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'POST',\n    CURLOPT_HTTPHEADER => [\n        'X-Fluide-Api-Key: ' . getenv('FLUIDE_API_KEY'),\n        'X-Fluide-Api-Secret: ' . getenv('FLUIDE_API_SECRET'),\n        'X-Fluide-Client-Id: fluide-developer',\n        'Content-Type: application/json',\n    ],\n    CURLOPT_POSTFIELDS => \"{}\",\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
     }
   },
   "info": {
@@ -24368,7 +24548,8 @@
       "name": "Auth"
     },
     {
-      "name": "Authorize"
+      "name": "Authorize",
+      "description": "Exchange API key and secret for a machine JWT, read developer metadata, rotate secrets, and manage API billing."
     },
     {
       "name": "Organizations"

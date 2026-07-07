@@ -139,6 +139,8 @@ export const TAG_DESCRIPTIONS = {
     "Prometheus scrape endpoint in text exposition format. Configure your metrics collector to poll this path on each service.",
   "Developer Access":
     "Manage developer credentials and session.",
+  Authorize:
+    "Exchange API key and secret for a machine JWT, read developer metadata, rotate secrets, and manage API billing.",
   "HR Employees": "Create and manage employee records tied to your organization.",
   Notifications: "In-app and multi-channel notifications for suite products.",
   "File Management": "Upload, download, and manage files scoped to your organization.",
@@ -187,6 +189,11 @@ export const OPERATION_PATCHES = {
     summary: "Utils service root",
     description: "Returns a simple greeting confirming the utils service is reachable.",
   },
+  "POST /api/v1/authorize/token": {
+    summary: "Exchange API key for access token",
+    description:
+      "Exchanges a developer API key and secret for a short-lived machine JWT. Send credentials via `X-Fluide-Api-Key`, `X-Fluide-Api-Secret`, and `X-Fluide-Client-Id: fluide-developer` headers. Use the secret only on this route — never on product APIs. See [Authorization](/getting-started/authorization).",
+  },
   "GET /api/v1/hr/attendance/events": {
     summary: "List clock events",
     description:
@@ -196,6 +203,115 @@ export const OPERATION_PATCHES = {
 
 /** Mintlify slugifies summaries into filenames — keep them short to avoid ENAMETOOLONG. */
 const MAX_OPERATION_SUMMARY_LENGTH = 72;
+
+const STANDARD_API_ERROR_RESPONSE = {
+  description: "Error response",
+  content: {
+    "application/json": {
+      schema: { $ref: "#/components/schemas/ApiErrorResponseDto" },
+    },
+  },
+};
+
+/** Gateway export often omits @Public credential routes — inject for Mintlify API reference. */
+function injectAuthorizeTokenPath(paths) {
+  const pathKey = "/api/v1/authorize/token";
+  if (paths[pathKey]) return paths;
+
+  return {
+    ...paths,
+    [pathKey]: {
+      post: {
+        operationId: "AuthorizeController_token_v1",
+        summary: "Exchange API key for access token",
+        description:
+          "Exchanges a developer API key and secret for a short-lived machine JWT. Prefer sending credentials in headers rather than the JSON body.",
+        tags: ["Authorize"],
+        parameters: [
+          {
+            name: "X-Fluide-Api-Key",
+            in: "header",
+            required: true,
+            schema: { type: "string" },
+            description: "Developer API key (`fl_dev_...`).",
+          },
+          {
+            name: "X-Fluide-Api-Secret",
+            in: "header",
+            required: true,
+            schema: { type: "string" },
+            description: "API secret — use only on this route, never on product APIs.",
+          },
+          {
+            name: "X-Fluide-Client-Id",
+            in: "header",
+            required: true,
+            schema: { type: "string", default: "fluide-developer" },
+            description: "Must be `fluide-developer` for Connect integrations.",
+          },
+        ],
+        requestBody: {
+          required: false,
+          content: {
+            "application/json": {
+              schema: {
+                type: "object",
+                properties: {
+                  apiKey: { type: "string", description: "Optional if sent via header." },
+                  apiSecret: { type: "string", description: "Optional if sent via header." },
+                  organizationId: {
+                    type: "string",
+                    format: "uuid",
+                    description: "Optional active organization override for the issued token.",
+                  },
+                },
+              },
+            },
+          },
+        },
+        responses: {
+          "201": {
+            description: "Access token issued",
+            content: {
+              "application/json": {
+                schema: {
+                  allOf: [
+                    { $ref: "#/components/schemas/ApiResponseDto" },
+                    {
+                      properties: {
+                        data: {
+                          type: "object",
+                          properties: {
+                            accessToken: { type: "string", description: "RS256 JWT." },
+                            jti: { type: "string" },
+                            tenantId: { type: "string", format: "uuid" },
+                            fluideClientId: {
+                              type: "string",
+                              example: "fluide-developer",
+                            },
+                            exp: { type: "integer", description: "Expiry (Unix seconds)." },
+                            iat: { type: "integer" },
+                            authContextPath: {
+                              type: "string",
+                              example: "/api/v1/auth-context/{jti}",
+                            },
+                          },
+                        },
+                      },
+                    },
+                  ],
+                },
+              },
+            },
+          },
+          "400": { ...STANDARD_API_ERROR_RESPONSE, description: "Validation failed or invalid request parameters" },
+          "401": { ...STANDARD_API_ERROR_RESPONSE, description: "Invalid API key or secret" },
+          "403": { ...STANDARD_API_ERROR_RESPONSE, description: "Developer account not eligible for token exchange" },
+        },
+      },
+    },
+  };
+}
 
 function clampOperationSummary(operation) {
   const summary = operation.summary;
@@ -293,10 +409,7 @@ export function enrichOpenApiSpec(doc, serviceKey) {
     tagByName.set(name, current);
   }
 
-  const paths = { ...doc.paths };
-  for (const hiddenPath of TOKEN_EXCHANGE_PATHS) {
-    delete paths[hiddenPath];
-  }
+  const paths = injectAuthorizeTokenPath({ ...doc.paths });
   for (const [pathKey, pathItem] of Object.entries(paths)) {
     const nextPathItem = { ...pathItem };
     for (const [method, operation] of Object.entries(pathItem)) {

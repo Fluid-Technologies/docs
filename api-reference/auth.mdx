@@ -5,6 +5,16 @@ description: Developer credentials, organizations, and identity for the Fluide S
 
 The **Auth API** covers developer session management and identity for Fluide Connect integrations.
 
+## Token exchange (start here)
+
+Server integrations obtain a machine JWT from **`POST /api/v1/authorize/token`** using `X-Fluide-Api-Key`, `X-Fluide-Api-Secret`, and `X-Fluide-Client-Id: fluide-developer`. This route does **not** use a Bearer token.
+
+<Card title="POST /authorize/token" icon="key" href="/api-reference/auth/exchange-api-key-for-access-token">
+  Open in API reference with playground
+</Card>
+
+See also [Authorization](/getting-started/authorization) for curl and Node.js walkthroughs.
+
 ## Base path
 
 `/api/v1`
