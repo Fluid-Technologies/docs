@@ -1,0 +1,36 @@
+---
+title: Assign org roles
+description: Assign roles to organization members.
+---
+
+# Assign org roles
+
+Assign roles to organization members.
+
+## Prerequisites
+
+- Custom or built-in role exists
+
+Required permissions: `org:members:write`.
+
+## Steps
+
+<Steps>
+
+<Step title="Assign role">
+
+Patch member role via `/api/v1/organizations/{id}/members` in [Auth API reference](/api-reference/auth).
+
+</Step>
+
+</Steps>
+
+
+
+
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="create custom role" href="/guides/access/create-custom-role" />
+</CardGroup>

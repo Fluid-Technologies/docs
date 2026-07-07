@@ -1,0 +1,51 @@
+---
+title: Manage employment contracts
+description: Create and update employment contracts that drive payroll eligibility.
+---
+
+# Manage employment contracts
+
+Create and update employment contracts that drive payroll eligibility.
+
+<Note>
+Include acting-client headers on product API calls: `X-Workspace-Id` and `X-Acting-Company-Id`. See [Act as a client](/guides/service-partner/act-as-client).
+</Note>
+
+## Prerequisites
+
+- Employee exists in HR
+
+Required permissions: `hr:contracts:write`.
+
+## Steps
+
+<Steps>
+
+<Step title="Create contract">
+
+```bash
+curl -sS -X POST "$FLUIDE_BASE_URL/api/v1/hr/employment-contracts" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer" \
+  -H "X-Workspace-Id: $FLUIDE_WORKSPACE_ID" \
+  -H "X-Acting-Company-Id: $FLUIDE_COMPANY_ID" \
+  -H "Content-Type: application/json" \
+  -d '{"employeeId":"'$EMPLOYEE_ID'","startDate":"2026-01-01","employmentType":"FULL_TIME"}'
+```
+
+</Step>
+
+</Steps>
+
+## Tips
+
+- Active contract required for payroll run inclusion.
+
+
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="run payroll" href="/guides/payroll/run-payroll" />
+</CardGroup>

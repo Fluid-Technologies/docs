@@ -1,0 +1,62 @@
+---
+title: Manage workspaces
+description: Create, list, and organize partner workspaces that group client companies.
+---
+
+# Manage workspaces
+
+Create, list, and organize partner workspaces that group client companies.
+
+## Prerequisites
+
+- SERVICE_PARTNER org and machine JWT
+
+Required permissions: `partner:workspace:manage`.
+
+## Steps
+
+<Steps>
+
+<Step title="List workspaces">
+
+```bash
+curl -sS "$FLUIDE_BASE_URL/api/v1/workspaces" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer"
+```
+
+</Step>
+
+<Step title="Create a workspace">
+
+```bash
+curl -sS -X POST "$FLUIDE_BASE_URL/api/v1/workspaces" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Sandbox merchants","metadata":{"visibility":"public"}}'
+```
+
+</Step>
+
+<Step title="Update or delete">
+
+Use `PATCH /api/v1/workspaces/{id}` or `DELETE` per [Auth API reference](/api-reference/auth). Private workspaces restrict visibility to owners/admins and `workspace_member` rows.
+
+</Step>
+
+</Steps>
+
+## Tips
+
+- Use separate workspaces for sandbox vs production merchants.
+
+
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="onboard client company" href="/guides/service-partner/onboard-client-company" />
+</CardGroup>

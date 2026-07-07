@@ -1,0 +1,45 @@
+---
+title: Clock attendance
+description: Record clock-in and clock-out events for attendance tracking.
+---
+
+# Clock attendance
+
+Record clock-in and clock-out events for attendance tracking.
+
+<Note>
+Include acting-client headers on product API calls: `X-Workspace-Id` and `X-Acting-Company-Id`. See [Act as a client](/guides/service-partner/act-as-client).
+</Note>
+
+## Prerequisites
+
+- Employee exists
+
+Required permissions: `hr:attendance:write`.
+
+## Steps
+
+<Steps>
+
+<Step title="Record clock event">
+
+```bash
+curl -sS -X POST "$FLUIDE_BASE_URL/api/v1/hr/attendance/events" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer" \
+  -H "X-Workspace-Id: $FLUIDE_WORKSPACE_ID" \
+  -H "X-Acting-Company-Id: $FLUIDE_COMPANY_ID" \
+  -H "Content-Type: application/json" \
+  -d '{"employeeId":"'$EMPLOYEE_ID'","eventType":"CLOCK_IN"}'
+```
+
+</Step>
+
+</Steps>
+
+
+
+
+
+

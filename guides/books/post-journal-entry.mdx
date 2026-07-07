@@ -1,0 +1,49 @@
+---
+title: Post a journal entry
+description: Create and post double-entry journal entries to the general ledger.
+---
+
+# Post a journal entry
+
+Create and post double-entry journal entries to the general ledger.
+
+<Note>
+Include acting-client headers on product API calls: `X-Workspace-Id` and `X-Acting-Company-Id`. See [Act as a client](/guides/service-partner/act-as-client).
+</Note>
+
+## Prerequisites
+
+- Chart of accounts configured
+
+Required permissions: `books:journal:write`.
+
+## Steps
+
+<Steps>
+
+<Step title="Create journal entry">
+
+```bash
+curl -sS -X POST "$FLUIDE_BASE_URL/api/v1/journal-entries" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer" \
+  -H "X-Workspace-Id: $FLUIDE_WORKSPACE_ID" \
+  -H "X-Acting-Company-Id: $FLUIDE_COMPANY_ID" \
+  -H "Content-Type: application/json" \
+  -d '{}'
+```
+
+</Step>
+
+</Steps>
+
+
+
+
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="payroll to books" href="/guides/playbooks/payroll-to-books" />
+</CardGroup>

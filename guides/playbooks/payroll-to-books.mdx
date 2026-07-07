@@ -1,0 +1,97 @@
+---
+title: Payroll → Books GL posting
+description: Configure payroll GL mappings and understand automatic journal posting when a payroll run completes.
+---
+
+# Payroll → Books GL posting
+
+When a payroll run **completes**, Fluide Payroll publishes a `PAYROLL_RUN_COMPLETED` event. **Fluide Books** consumes it and posts a double-entry journal entry using subsidiary-scoped payroll account mappings.
+
+## Prerequisites
+
+- Books subsidiary configured for the company
+- Payroll runs completing successfully — [Run payroll](/guides/payroll/run-payroll)
+- Payroll GL mappings configured per subsidiary
+
+## Required mapping codes
+
+Each subsidiary needs mappings for at minimum:
+
+| `componentCode` | Debit | Credit |
+| --- | --- | --- |
+| `SALARY_EXPENSE` | Required | — |
+| `EMPLOYER_CONTRIBUTION_EXPENSE` | Required | — |
+| `NET_SALARY_PAYABLE` | — | Required |
+| `PAYROLL_CASH` | — | Required |
+
+Configure mappings via Books HTTP APIs (audited) — see **Payroll account mappings** in [Books API reference](/api-reference/books).
+
+## Steps
+
+<Steps>
+
+<Step title="Configure payroll GL mappings">
+
+```bash
+# Example — see API reference for full schema
+curl -sS -X POST "$FLUIDE_BASE_URL/api/v1/books/payroll-account-mappings" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "subsidiaryId": "YOUR_SUBSIDIARY_ID",
+    "componentCode": "SALARY_EXPENSE",
+    "debitAccountId": "ACCOUNT_UUID"
+  }'
+```
+
+Repeat for each required `componentCode`.
+
+</Step>
+
+<Step title="Complete a payroll run">
+
+Process and complete a run — [Run payroll](/guides/payroll/run-payroll). GL posting triggers on completion, not on draft or calculate.
+
+</Step>
+
+<Step title="Verify journal entry in Books">
+
+List journal entries for the period and confirm a posted payroll entry exists:
+
+```bash
+curl -sS "$FLUIDE_BASE_URL/api/v1/books/journal-entries?from=2026-06-01&to=2026-06-30" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer"
+```
+
+</Step>
+
+</Steps>
+
+## Tips
+
+- Mappings are **per subsidiary** — multi-entity companies need a complete set for each legal entity.
+- Posting is event-driven and idempotent on replay — re-consuming the same run event does not duplicate entries.
+- Partner integrations: include acting-client headers on Books API calls when scoping to a merchant.
+
+## Troubleshooting
+
+| Problem | Resolution |
+| --- | --- |
+| Run completed, no journal | Missing or incomplete `payroll_account_mappings` for the subsidiary. |
+| Unbalanced entry | Verify debit/credit account IDs exist in the subsidiary COA. |
+| Wrong amounts | Check run totals and mapping `componentCode` coverage. |
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Run payroll" icon="wallet" href="/guides/payroll/run-payroll">
+    Complete a run to trigger posting.
+  </Card>
+  <Card title="Books API reference" icon="code" href="/api-reference/books">
+    Mappings and journal entry endpoints.
+  </Card>
+</CardGroup>

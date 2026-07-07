@@ -1,0 +1,101 @@
+---
+title: HR → Payroll employee sync
+description: How HR mirrors employees and contracts into Payroll after you create records via the Connect API.
+---
+
+# HR → Payroll employee sync
+
+**Fluide HR** is the canonical source for employee and contract data. When you create or update records via the HR API, HR automatically mirrors them into **Fluide Payroll** using internal service-to-service calls.
+
+<Info>
+As a Connect integrator you only call **public HR and Payroll APIs**. Mirroring happens inside the platform — this guide explains the behavior so you can debug sync issues.
+</Info>
+
+## When sync happens
+
+| HR action | Payroll effect |
+| --- | --- |
+| `POST /api/v1/hr/employees` | Upsert employee mirror row |
+| `PATCH /api/v1/hr/employees/{id}` | Update mirror |
+| Create / update employment contract | Upsert contract mirror |
+| Company created under workspace | Default wallet provisioned on Pay |
+
+## Idempotency
+
+Payroll `employees.id` equals the canonical **HR employee UUID**. Replaying the same create or update updates the same Payroll row — safe to retry.
+
+Contract rows may use the same UUID as `hr_employment_contract.id` when HR sends `contract.id`.
+
+## Steps (integrator workflow)
+
+<Steps>
+
+<Step title="Create employee in HR">
+
+```bash
+curl -sS -X POST "$FLUIDE_BASE_URL/api/v1/hr/employees" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer" \
+  -H "Content-Type: application/json" \
+  -d '{"firstName": "Ada", "lastName": "Lovelace", "email": "ada@example.com"}'
+```
+
+</Step>
+
+<Step title="Wait for mirror (usually seconds)">
+
+HR publishes to Payroll internal endpoints asynchronously after commit.
+
+</Step>
+
+<Step title="Verify in Payroll API">
+
+```bash
+curl -sS "$FLUIDE_BASE_URL/api/v1/payroll/employees" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer"
+```
+
+The employee `id` should match HR `data.id`.
+
+</Step>
+
+<Step title="Proceed to payroll run">
+
+Once mirrored, include the employee in a run — [Run payroll](/guides/payroll/run-payroll).
+
+</Step>
+
+</Steps>
+
+## Internal mechanics (reference)
+
+HR calls Payroll with:
+
+- Header: `x-internal-api-key` (service mesh only — not for Connect developers)
+- `POST /api/v1/payroll/internal/employees/mirror-from-hr`
+- `POST /api/v1/payroll/internal/contracts/upsert-from-hr`
+- `POST /api/v1/payroll/internal/employees/provision-wallet`
+
+See also [HR payroll integration](/hr/payroll-integration) and [Payroll HR mirror](/payroll/hr-mirror) for service-side detail.
+
+## Troubleshooting
+
+| Problem | Resolution |
+| --- | --- |
+| HR row exists, Payroll empty | Wait and retry list. If still missing after minutes, contact support with HR employee UUID. |
+| Employee in Payroll but not in run | Add active contract and payment rail in HR first. |
+| Wrong company scope (partners) | Confirm acting-client headers on **both** HR and Payroll calls. |
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Add an employee" icon="user-plus" href="/guides/hr/add-employee">
+    Create the canonical HR record.
+  </Card>
+  <Card title="Run payroll" icon="wallet" href="/guides/payroll/run-payroll">
+    Process pay after sync.
+  </Card>
+</CardGroup>

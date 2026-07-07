@@ -1,0 +1,118 @@
+---
+title: Add an employee
+description: Create a single employee record via the HR API — the canonical source for payroll and suite products.
+---
+
+# Add an employee
+
+Use this guide when onboarding one hire through your integration. The employee record in **Fluide HR** is the source of truth; Payroll mirrors it automatically after create.
+
+## Prerequisites
+
+- API credentials — [Authorization](/getting-started/authorization)
+- For partners: `workspaceId`, `companyId`, and acting-client headers — [Act as a client](/guides/service-partner/act-as-client)
+- Permission: `hr:employees:write`
+
+## Steps
+
+<Steps>
+
+<Step title="Create the employee record">
+
+<CodeGroup>
+
+```bash curl
+curl -sS -X POST "$FLUIDE_BASE_URL/api/v1/hr/employees" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer" \
+  -H "X-Workspace-Id: $FLUIDE_WORKSPACE_ID" \
+  -H "X-Acting-Company-Id: $FLUIDE_COMPANY_ID" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "firstName": "Ada",
+    "lastName": "Lovelace",
+    "email": "ada@example.com",
+    "employeeCode": "EMP-001"
+  }'
+```
+
+```javascript Node.js
+const res = await fetch(`${baseUrl}/api/v1/hr/employees`, {
+  method: 'POST',
+  headers: {
+    Authorization: `Bearer ${accessToken}`,
+    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,
+    'X-Fluide-Client-Id': 'fluide-developer',
+  },
+  body: JSON.stringify({
+    firstName: 'Ada',
+    lastName: 'Lovelace',
+    email: 'ada@example.com',
+    employeeCode: 'EMP-001',
+  }),
+});
+```
+
+</CodeGroup>
+
+<Note>
+Direct-tenant integrations: omit `X-Workspace-Id` and `X-Acting-Company-Id` — JWT `tenantId` scopes the organization.
+</Note>
+
+Save `data.id` — this UUID is reused as `hrEmployeeId` in Payroll.
+
+</Step>
+
+<Step title="Add employment details (optional)">
+
+Patch the employee or create an employment contract for start date, job title, and reporting manager. See **Update employee** and **Employment contracts** in [HR API reference](/api-reference/hr).
+
+</Step>
+
+<Step title="Confirm payroll mirror">
+
+After create, HR calls Payroll internal mirror endpoints. Verify the employee appears:
+
+```bash
+curl -sS "$FLUIDE_BASE_URL/api/v1/payroll/employees" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer" \
+  -H "X-Workspace-Id: $FLUIDE_WORKSPACE_ID" \
+  -H "X-Acting-Company-Id: $FLUIDE_COMPANY_ID"
+```
+
+See [HR → Payroll sync](/guides/playbooks/hr-to-payroll) if the mirror is missing.
+
+</Step>
+
+</Steps>
+
+## Tips
+
+- Use `POST /api/v1/hr/employees/onboard-with-staff` when the employee also needs a FluideAuth staff seat in one request.
+- `employeeCode` should be unique per company — your ERP employee ID maps cleanly here.
+- Direct-tenant integrations omit acting-client headers; JWT `tenantId` scopes the org.
+
+## Troubleshooting
+
+| Problem | Resolution |
+| --- | --- |
+| `403` on create | Missing `hr:employees:write` or acting-client permission `partner:client:act-as`. |
+| Employee not in Payroll | Mirror is async — wait and retry. See [HR → Payroll](/guides/playbooks/hr-to-payroll). |
+| Duplicate `employeeCode` | Use a unique code or update the existing record via `PATCH`. |
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Bulk import" icon="file-import" href="/guides/hr/bulk-import-employees">
+    Import many employees from a spreadsheet.
+  </Card>
+  <Card title="Run payroll" icon="wallet" href="/guides/payroll/run-payroll">
+    Pay employees after HR records exist.
+  </Card>
+  <Card title="HR API reference" icon="code" href="/api-reference/hr">
+    Full employee schema and playground.
+  </Card>
+</CardGroup>

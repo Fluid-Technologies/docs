@@ -1,0 +1,42 @@
+---
+title: Offboard an employee
+description: Deactivate an employee and close out contracts and access.
+---
+
+# Offboard an employee
+
+Deactivate an employee and close out contracts and access.
+
+<Note>
+Include acting-client headers on product API calls: `X-Workspace-Id` and `X-Acting-Company-Id`. See [Act as a client](/guides/service-partner/act-as-client).
+</Note>
+
+## Prerequisites
+
+- Employee active in HR
+
+Required permissions: `hr:employees:write`.
+
+## Steps
+
+<Steps>
+
+<Step title="End contract and deactivate">
+
+Terminate employment contract, then patch employee `isActive: false`. See HR employment-contract and employee endpoints.
+
+</Step>
+
+</Steps>
+
+## Tips
+
+- Complete final payroll run before offboarding if applicable.
+
+
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="manage employment contracts" href="/guides/hr-operations/manage-employment-contracts" />
+</CardGroup>

@@ -1,0 +1,42 @@
+---
+title: Machine tokens and scopes
+description: Exchange API keys for JWTs and understand permission scoping for integrations.
+---
+
+# Machine tokens and scopes
+
+Exchange API keys for JWTs and understand permission scoping for integrations.
+
+## Prerequisites
+
+- Developer API key from Connect
+
+## Steps
+
+<Steps>
+
+<Step title="Token exchange">
+
+```bash
+curl -sS -X POST "$FLUIDE_BASE_URL/api/v1/authorize/token" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Api-Secret: $FLUIDE_API_SECRET" \
+  -H "X-Fluide-Client-Id: fluide-developer"
+```
+
+</Step>
+
+</Steps>
+
+## Tips
+
+- See [Authorization](/getting-started/authorization) for full header reference.
+
+
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="authorization" href="/getting-started/authorization" />
+  <Card title="rbac" href="/auth/rbac" />
+</CardGroup>

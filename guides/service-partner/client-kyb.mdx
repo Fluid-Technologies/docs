@@ -1,0 +1,104 @@
+---
+title: Submit client KYB
+description: Upload KYB documents and submit partner-mediated compliance review for a workspace client company.
+---
+
+# Submit client KYB
+
+Use this guide when a **partner** must complete Know Your Business (KYB) for an end-customer before regulated products (Pay, Payroll disbursement, etc.) are enabled. Partner-mediated KYB is reviewed in a separate queue from direct-tenant KYB.
+
+## Prerequisites
+
+- Client company created under a workspace — [Onboard a client company](/guides/service-partner/onboard-client-company)
+- Company profile fields complete (name, country, currency, registration details)
+- Documents collected from the merchant offline or via your product
+
+## Overview
+
+<Steps>
+  <Step title="Partner collects documents">
+    Gather registration certificates, ID copies, and any jurisdiction-specific files from the merchant.
+  </Step>
+  <Step title="Partner uploads via Connect API">
+    Attach files to the client company KYB state.
+  </Step>
+  <Step title="Partner submits for review">
+    `POST .../kyb/submit` moves the case to the platform Partner KYB queue.
+  </Step>
+  <Step title="Platform reviews">
+    Approve or reject with notes returned to the **partner only** — relay outcomes to your client.
+  </Step>
+</Steps>
+
+<Warning>
+Your **firm** KYB (the SERVICE_PARTNER organization) uses org onboarding routes (`/api/v1/onboarding/kyb/*`). **Client** KYB uses workspace company routes below.
+</Warning>
+
+## Steps
+
+<Steps>
+
+<Step title="Check current KYB state">
+
+```bash
+curl -sS "$FLUIDE_BASE_URL/api/v1/workspaces/$FLUIDE_WORKSPACE_ID/companies/$FLUIDE_COMPANY_ID/kyb" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer"
+```
+
+Review required document types and current status.
+
+</Step>
+
+<Step title="Upload documents">
+
+Upload each required file per the KYB requirements returned in the state payload. Use the document upload endpoints on the company KYB resource — see [Auth API reference](/api-reference/auth) under workspace company KYB operations.
+
+</Step>
+
+<Step title="Submit for review">
+
+```bash
+curl -sS -X POST "$FLUIDE_BASE_URL/api/v1/workspaces/$FLUIDE_WORKSPACE_ID/companies/$FLUIDE_COMPANY_ID/kyb/submit" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer" \
+  -H "Content-Type: application/json" \
+  -d '{}'
+```
+
+</Step>
+
+<Step title="Poll status and relay to client">
+
+Re-fetch KYB state until status is `APPROVED` or `REJECTED`. Notes are visible to your partner org — communicate results to the merchant through your own product.
+
+</Step>
+
+</Steps>
+
+## Tips
+
+- Complete the company profile before submit — incomplete registration data is a common rejection reason.
+- Keep a mapping from your merchant ID to `companyId` so you can poll KYB status from your admin dashboard.
+- Approved client KYB unlocks wallet and disbursement flows for that `companyId` under acting-client headers.
+
+## Troubleshooting
+
+| Problem | Resolution |
+| --- | --- |
+| Submit rejected — missing documents | Re-fetch KYB state; upload all required `documentType` entries before re-submitting. |
+| Confused firm vs client KYB | Firm = your org onboarding. Client = workspace company routes in this guide. |
+| Product APIs blocked after approval | Confirm acting-client headers use the approved `companyId`. |
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Onboard a client company" icon="building" href="/guides/service-partner/onboard-client-company">
+    Create the company before KYB.
+  </Card>
+  <Card title="Multi-tenancy" icon="layers" href="/getting-started/multi-tenancy">
+    Partner tenancy model and API tables.
+  </Card>
+</CardGroup>

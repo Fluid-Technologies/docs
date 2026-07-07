@@ -1,0 +1,49 @@
+---
+title: Create a payment link
+description: Generate a checkout session or payment link for collecting customer payments.
+---
+
+# Create a payment link
+
+Generate a checkout session or payment link for collecting customer payments.
+
+<Note>
+Include acting-client headers on product API calls: `X-Workspace-Id` and `X-Acting-Company-Id`. See [Act as a client](/guides/service-partner/act-as-client).
+</Note>
+
+## Prerequisites
+
+- Pay provider configured
+
+Required permissions: `pay:checkout:write`.
+
+## Steps
+
+<Steps>
+
+<Step title="Create checkout session">
+
+```bash
+curl -sS -X POST "$FLUIDE_BASE_URL/api/v1/checkout/sessions" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer" \
+  -H "X-Workspace-Id: $FLUIDE_WORKSPACE_ID" \
+  -H "X-Acting-Company-Id: $FLUIDE_COMPANY_ID" \
+  -H "Content-Type: application/json" \
+  -d '{"amount":50000,"currency":"XAF"}'
+```
+
+</Step>
+
+</Steps>
+
+
+
+
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="invoice to cash collection" href="/guides/playbooks/invoice-to-cash-collection" />
+</CardGroup>

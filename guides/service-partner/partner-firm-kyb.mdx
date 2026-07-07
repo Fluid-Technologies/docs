@@ -1,0 +1,49 @@
+---
+title: Complete partner firm KYB
+description: Submit Know Your Business verification for your SERVICE_PARTNER organization.
+---
+
+# Complete partner firm KYB
+
+Submit Know Your Business verification for your SERVICE_PARTNER organization.
+
+## Prerequisites
+
+- Partner org onboarding started
+
+Required permissions: `onboarding:kyb:write`.
+
+## Steps
+
+<Steps>
+
+<Step title="Get KYB state">
+
+```bash
+curl -sS "$FLUIDE_BASE_URL/api/v1/onboarding/kyb" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer"
+```
+
+</Step>
+
+<Step title="Upload and submit">
+
+Upload documents via onboarding KYB routes, then `POST /api/v1/onboarding/kyb/submit`. Distinct from [client KYB](/guides/service-partner/client-kyb).
+
+</Step>
+
+</Steps>
+
+## Tips
+
+- Firm KYB must be approved before production API access.
+
+
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="client kyb" href="/guides/service-partner/client-kyb" />
+</CardGroup>

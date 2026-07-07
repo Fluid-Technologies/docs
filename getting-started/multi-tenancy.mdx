@@ -98,7 +98,7 @@ Sign in to Connect, verify your developer account, and provision API credentials
 </Step>
 
 <Step title="Submit client KYB (when required)">
-For regulated products, upload documents and submit via `POST .../workspaces/{workspaceId}/companies/{companyId}/kyb/submit`. Super-admin reviews partner-mediated KYB separately from direct-tenant KYB.
+For regulated products, upload documents and submit via `POST .../workspaces/{workspaceId}/companies/{companyId}/kyb/submit`. See the [client KYB guide](/guides/service-partner/client-kyb) for the full flow.
 </Step>
 
 <Step title="Call product APIs with acting-client headers">
@@ -188,13 +188,16 @@ Browse full request and response schemas in the [Auth API reference](/api-refere
   <Card title="Authorization" icon="key" href="/getting-started/authorization">
     Token exchange and required headers for machine tokens.
   </Card>
+  <Card title="How-to guides" icon="book-open" href="/guides">
+    Partner onboarding, HR, payroll, and cross-product playbooks.
+  </Card>
   <Card title="RBAC" icon="shield" href="/auth/rbac">
     Organization roles, permissions, and validate-session payload.
   </Card>
-  <Card title="Gateway and auth" icon="route" href="/platform/gateway-and-auth">
-    Tyk routing, JWKS validation, and gateway user enrichment.
+  <Card title="HR → Payroll sync" icon="arrow-right-left" href="/guides/playbooks/hr-to-payroll">
+    Employee mirror and payroll run lifecycle.
   </Card>
-  <Card title="Cross-service flows" icon="arrow-right-left" href="/platform/cross-service-flows">
-    Partner KYB, HR → Payroll mirror, and payroll → Books GL.
+  <Card title="Payroll → Books GL" icon="book" href="/guides/playbooks/payroll-to-books">
+    GL mappings and journal posting after payroll completes.
   </Card>
 </CardGroup>

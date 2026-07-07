@@ -1,0 +1,40 @@
+---
+title: Disburse a bill payment
+description: Pay an approved vendor bill from your operating wallet.
+---
+
+# Disburse a bill payment
+
+Pay an approved vendor bill from your operating wallet.
+
+<Note>
+Include acting-client headers on product API calls: `X-Workspace-Id` and `X-Acting-Company-Id`. See [Act as a client](/guides/service-partner/act-as-client).
+</Note>
+
+## Prerequisites
+
+- Approved bill in Books
+
+Required permissions: `books:bills:write`, `pay:transactions:write`.
+
+## Steps
+
+<Steps>
+
+<Step title="Initiate bill payment">
+
+Use bill payment and transfer endpoints in [Pay API reference](/api-reference/pay).
+
+</Step>
+
+</Steps>
+
+
+
+
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="record bill" href="/guides/books/record-bill" />
+</CardGroup>

@@ -1,0 +1,59 @@
+---
+title: Guide template (maintainers)
+description: Copy this structure when adding a new how-to guide.
+---
+
+# Guide title
+
+One-sentence overview of what the integrator will accomplish.
+
+<Note>
+Partner integrations: include `X-Workspace-Id` and `X-Acting-Company-Id` on product API calls when scoping to a merchant.
+</Note>
+
+## Prerequisites
+
+- Developer API key and machine JWT — [Authorization](/getting-started/authorization)
+- Permission: `module:resource:action`
+- Data that must exist first
+
+## Steps
+
+<Steps>
+
+<Step title="First API call">
+
+```bash
+curl -sS "$FLUIDE_BASE_URL/api/v1/..." \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer"
+```
+
+</Step>
+
+</Steps>
+
+## Tips
+
+- Convention or optimization
+
+## Troubleshooting
+
+| Problem | Resolution |
+| --- | --- |
+| `403` | Check permission and acting-client headers |
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="API reference" icon="code" href="/api-reference" />
+</CardGroup>
+
+<!--
+After authoring:
+1. Add entry to guides/catalog.mjs
+2. Run: node scripts/generate-guides-index.mjs
+3. Add to docs.json Guides tab (or run scripts/update-docs-nav.mjs)
+4. node scripts/validate-guides.mjs
+-->

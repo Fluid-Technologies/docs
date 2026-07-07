@@ -1,0 +1,49 @@
+---
+title: Books overview for integrators
+description: Understand accounting modules, subsidiaries, and API layout for Fluide Books.
+---
+
+# Books overview for integrators
+
+Understand accounting modules, subsidiaries, and API layout for Fluide Books.
+
+<Note>
+Include acting-client headers on product API calls: `X-Workspace-Id` and `X-Acting-Company-Id`. See [Act as a client](/guides/service-partner/act-as-client).
+</Note>
+
+## Prerequisites
+
+- API credentials
+
+Required permissions: `books:read`.
+
+## Steps
+
+<Steps>
+
+<Step title="Verify connectivity">
+
+```bash
+curl -sS "$FLUIDE_BASE_URL/api/v1/chart-of-accounts" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer" \
+  -H "X-Workspace-Id: $FLUIDE_WORKSPACE_ID" \
+  -H "X-Acting-Company-Id: $FLUIDE_COMPANY_ID"
+```
+
+</Step>
+
+</Steps>
+
+## Tips
+
+- Books routes use `/api/v1/*` without a product prefix.
+
+
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="chart of accounts" href="/guides/books/chart-of-accounts" />
+</CardGroup>

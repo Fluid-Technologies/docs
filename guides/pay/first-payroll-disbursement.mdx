@@ -1,0 +1,55 @@
+---
+title: First payroll disbursement
+description: Disburse net pay from a completed payroll run to employee payout rails.
+---
+
+# First payroll disbursement
+
+Disburse net pay from a completed payroll run to employee payout rails.
+
+<Note>
+Include acting-client headers on product API calls: `X-Workspace-Id` and `X-Acting-Company-Id`. See [Act as a client](/guides/service-partner/act-as-client).
+</Note>
+
+## Prerequisites
+
+- Completed payroll run; employee payout rails configured
+
+Required permissions: `payroll:runs:approve`, `pay:transactions:write`.
+
+## Steps
+
+<Steps>
+
+<Step title="Initiate disbursement">
+
+After payroll run completes, trigger disbursement via Payroll → Pay integration. See [Run payroll](/guides/payroll/run-payroll) and [Pay API reference](/api-reference/pay).
+
+</Step>
+
+<Step title="Verify transactions">
+
+```bash
+curl -sS "$FLUIDE_BASE_URL/api/v1/transactions" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer" \
+  -H "X-Workspace-Id: $FLUIDE_WORKSPACE_ID" \
+  -H "X-Acting-Company-Id: $FLUIDE_COMPANY_ID"
+```
+
+</Step>
+
+</Steps>
+
+## Tips
+
+- Ensure operating wallet has sufficient balance.
+
+
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="partner onboard to first payroll" href="/guides/playbooks/partner-onboard-to-first-payroll" />
+</CardGroup>

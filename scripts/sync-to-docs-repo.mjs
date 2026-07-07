@@ -28,6 +28,7 @@ const SYNC_PATHS = [
   "api-reference.mdx",
   "export-openapi.mjs",
   "getting-started",
+  "guides",
   "auth",
   "hr",
   "payroll",
@@ -43,6 +44,10 @@ const SYNC_PATHS = [
   "scripts/enrich-openapi.mjs",
   "scripts/diff-openapi.mjs",
   "scripts/sync-to-docs-repo.mjs",
+  "scripts/generate-guide-pages.mjs",
+  "scripts/generate-guides-index.mjs",
+  "scripts/validate-guides.mjs",
+  "scripts/update-docs-nav.mjs",
   "openapi/enrichment.mjs",
 ];
 

@@ -1,0 +1,115 @@
+---
+title: Run payroll
+description: Create, calculate, approve, and complete a payroll run through the Payroll API.
+---
+
+# Run payroll
+
+Use this guide to process pay for a period via API. Employees must exist in HR (and be mirrored in Payroll) before you start a run.
+
+## Prerequisites
+
+- API credentials — [Authorization](/getting-started/authorization)
+- Employees in HR — [Add an employee](/guides/hr/add-employee)
+- Payroll settings and chart of accounts configured for the company
+- Permissions: `payroll:runs:read`, `payroll:runs:write`; approval may require `payroll:runs:approve`
+
+## Steps
+
+<Steps>
+
+<Step title="List existing runs">
+
+```bash
+curl -sS "$FLUIDE_BASE_URL/api/v1/payroll/payroll" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer" \
+  -H "X-Workspace-Id: $FLUIDE_WORKSPACE_ID" \
+  -H "X-Acting-Company-Id: $FLUIDE_COMPANY_ID"
+```
+
+</Step>
+
+<Step title="Create a payroll run">
+
+Create a run for your target pay period. Open **Create payroll run** in [Payroll API reference](/api-reference/payroll) for the exact request body — fields depend on your organization's payroll configuration.
+
+```bash
+curl -sS -X POST "$FLUIDE_BASE_URL/api/v1/payroll/payroll" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer" \
+  -H "X-Workspace-Id: $FLUIDE_WORKSPACE_ID" \
+  -H "X-Acting-Company-Id: $FLUIDE_COMPANY_ID" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "periodStart": "2026-06-01",
+    "periodEnd": "2026-06-30"
+  }'
+```
+
+Save the run `id` from the response.
+
+</Step>
+
+<Step title="Calculate and review">
+
+Trigger calculation on the run, then fetch line items and totals. Resolve exceptions (missing payment rails, expired contracts) before approving.
+
+<Tip>
+Poll the run status until calculation completes. Exact status values are documented on the run resource in the API reference.
+</Tip>
+
+</Step>
+
+<Step title="Approve and complete">
+
+If your process requires approval, call the approve endpoint with a principal holding `payroll:runs:approve`. Then complete or disburse per your configuration.
+
+</Step>
+
+<Step title="Fetch payslips">
+
+```bash
+curl -sS "$FLUIDE_BASE_URL/api/v1/payroll/payslips?payrollRunId=$RUN_ID" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer" \
+  -H "X-Workspace-Id: $FLUIDE_WORKSPACE_ID" \
+  -H "X-Acting-Company-Id: $FLUIDE_COMPANY_ID"
+```
+
+Generate PDF artifacts via [Utils](/utils/overview) when your integration needs downloadable payslips.
+
+</Step>
+
+</Steps>
+
+## Tips
+
+- Configure [payroll GL mappings](/guides/playbooks/payroll-to-books) before your first production run if Books integration is enabled.
+- Variable pay (bonuses, adjustments) is added on the run before calculation — see run line-item endpoints in the API reference.
+- After completion, Payroll publishes events consumed by Books for journal posting.
+
+## Troubleshooting
+
+| Problem | Resolution |
+| --- | --- |
+| Employee missing from run | Confirm HR → Payroll mirror. Employee needs active contract and payment rail. |
+| Calculation exceptions | Fetch run exception list; fix HR data and recalculate. |
+| GL not posted after run | Check Books mappings — [Payroll → Books](/guides/playbooks/payroll-to-books). |
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="HR → Payroll sync" icon="arrow-right" href="/guides/playbooks/hr-to-payroll">
+    Employee mirror mechanics.
+  </Card>
+  <Card title="Payroll → Books" icon="book" href="/guides/playbooks/payroll-to-books">
+    GL posting after run completion.
+  </Card>
+  <Card title="Payroll API reference" icon="code" href="/api-reference/payroll">
+    Full run lifecycle endpoints.
+  </Card>
+</CardGroup>

@@ -1,0 +1,40 @@
+---
+title: Export bank payment files
+description: Generate bank upload files for bulk payroll or vendor disbursements.
+---
+
+# Export bank payment files
+
+Generate bank upload files for bulk payroll or vendor disbursements.
+
+<Note>
+Include acting-client headers on product API calls: `X-Workspace-Id` and `X-Acting-Company-Id`. See [Act as a client](/guides/service-partner/act-as-client).
+</Note>
+
+## Prerequisites
+
+- Scheduled disbursement batch
+
+Required permissions: `pay:transactions:read`.
+
+## Steps
+
+<Steps>
+
+<Step title="Export file">
+
+Use bank file export endpoints in [Pay API reference](/api-reference/pay) for your provider format.
+
+</Step>
+
+</Steps>
+
+
+
+
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="first payroll disbursement" href="/guides/pay/first-payroll-disbursement" />
+</CardGroup>

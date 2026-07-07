@@ -1,0 +1,121 @@
+---
+title: Onboard a client company
+description: Create a workspace and client company for a partner integration, then store IDs for acting-client API calls.
+---
+
+# Onboard a client company
+
+Use this guide when your **SERVICE_PARTNER** integration onboards a new merchant. You will create (or reuse) a workspace, add a **client company** under it, and capture the UUIDs needed for product API calls.
+
+<Info>
+Client companies live **inside your partner organization** — they do not get a separate Fluide org. Your machine JWT `tenantId` stays your partner org; acting headers pick the merchant. See [Multi-tenancy](/getting-started/multi-tenancy).
+</Info>
+
+## Prerequisites
+
+- Developer API key and machine JWT — [Authorization](/getting-started/authorization)
+- Your account is a **SERVICE_PARTNER** organization with `partner:workspace:manage` and `partner:client-company:manage`
+- Sandbox base URL: `https://test.api.fluidehr.com`
+
+## Steps
+
+<Steps>
+
+<Step title="List or create a workspace">
+
+Workspaces group client companies (e.g. production vs sandbox, or by region).
+
+```bash
+# List existing workspaces
+curl -sS "$FLUIDE_BASE_URL/api/v1/workspaces" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer"
+
+# Create a workspace (if needed)
+curl -sS -X POST "$FLUIDE_BASE_URL/api/v1/workspaces" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer" \
+  -H "Content-Type: application/json" \
+  -d '{"name": "Production merchants"}'
+```
+
+Save `workspaceId` from the response.
+
+</Step>
+
+<Step title="Create the client company">
+
+```bash
+curl -sS -X POST "$FLUIDE_BASE_URL/api/v1/workspaces/$FLUIDE_WORKSPACE_ID/companies" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Acme Corp",
+    "countryCode": "CM",
+    "currency": "XAF"
+  }'
+```
+
+Save `companyId` from the response. Fluide automatically provisions a default operating wallet on Pay and seeds Books for the new company.
+
+</Step>
+
+<Step title="Store IDs in your integration">
+
+Persist both UUIDs per merchant in your database:
+
+| Field | Header / usage |
+| --- | --- |
+| `workspaceId` | `X-Workspace-Id` on product API calls |
+| `companyId` | `X-Acting-Company-Id` on product API calls |
+
+</Step>
+
+<Step title="Verify with a product API call">
+
+```bash
+curl -sS "$FLUIDE_BASE_URL/api/v1/hr/employees" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer" \
+  -H "X-Workspace-Id: $FLUIDE_WORKSPACE_ID" \
+  -H "X-Acting-Company-Id: $FLUIDE_COMPANY_ID"
+```
+
+A `200` with an empty list confirms scoping works — you are ready to [add employees](/guides/hr/add-employee).
+
+</Step>
+
+</Steps>
+
+## Tips
+
+- A **Default workspace** is auto-created when you complete SERVICE_PARTNER onboarding — you can use it instead of creating a new one.
+- Prefer a dedicated sandbox workspace for test merchants so production IDs never mix with test data.
+- Optional fields (`industry`, `registrationNumber`, `taxId`, etc.) can be set on create or updated later via `PATCH`.
+
+## Troubleshooting
+
+| Problem | Resolution |
+| --- | --- |
+| `403` / `partner:workspace:manage` | Your developer account needs partner workspace permissions. Ensure onboarding completed as SERVICE_PARTNER. |
+| `403` on product APIs after create | Add both acting-client headers. Bearer alone scopes to partner org, not the merchant. |
+| Company missing from list | Confirm you are listing `GET /workspaces/{id}/companies` with the same workspace UUID used at create time. |
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Self-onboarding link" icon="link" href="/guides/service-partner/self-onboarding-link">
+    Let the merchant fill in their own profile.
+  </Card>
+  <Card title="Client KYB" icon="shield-check" href="/guides/service-partner/client-kyb">
+    Submit compliance documents for regulated products.
+  </Card>
+  <Card title="Workspaces API" icon="code" href="/api-reference/auth">
+    Full workspace and company endpoint reference.
+  </Card>
+</CardGroup>

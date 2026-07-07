@@ -1,0 +1,51 @@
+---
+title: Create wallet types
+description: Provision operating and other wallet types for a client company.
+---
+
+# Create wallet types
+
+Provision operating and other wallet types for a client company.
+
+<Note>
+Include acting-client headers on product API calls: `X-Workspace-Id` and `X-Acting-Company-Id`. See [Act as a client](/guides/service-partner/act-as-client).
+</Note>
+
+## Prerequisites
+
+- Company exists; KYB may be required
+
+Required permissions: `pay:wallets:write`.
+
+## Steps
+
+<Steps>
+
+<Step title="Create wallet">
+
+```bash
+curl -sS -X POST "$FLUIDE_BASE_URL/api/v1/accounts/wallets" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer" \
+  -H "X-Workspace-Id: $FLUIDE_WORKSPACE_ID" \
+  -H "X-Acting-Company-Id: $FLUIDE_COMPANY_ID" \
+  -H "Content-Type: application/json" \
+  -d '{"walletType":"OPERATING","currency":"XAF"}'
+```
+
+</Step>
+
+</Steps>
+
+## Tips
+
+- Default operating wallet is auto-provisioned when a partner creates a client company.
+
+
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="first payroll disbursement" href="/guides/pay/first-payroll-disbursement" />
+</CardGroup>

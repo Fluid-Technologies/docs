@@ -1,0 +1,49 @@
+---
+title: Request leave
+description: Submit and track employee leave requests via the HR API.
+---
+
+# Request leave
+
+Submit and track employee leave requests via the HR API.
+
+<Note>
+Include acting-client headers on product API calls: `X-Workspace-Id` and `X-Acting-Company-Id`. See [Act as a client](/guides/service-partner/act-as-client).
+</Note>
+
+## Prerequisites
+
+- Leave policy configured
+
+Required permissions: `hr:leave:write`.
+
+## Steps
+
+<Steps>
+
+<Step title="Create leave request">
+
+```bash
+curl -sS -X POST "$FLUIDE_BASE_URL/api/v1/hr/leave/requests" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer" \
+  -H "X-Workspace-Id: $FLUIDE_WORKSPACE_ID" \
+  -H "X-Acting-Company-Id: $FLUIDE_COMPANY_ID" \
+  -H "Content-Type: application/json" \
+  -d '{"employeeId":"'$EMPLOYEE_ID'","leaveTypeId":"'$LEAVE_TYPE_ID'","startDate":"2026-08-01","endDate":"2026-08-05"}'
+```
+
+</Step>
+
+</Steps>
+
+
+
+
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="configure leave policy" href="/guides/hr-operations/configure-leave-policy" />
+</CardGroup>

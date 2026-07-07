@@ -1,0 +1,41 @@
+---
+title: Check permissions
+description: Validate session and inspect effective permissions for debugging.
+---
+
+# Check permissions
+
+Validate session and inspect effective permissions for debugging.
+
+## Prerequisites
+
+- Valid session or machine JWT
+
+## Steps
+
+<Steps>
+
+<Step title="Validate session">
+
+```bash
+curl -sS "$FLUIDE_BASE_URL/api/v1/auth/me" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer"
+```
+
+Inspect `orgMemberRole` and permissions in the response. See [RBAC](/auth/rbac).
+
+</Step>
+
+</Steps>
+
+
+
+
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="rbac" href="/auth/rbac" />
+</CardGroup>

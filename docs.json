@@ -38,7 +38,13 @@
       "display": "interactive"
     },
     "examples": {
-      "languages": ["bash", "node", "python", "java", "php"],
+      "languages": [
+        "bash",
+        "node",
+        "python",
+        "java",
+        "php"
+      ],
       "defaults": "required",
       "prefill": false,
       "autogenerate": false
@@ -64,34 +70,169 @@
         ]
       },
       {
+        "tab": "Guides",
+        "groups": [
+          {
+            "group": "Overview",
+            "pages": [
+              "guides/index"
+            ]
+          },
+          {
+            "group": "Service partner",
+            "pages": [
+              "guides/service-partner/onboard-client-company",
+              "guides/service-partner/self-onboarding-link",
+              "guides/service-partner/client-kyb",
+              "guides/service-partner/act-as-client",
+              "guides/service-partner/manage-workspaces",
+              "guides/service-partner/partner-firm-kyb",
+              "guides/service-partner/manage-partner-team",
+              "guides/service-partner/list-partner-transactions"
+            ]
+          },
+          {
+            "group": "HR & People",
+            "pages": [
+              "guides/hr/add-employee",
+              "guides/hr/bulk-import-employees",
+              "guides/hr/configure-payout-rails",
+              "guides/hr/update-employee",
+              "guides/hr/download-employee-cv"
+            ]
+          },
+          {
+            "group": "HR Operations",
+            "pages": [
+              "guides/hr-operations/manage-employment-contracts",
+              "guides/hr-operations/request-leave",
+              "guides/hr-operations/clock-attendance",
+              "guides/hr-operations/configure-leave-policy",
+              "guides/hr-operations/run-performance-cycle",
+              "guides/hr-operations/offboard-employee"
+            ]
+          },
+          {
+            "group": "Payroll",
+            "pages": [
+              "guides/payroll/run-payroll",
+              "guides/payroll/configure-payroll-settings",
+              "guides/payroll/payroll-chart-of-accounts"
+            ]
+          },
+          {
+            "group": "Pay",
+            "pages": [
+              "guides/pay/create-wallet-types",
+              "guides/pay/first-payroll-disbursement",
+              "guides/pay/create-payment-link",
+              "guides/pay/collect-invoice-payment",
+              "guides/pay/disburse-bill-payment",
+              "guides/pay/export-bank-files"
+            ]
+          },
+          {
+            "group": "Books",
+            "pages": [
+              "guides/books/books-overview",
+              "guides/books/create-invoice",
+              "guides/books/record-bill",
+              "guides/books/post-journal-entry",
+              "guides/books/chart-of-accounts",
+              "guides/books/manage-business-partners",
+              "guides/books/bill-approval-workflow",
+              "guides/books/recurring-journal-entries",
+              "guides/books/record-invoice-payment",
+              "guides/books/bank-reconciliation",
+              "guides/books/financial-statements",
+              "guides/books/configure-tax-settings"
+            ]
+          },
+          {
+            "group": "Access & Auth",
+            "pages": [
+              "guides/access/machine-token-and-scopes",
+              "guides/access/create-custom-role",
+              "guides/access/assign-org-roles",
+              "guides/access/check-permissions",
+              "auth/sso",
+              "auth/rbac"
+            ]
+          },
+          {
+            "group": "Utils",
+            "pages": [
+              "guides/utils/generate-payslip-pdf",
+              "guides/utils/send-notification",
+              "guides/utils/upload-and-retrieve-files"
+            ]
+          },
+          {
+            "group": "Playbooks",
+            "pages": [
+              "guides/playbooks/hr-to-payroll",
+              "guides/playbooks/payroll-to-books",
+              "guides/playbooks/partner-onboard-to-first-employee",
+              "guides/playbooks/partner-onboard-to-first-payroll",
+              "guides/playbooks/hire-to-payslip",
+              "guides/playbooks/invoice-to-cash-collection"
+            ]
+          }
+        ]
+      },
+      {
         "tab": "Products",
         "groups": [
           {
             "group": "Auth",
             "pages": [
               "auth/overview",
-              "auth/quickstart"
+              "auth/quickstart",
+              "auth/sso",
+              "auth/rbac",
+              "auth/features"
             ]
           },
           {
             "group": "HR",
-            "pages": ["hr/overview", "hr/quickstart"]
+            "pages": [
+              "hr/overview",
+              "hr/quickstart",
+              "hr/modules",
+              "hr/payroll-integration"
+            ]
           },
           {
             "group": "Payroll",
-            "pages": ["payroll/overview", "payroll/quickstart"]
+            "pages": [
+              "payroll/overview",
+              "payroll/quickstart",
+              "payroll/modules",
+              "payroll/hr-mirror"
+            ]
           },
           {
             "group": "Pay",
-            "pages": ["pay/overview", "pay/quickstart"]
+            "pages": [
+              "pay/overview",
+              "pay/quickstart",
+              "pay/modules"
+            ]
           },
           {
             "group": "Books",
-            "pages": ["books/overview", "books/quickstart"]
+            "pages": [
+              "books/overview",
+              "books/quickstart"
+            ]
           },
           {
             "group": "Utils",
-            "pages": ["utils/overview", "utils/quickstart", "utils/modules"]
+            "pages": [
+              "utils/overview",
+              "utils/quickstart",
+              "utils/modules"
+            ]
           }
         ]
       },
@@ -102,32 +243,44 @@
           {
             "group": "Auth API",
             "openapi": "openapi/fluide-auth.json",
-            "pages": ["api-reference/auth"]
+            "pages": [
+              "api-reference/auth"
+            ]
           },
           {
             "group": "HR API",
             "openapi": "openapi/fluide-hr.json",
-            "pages": ["api-reference/hr"]
+            "pages": [
+              "api-reference/hr"
+            ]
           },
           {
             "group": "Payroll API",
             "openapi": "openapi/fluide-payroll.json",
-            "pages": ["api-reference/payroll"]
+            "pages": [
+              "api-reference/payroll"
+            ]
           },
           {
             "group": "Pay API",
             "openapi": "openapi/fluide-pay.json",
-            "pages": ["api-reference/pay"]
+            "pages": [
+              "api-reference/pay"
+            ]
           },
           {
             "group": "Books API",
             "openapi": "openapi/fluide-books.json",
-            "pages": ["api-reference/books"]
+            "pages": [
+              "api-reference/books"
+            ]
           },
           {
             "group": "Utils API",
             "openapi": "openapi/fluide-utils.json",
-            "pages": ["api-reference/utils"]
+            "pages": [
+              "api-reference/utils"
+            ]
           }
         ]
       }

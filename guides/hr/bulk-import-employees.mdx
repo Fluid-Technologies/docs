@@ -1,0 +1,92 @@
+---
+title: Bulk import employees
+description: Download the HR import template and upload a spreadsheet to create many employee records at once.
+---
+
+# Bulk import employees
+
+Use this guide when migrating or onboarding **many employees** from an HRIS or spreadsheet. Fluide HR provides a template endpoint and bulk import route.
+
+## Prerequisites
+
+- API credentials and `hr:employees:write`
+- Partner acting-client headers when scoping to a merchant
+- Spreadsheet filled per the template column definitions
+
+## Steps
+
+<Steps>
+
+<Step title="Download the import template">
+
+```bash
+curl -sS "$FLUIDE_BASE_URL/api/v1/hr/employees/import-template" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer" \
+  -H "X-Workspace-Id: $FLUIDE_WORKSPACE_ID" \
+  -H "X-Acting-Company-Id: $FLUIDE_COMPANY_ID" \
+  -o employees-template.xlsx
+```
+
+Open the template and fill required columns. Do not rename header rows.
+
+</Step>
+
+<Step title="Upload the completed file">
+
+```bash
+curl -sS -X POST "$FLUIDE_BASE_URL/api/v1/hr/employees/import" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer" \
+  -H "X-Workspace-Id: $FLUIDE_WORKSPACE_ID" \
+  -H "X-Acting-Company-Id: $FLUIDE_COMPANY_ID" \
+  -F "file=@employees-filled.xlsx"
+```
+
+The response includes per-row success and error details. Fix validation errors and re-upload failed rows if needed.
+
+</Step>
+
+<Step title="Verify and sync to Payroll">
+
+List employees to confirm counts, then check Payroll mirror — [HR → Payroll](/guides/playbooks/hr-to-payroll).
+
+```bash
+curl -sS "$FLUIDE_BASE_URL/api/v1/hr/employees?limit=1" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer" \
+  -H "X-Workspace-Id: $FLUIDE_WORKSPACE_ID" \
+  -H "X-Acting-Company-Id: $FLUIDE_COMPANY_ID"
+```
+
+</Step>
+
+</Steps>
+
+## Tips
+
+- Run a small test file (5–10 rows) in sandbox before a full production import.
+- `employeeCode` must be unique per company — dedupe your source data first.
+- Large imports may take time; Payroll mirrors each employee as HR processes rows.
+
+## Troubleshooting
+
+| Problem | Resolution |
+| --- | --- |
+| Row rejected — invalid email | Fix format in spreadsheet; partial import still commits valid rows. |
+| Template download empty | Confirm acting-client headers match the target company. |
+| Payroll count lower than HR | Mirror is per-row async — allow a few minutes or see playbook troubleshooting. |
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Add an employee" icon="user-plus" href="/guides/hr/add-employee">
+    Single-employee create flow.
+  </Card>
+  <Card title="HR API reference" icon="code" href="/api-reference/hr">
+    Import endpoint schema and field definitions.
+  </Card>
+</CardGroup>

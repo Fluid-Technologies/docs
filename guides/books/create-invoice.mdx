@@ -1,0 +1,51 @@
+---
+title: Create an invoice
+description: Create and send a customer invoice via the Books API.
+---
+
+# Create an invoice
+
+Create and send a customer invoice via the Books API.
+
+<Note>
+Include acting-client headers on product API calls: `X-Workspace-Id` and `X-Acting-Company-Id`. See [Act as a client](/guides/service-partner/act-as-client).
+</Note>
+
+## Prerequisites
+
+- Customer business partner exists
+
+Required permissions: `books:invoices:write`.
+
+## Steps
+
+<Steps>
+
+<Step title="Create invoice">
+
+```bash
+curl -sS -X POST "$FLUIDE_BASE_URL/api/v1/invoices" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer" \
+  -H "X-Workspace-Id: $FLUIDE_WORKSPACE_ID" \
+  -H "X-Acting-Company-Id: $FLUIDE_COMPANY_ID" \
+  -H "Content-Type: application/json" \
+  -d '{}'
+```
+
+See [Books API reference](/api-reference/books) for line items and tax.
+
+</Step>
+
+</Steps>
+
+
+
+
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="record invoice payment" href="/guides/books/record-invoice-payment" />
+</CardGroup>

@@ -1,0 +1,42 @@
+---
+title: Configure employee payout rails
+description: Set up bank or mobile-money payout rails for employees via HR API.
+---
+
+# Configure employee payout rails
+
+Set up bank or mobile-money payout rails for employees via HR API.
+
+<Note>
+Include acting-client headers on product API calls: `X-Workspace-Id` and `X-Acting-Company-Id`. See [Act as a client](/guides/service-partner/act-as-client).
+</Note>
+
+## Prerequisites
+
+- Employee record exists
+
+Required permissions: `hr:employees:write`.
+
+## Steps
+
+<Steps>
+
+<Step title="Configure payout rail">
+
+Use employee payout configuration endpoints under `/api/v1/hr/employees/{id}` in [HR API reference](/api-reference/hr). Required before payroll disbursement.
+
+</Step>
+
+</Steps>
+
+## Tips
+
+- Rails must match Pay provider capabilities for the company's country.
+
+
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="first payroll disbursement" href="/guides/pay/first-payroll-disbursement" />
+</CardGroup>

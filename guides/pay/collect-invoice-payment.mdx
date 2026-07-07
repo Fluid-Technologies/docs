@@ -1,0 +1,41 @@
+---
+title: Collect invoice payment
+description: Record payment against a Books invoice via Pay integration.
+---
+
+# Collect invoice payment
+
+Record payment against a Books invoice via Pay integration.
+
+<Note>
+Include acting-client headers on product API calls: `X-Workspace-Id` and `X-Acting-Company-Id`. See [Act as a client](/guides/service-partner/act-as-client).
+</Note>
+
+## Prerequisites
+
+- Open invoice in Books
+
+Required permissions: `books:invoices:write`, `pay:transactions:write`.
+
+## Steps
+
+<Steps>
+
+<Step title="Record payment">
+
+Use invoice payment endpoints in [Books API reference](/api-reference/books) and Pay transaction APIs.
+
+</Step>
+
+</Steps>
+
+
+
+
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="create invoice" href="/guides/books/create-invoice" />
+  <Card title="invoice to cash collection" href="/guides/playbooks/invoice-to-cash-collection" />
+</CardGroup>

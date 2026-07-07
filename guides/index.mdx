@@ -1,0 +1,260 @@
+---
+title: How-to guides
+description: Task-oriented integration guides for Fluide Connect — the API counterpart to Fluide Business help articles.
+---
+
+# How-to guides
+
+These guides walk through **specific integration tasks** end to end: prerequisites, API sequence, headers, and troubleshooting. They mirror the [Fluide Business help center](https://app.fluidehr.com/help) but are written for **developers** calling Fluide APIs.
+
+<Info>
+**Quickstarts** verify connectivity and your first call. **Guides** go deeper on a single feature or cross-product workflow.
+</Info>
+
+## Guide structure
+
+| Section | Purpose |
+| --- | --- |
+| **Overview** | What you will accomplish |
+| **Prerequisites** | Credentials, permissions, existing data |
+| **Steps** | Numbered API sequence with curl examples |
+| **Tips** | Conventions and optimizations |
+| **Troubleshooting** | Common errors and fixes |
+| **Related** | API reference and adjacent guides |
+
+<Note>
+**Partner integrations:** include `X-Workspace-Id` and `X-Acting-Company-Id` on product API calls. See [Multi-tenancy](/getting-started/multi-tenancy).
+</Note>
+
+---
+
+## Service partner
+
+<CardGroup cols={2}>
+  <Card title="Onboard a client company" icon="building" href="/guides/service-partner/onboard-client-company">
+    Create a workspace and client company for a partner integration, then store IDs for acting-client API calls.
+  </Card>
+  <Card title="Issue a self-onboarding link" icon="link" href="/guides/service-partner/self-onboarding-link">
+    Generate a one-time URL so a merchant completes their own company profile.
+  </Card>
+  <Card title="Submit client KYB" icon="shield-check" href="/guides/service-partner/client-kyb">
+    Upload KYB documents and submit partner-mediated compliance review for a client company.
+  </Card>
+  <Card title="Act as a client via API" icon="user-check" href="/guides/service-partner/act-as-client">
+    Scope product API requests to a specific merchant using acting-client headers.
+  </Card>
+  <Card title="Manage workspaces" icon="folder-tree" href="/guides/service-partner/manage-workspaces">
+    Create, list, and organize partner workspaces that group client companies.
+  </Card>
+  <Card title="Complete partner firm KYB" icon="badge-check" href="/guides/service-partner/partner-firm-kyb">
+    Submit Know Your Business verification for your SERVICE_PARTNER organization.
+  </Card>
+  <Card title="Manage partner team members" icon="users" href="/guides/service-partner/manage-partner-team">
+    Invite and assign roles to staff in your SERVICE_PARTNER organization.
+  </Card>
+  <Card title="List partner transactions" icon="receipt" href="/guides/service-partner/list-partner-transactions">
+    View payment and wallet transactions across client companies in your partner portfolio.
+  </Card>
+</CardGroup>
+
+---
+
+## HR & People
+
+<CardGroup cols={2}>
+  <Card title="Add an employee" icon="user-plus" href="/guides/hr/add-employee">
+    Create a single employee record via the HR API — canonical source for payroll.
+  </Card>
+  <Card title="Bulk import employees" icon="file-import" href="/guides/hr/bulk-import-employees">
+    Download the HR import template and upload a spreadsheet of employees.
+  </Card>
+  <Card title="Configure employee payout rails" icon="credit-card" href="/guides/hr/configure-payout-rails">
+    Set up bank or mobile-money payout rails for employees via HR API.
+  </Card>
+  <Card title="Update an employee profile" icon="user-pen" href="/guides/hr/update-employee">
+    Patch employee personal, employment, and contact details via API.
+  </Card>
+  <Card title="Download employee CV" icon="file-pdf" href="/guides/hr/download-employee-cv">
+    Export an employee CV document via HR or Utils document APIs.
+  </Card>
+</CardGroup>
+
+---
+
+## HR Operations
+
+<CardGroup cols={2}>
+  <Card title="Manage employment contracts" icon="file-contract" href="/guides/hr-operations/manage-employment-contracts">
+    Create and update employment contracts that drive payroll eligibility.
+  </Card>
+  <Card title="Request leave" icon="calendar" href="/guides/hr-operations/request-leave">
+    Submit and track employee leave requests via the HR API.
+  </Card>
+  <Card title="Clock attendance" icon="clock" href="/guides/hr-operations/clock-attendance">
+    Record clock-in and clock-out events for attendance tracking.
+  </Card>
+  <Card title="Configure leave policy" icon="calendar-days" href="/guides/hr-operations/configure-leave-policy">
+    Set up leave types, accrual rules, and approval workflows.
+  </Card>
+  <Card title="Run a performance cycle" icon="chart-line" href="/guides/hr-operations/run-performance-cycle">
+    Create and manage performance review cycles via API.
+  </Card>
+  <Card title="Offboard an employee" icon="user-minus" href="/guides/hr-operations/offboard-employee">
+    Deactivate an employee and close out contracts and access.
+  </Card>
+</CardGroup>
+
+---
+
+## Payroll
+
+<CardGroup cols={2}>
+  <Card title="Run payroll" icon="wallet" href="/guides/payroll/run-payroll">
+    Create, calculate, approve, and complete a payroll run via API.
+  </Card>
+  <Card title="Configure payroll settings" icon="gear" href="/guides/payroll/configure-payroll-settings">
+    Set pay frequency, tax rules, and payroll configuration for a company.
+  </Card>
+  <Card title="Payroll chart of accounts" icon="list-tree" href="/guides/payroll/payroll-chart-of-accounts">
+    Map payroll components to GL accounts before Books integration.
+  </Card>
+</CardGroup>
+
+---
+
+## Pay
+
+<CardGroup cols={2}>
+  <Card title="Create wallet types" icon="wallet" href="/guides/pay/create-wallet-types">
+    Provision operating and other wallet types for a client company.
+  </Card>
+  <Card title="First payroll disbursement" icon="money-bill-transfer" href="/guides/pay/first-payroll-disbursement">
+    Disburse net pay from a completed payroll run to employee payout rails.
+  </Card>
+  <Card title="Create a payment link" icon="link" href="/guides/pay/create-payment-link">
+    Generate a checkout session or payment link for collecting customer payments.
+  </Card>
+  <Card title="Collect invoice payment" icon="hand-holding-dollar" href="/guides/pay/collect-invoice-payment">
+    Record payment against a Books invoice via Pay integration.
+  </Card>
+  <Card title="Disburse a bill payment" icon="file-invoice-dollar" href="/guides/pay/disburse-bill-payment">
+    Pay an approved vendor bill from your operating wallet.
+  </Card>
+  <Card title="Export bank payment files" icon="file-export" href="/guides/pay/export-bank-files">
+    Generate bank upload files for bulk payroll or vendor disbursements.
+  </Card>
+</CardGroup>
+
+---
+
+## Books
+
+<CardGroup cols={2}>
+  <Card title="Books overview for integrators" icon="book" href="/guides/books/books-overview">
+    Understand accounting modules, subsidiaries, and API layout for Fluide Books.
+  </Card>
+  <Card title="Create an invoice" icon="file-invoice" href="/guides/books/create-invoice">
+    Create and send a customer invoice via the Books API.
+  </Card>
+  <Card title="Record a bill" icon="receipt" href="/guides/books/record-bill">
+    Create a vendor bill for accounts payable.
+  </Card>
+  <Card title="Post a journal entry" icon="book-open" href="/guides/books/post-journal-entry">
+    Create and post double-entry journal entries to the general ledger.
+  </Card>
+  <Card title="Chart of accounts" icon="sitemap" href="/guides/books/chart-of-accounts">
+    List and create GL accounts in the account hierarchy.
+  </Card>
+  <Card title="Manage business partners" icon="handshake" href="/guides/books/manage-business-partners">
+    Create customers and vendors used on invoices and bills.
+  </Card>
+  <Card title="Bill approval workflow" icon="check-double" href="/guides/books/bill-approval-workflow">
+    Submit bills for approval and track approval status via API.
+  </Card>
+  <Card title="Recurring journal entries" icon="rotate" href="/guides/books/recurring-journal-entries">
+    Set up automated recurring GL entries.
+  </Card>
+  <Card title="Record invoice payment" icon="coins" href="/guides/books/record-invoice-payment">
+    Apply a payment to an open invoice in Books.
+  </Card>
+  <Card title="Bank reconciliation" icon="scale-balanced" href="/guides/books/bank-reconciliation">
+    Match bank transactions to ledger entries.
+  </Card>
+  <Card title="Financial statements" icon="chart-pie" href="/guides/books/financial-statements">
+    Generate P&L, balance sheet, and cash flow reports via API.
+  </Card>
+  <Card title="Configure tax settings" icon="percent" href="/guides/books/configure-tax-settings">
+    Set tax codes and rates for invoices and bills.
+  </Card>
+</CardGroup>
+
+---
+
+## Access & Auth
+
+<CardGroup cols={2}>
+  <Card title="Machine tokens and scopes" icon="key" href="/guides/access/machine-token-and-scopes">
+    Exchange API keys for JWTs and understand permission scoping for integrations.
+  </Card>
+  <Card title="Create a custom org role" icon="shield" href="/guides/access/create-custom-role">
+    Define a custom role with specific permission strings.
+  </Card>
+  <Card title="Assign org roles" icon="user-tag" href="/guides/access/assign-org-roles">
+    Assign roles to organization members.
+  </Card>
+  <Card title="Check permissions" icon="list-check" href="/guides/access/check-permissions">
+    Validate session and inspect effective permissions for debugging.
+  </Card>
+</CardGroup>
+
+---
+
+## Utils
+
+<CardGroup cols={2}>
+  <Card title="Generate payslip PDF" icon="file-pdf" href="/guides/utils/generate-payslip-pdf">
+    Generate a payslip PDF and retrieve a public URL via Utils.
+  </Card>
+  <Card title="Send a notification" icon="bell" href="/guides/utils/send-notification">
+    Send email, SMS, or push notifications via Utils.
+  </Card>
+  <Card title="Upload and retrieve files" icon="folder-open" href="/guides/utils/upload-and-retrieve-files">
+    Store and fetch files via the Utils file API.
+  </Card>
+</CardGroup>
+
+---
+
+## Playbooks
+
+<CardGroup cols={2}>
+  <Card title="HR → Payroll employee sync" icon="arrow-right" href="/guides/playbooks/hr-to-payroll">
+    How HR mirrors employees into Payroll after API create.
+  </Card>
+  <Card title="Payroll → Books GL posting" icon="book" href="/guides/playbooks/payroll-to-books">
+    GL mappings and journal posting after payroll completes.
+  </Card>
+  <Card title="Partner onboard to first employee" icon="route" href="/guides/playbooks/partner-onboard-to-first-employee">
+    End-to-end: workspace → company → acting headers → HR employee.
+  </Card>
+  <Card title="Partner onboard to first payroll" icon="flag-checkered" href="/guides/playbooks/partner-onboard-to-first-payroll">
+    Full ISV path from merchant onboarding through first payroll run.
+  </Card>
+  <Card title="Hire to payslip" icon="file-lines" href="/guides/playbooks/hire-to-payslip">
+    HR create → payroll run → payslip PDF delivery.
+  </Card>
+  <Card title="Invoice to cash collection" icon="money-bill-wave" href="/guides/playbooks/invoice-to-cash-collection">
+    Books invoice → Pay payment link → record payment.
+  </Card>
+</CardGroup>
+
+
+
+<CardGroup cols={2}>
+  <Card title="Multi-tenancy" icon="building" href="/getting-started/multi-tenancy">
+    Organization vs partner tenancy models.
+  </Card>
+  <Card title="API reference" icon="code" href="/api-reference">
+    Full endpoint schemas and playground.
+  </Card>
+</CardGroup>

@@ -1,0 +1,40 @@
+---
+title: Financial statements
+description: Generate P&L, balance sheet, and cash flow reports via API.
+---
+
+# Financial statements
+
+Generate P&L, balance sheet, and cash flow reports via API.
+
+<Note>
+Include acting-client headers on product API calls: `X-Workspace-Id` and `X-Acting-Company-Id`. See [Act as a client](/guides/service-partner/act-as-client).
+</Note>
+
+## Prerequisites
+
+- Posted journal entries for the period
+
+Required permissions: `books:reports:read`.
+
+## Steps
+
+<Steps>
+
+<Step title="Fetch statements">
+
+Use reporting endpoints in [Books API reference](/api-reference/books). Export PDFs via [Utils](/guides/utils/generate-payslip-pdf) document patterns.
+
+</Step>
+
+</Steps>
+
+
+
+
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="books overview" href="/guides/books/books-overview" />
+</CardGroup>

@@ -1,0 +1,49 @@
+---
+title: List partner transactions
+description: View payment and wallet transactions across client companies in your partner portfolio.
+---
+
+# List partner transactions
+
+View payment and wallet transactions across client companies in your partner portfolio.
+
+<Note>
+Include acting-client headers on product API calls: `X-Workspace-Id` and `X-Acting-Company-Id`. See [Act as a client](/guides/service-partner/act-as-client).
+</Note>
+
+## Prerequisites
+
+- Acting-client headers for the target merchant
+
+Required permissions: `pay:transactions:read`.
+
+## Steps
+
+<Steps>
+
+<Step title="List transactions">
+
+```bash
+curl -sS "$FLUIDE_BASE_URL/api/v1/transactions" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer" \
+  -H "X-Workspace-Id: $FLUIDE_WORKSPACE_ID" \
+  -H "X-Acting-Company-Id: $FLUIDE_COMPANY_ID"
+```
+
+</Step>
+
+</Steps>
+
+## Tips
+
+- Filter by date range and status in query params — see [Pay API reference](/api-reference/pay).
+
+
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="create wallet types" href="/guides/pay/create-wallet-types" />
+</CardGroup>

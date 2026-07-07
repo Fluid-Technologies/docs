@@ -1,0 +1,51 @@
+---
+title: Generate payslip PDF
+description: Generate a payslip PDF and retrieve a public URL via Utils.
+---
+
+# Generate payslip PDF
+
+Generate a payslip PDF and retrieve a public URL via Utils.
+
+<Note>
+Include acting-client headers on product API calls: `X-Workspace-Id` and `X-Acting-Company-Id`. See [Act as a client](/guides/service-partner/act-as-client).
+</Note>
+
+## Prerequisites
+
+- Payslip exists from completed payroll run
+
+Required permissions: `payroll:payslips:read`.
+
+## Steps
+
+<Steps>
+
+<Step title="Generate PDF">
+
+```bash
+curl -sS -X POST "$FLUIDE_BASE_URL/api/v1/app/documents/payslips" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer" \
+  -H "X-Workspace-Id: $FLUIDE_WORKSPACE_ID" \
+  -H "X-Acting-Company-Id: $FLUIDE_COMPANY_ID" \
+  -H "Content-Type: application/json" \
+  -d '{"payslipId":"'$PAYSLIP_ID'"}'
+```
+
+</Step>
+
+</Steps>
+
+## Tips
+
+- Idempotent per payslipId unless `force=true` after payroll corrections.
+
+
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="hire to payslip" href="/guides/playbooks/hire-to-payslip" />
+</CardGroup>

@@ -1,0 +1,99 @@
+---
+title: Act as a client via API
+description: Scope product API requests to a specific merchant using acting-client headers and partner permissions.
+---
+
+# Act as a client via API
+
+Use this guide when your integration calls **HR, Payroll, Pay, or Books** on behalf of a merchant you manage as a SERVICE_PARTNER. Acting-client headers tell the gateway which client company to scope — without creating a separate org per merchant.
+
+## Prerequisites
+
+- Machine JWT from [token exchange](/getting-started/authorization)
+- `workspaceId` and `companyId` for the target merchant
+- `partner:client:act-as` permission (included in partner workspace lead roles)
+
+## Overview
+
+| Layer | What it identifies |
+| --- | --- |
+| Bearer JWT | **Who** is calling (your partner org, `tenantId`) |
+| `X-Workspace-Id` | **Which workspace** owns the client |
+| `X-Acting-Company-Id` | **Which merchant** you are operating on |
+
+Both acting headers must be sent together on **every product API request**. They are optional in the OpenAPI schema but required in practice for partner multi-merchant integrations.
+
+## Steps
+
+<Steps>
+
+<Step title="Exchange credentials for a machine token">
+
+```bash
+curl -sS -X POST "$FLUIDE_BASE_URL/api/v1/authorize/token" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Api-Secret: $FLUIDE_API_SECRET" \
+  -H "X-Fluide-Client-Id: fluide-developer"
+```
+
+JWT `tenantId` is your **partner** organization — not the client's.
+
+</Step>
+
+<Step title="Call a product API with acting headers">
+
+```bash
+curl -sS "$FLUIDE_BASE_URL/api/v1/hr/employees" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer" \
+  -H "X-Workspace-Id: $FLUIDE_WORKSPACE_ID" \
+  -H "X-Acting-Company-Id: $FLUIDE_COMPANY_ID"
+```
+
+In the API reference playground: **Authorize** for Bearer + API key, then fill **X-Workspace-Id** and **X-Acting-Company-Id** on the endpoint form.
+
+</Step>
+
+<Step title="Switch merchants in your app">
+
+When an admin selects a different merchant in your UI, swap only the header values — the same JWT and API key stay valid:
+
+```javascript
+const headers = {
+  Authorization: `Bearer ${accessToken}`,
+  'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,
+  'X-Fluide-Client-Id': 'fluide-developer',
+  'X-Workspace-Id': merchant.workspaceId,
+  'X-Acting-Company-Id': merchant.companyId,
+};
+```
+
+</Step>
+
+</Steps>
+
+## Tips
+
+- Store `workspaceId` + `companyId` per merchant at onboarding time — [Onboard a client company](/guides/service-partner/onboard-client-company).
+- Permissions are intersected at the gateway: you only get module permissions your partner role allows **and** that are valid for acting-client mode.
+- Auth routes (workspaces, companies, token exchange) do **not** use acting headers.
+
+## Troubleshooting
+
+| Problem | Resolution |
+| --- | --- |
+| Data from wrong merchant | Verify both headers match the intended company and that `company.workspaceId` matches `X-Workspace-Id`. |
+| `403` despite valid token | Missing `partner:client:act-as` or private workspace visibility. Check org role and workspace membership. |
+| Empty results but no error | Headers omitted — request scoped to partner org without a client context. |
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Multi-tenancy" icon="building" href="/getting-started/multi-tenancy">
+    Full tenancy model and setup flow.
+  </Card>
+  <Card title="Authorization" icon="key" href="/getting-started/authorization">
+    Token exchange and header reference.
+  </Card>
+</CardGroup>

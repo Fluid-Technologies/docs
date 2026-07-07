@@ -1,0 +1,47 @@
+---
+title: Manage partner team members
+description: Invite and assign roles to staff in your SERVICE_PARTNER organization.
+---
+
+# Manage partner team members
+
+Invite and assign roles to staff in your SERVICE_PARTNER organization.
+
+## Prerequisites
+
+- Org admin or owner role
+
+Required permissions: `org:members:write`.
+
+## Steps
+
+<Steps>
+
+<Step title="List members">
+
+```bash
+curl -sS "$FLUIDE_BASE_URL/api/v1/organizations/$ORG_ID/members" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer"
+```
+
+</Step>
+
+<Step title="Invite a member">
+
+Use organization member invite endpoints in [Auth API reference](/api-reference/auth). Assign roles with `partner:client:act-as` for staff who operate on client data.
+
+</Step>
+
+</Steps>
+
+
+
+
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="assign org roles" href="/guides/access/assign-org-roles" />
+</CardGroup>

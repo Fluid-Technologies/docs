@@ -1,0 +1,51 @@
+---
+title: Update an employee profile
+description: Patch employee personal, employment, and contact details via API.
+---
+
+# Update an employee profile
+
+Patch employee personal, employment, and contact details via API.
+
+<Note>
+Include acting-client headers on product API calls: `X-Workspace-Id` and `X-Acting-Company-Id`. See [Act as a client](/guides/service-partner/act-as-client).
+</Note>
+
+## Prerequisites
+
+- Employee UUID
+
+Required permissions: `hr:employees:write`.
+
+## Steps
+
+<Steps>
+
+<Step title="Patch employee">
+
+```bash
+curl -sS -X PATCH "$FLUIDE_BASE_URL/api/v1/hr/employees/$EMPLOYEE_ID" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer" \
+  -H "X-Workspace-Id: $FLUIDE_WORKSPACE_ID" \
+  -H "X-Acting-Company-Id: $FLUIDE_COMPANY_ID" \
+  -H "Content-Type: application/json" \
+  -d '{"jobTitle":"Senior Engineer"}'
+```
+
+</Step>
+
+</Steps>
+
+## Tips
+
+- Updates trigger Payroll mirror refresh.
+
+
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="add employee" href="/guides/hr/add-employee" />
+</CardGroup>

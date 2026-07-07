@@ -13,3 +13,4 @@ scripts/dev-with-docs.mjs
 .env*
 # Internal platform docs (not published to integrators)
 platform/
+guides/_template.mdx

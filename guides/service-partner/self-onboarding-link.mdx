@@ -1,0 +1,95 @@
+---
+title: Issue a self-onboarding link
+description: Generate a one-time URL so a merchant completes their own company profile under your workspace.
+---
+
+# Issue a self-onboarding link
+
+Use this guide when you want the **merchant** to enter their own company details instead of creating the record fully via API. Fluide creates a placeholder company immediately and returns a tokenized URL the client opens once.
+
+## Prerequisites
+
+- Workspace and partner credentials — [Onboard a client company](/guides/service-partner/onboard-client-company)
+- `partner:client-company:manage` permission
+
+## Steps
+
+<Steps>
+
+<Step title="Issue the onboarding link">
+
+```bash
+curl -sS -X POST "$FLUIDE_BASE_URL/api/v1/workspaces/$FLUIDE_WORKSPACE_ID/companies/onboarding-link" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Pending — Acme Corp",
+    "ttlSeconds": 604800
+  }'
+```
+
+The response includes:
+
+- `company` — placeholder record (save `companyId` now for acting-client headers)
+- `onboarding.token` — opaque token for the client form
+- `onboarding.expiresAt` — link expiry (default 7 days)
+
+</Step>
+
+<Step title="Share the URL with your client">
+
+Build the self-onboarding URL your product serves to merchants. The client completes country, currency, registration details, and other profile fields. When they submit, the token is consumed and the company record updates in place.
+
+</Step>
+
+<Step title="Poll or webhook for completion">
+
+List companies until the placeholder name updates and `selfOnboardingToken` is cleared:
+
+```bash
+curl -sS "$FLUIDE_BASE_URL/api/v1/workspaces/$FLUIDE_WORKSPACE_ID/companies/$FLUIDE_COMPANY_ID" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer"
+```
+
+</Step>
+
+<Step title="Revoke an unused link (optional)">
+
+```bash
+curl -sS -X DELETE "$FLUIDE_BASE_URL/api/v1/workspaces/$FLUIDE_WORKSPACE_ID/companies/$FLUIDE_COMPANY_ID/onboarding-link" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer"
+```
+
+</Step>
+
+</Steps>
+
+## Tips
+
+- Issue the link **before** KYB if the merchant must confirm legal entity details themselves.
+- `companyId` is stable from the moment the link is issued — you can start storing acting-client headers immediately.
+- Placeholder country/currency (`XX` / `XAF`) intentionally fail readiness checks until the client submits valid values.
+
+## Troubleshooting
+
+| Problem | Resolution |
+| --- | --- |
+| Client sees "invalid or expired link" | Token expired or already consumed. Issue a new link or create the company manually. |
+| Company stuck in placeholder state | Client has not submitted the form. Resend the URL or revoke and re-issue. |
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="Onboard a client company" icon="building" href="/guides/service-partner/onboard-client-company">
+    Manual company creation flow.
+  </Card>
+  <Card title="Client KYB" icon="shield-check" href="/guides/service-partner/client-kyb">
+    Submit compliance after profile is complete.
+  </Card>
+</CardGroup>

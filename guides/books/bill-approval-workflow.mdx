@@ -1,0 +1,41 @@
+---
+title: Bill approval workflow
+description: Submit bills for approval and track approval status via API.
+---
+
+# Bill approval workflow
+
+Submit bills for approval and track approval status via API.
+
+<Note>
+Include acting-client headers on product API calls: `X-Workspace-Id` and `X-Acting-Company-Id`. See [Act as a client](/guides/service-partner/act-as-client).
+</Note>
+
+## Prerequisites
+
+- Bill in draft or pending state
+
+Required permissions: `books:bills:approve`.
+
+## Steps
+
+<Steps>
+
+<Step title="Submit for approval">
+
+Use bill approval endpoints in [Books API reference](/api-reference/books).
+
+</Step>
+
+</Steps>
+
+
+
+
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="record bill" href="/guides/books/record-bill" />
+  <Card title="disburse bill payment" href="/guides/pay/disburse-bill-payment" />
+</CardGroup>

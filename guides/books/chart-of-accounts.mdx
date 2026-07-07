@@ -1,0 +1,47 @@
+---
+title: Chart of accounts
+description: List and create GL accounts in the account hierarchy.
+---
+
+# Chart of accounts
+
+List and create GL accounts in the account hierarchy.
+
+<Note>
+Include acting-client headers on product API calls: `X-Workspace-Id` and `X-Acting-Company-Id`. See [Act as a client](/guides/service-partner/act-as-client).
+</Note>
+
+## Prerequisites
+
+- Subsidiary selected
+
+Required permissions: `books:coa:write`.
+
+## Steps
+
+<Steps>
+
+<Step title="List accounts">
+
+```bash
+curl -sS "$FLUIDE_BASE_URL/api/v1/chart-of-accounts" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer" \
+  -H "X-Workspace-Id: $FLUIDE_WORKSPACE_ID" \
+  -H "X-Acting-Company-Id: $FLUIDE_COMPANY_ID"
+```
+
+</Step>
+
+</Steps>
+
+
+
+
+
+## Related
+
+<CardGroup cols={2}>
+  <Card title="books overview" href="/guides/books/books-overview" />
+</CardGroup>
