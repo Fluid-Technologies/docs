@@ -557,5 +557,41 @@ export function enrichOpenApiSpec(doc, serviceKey) {
   };
 
   const withAuth = injectGatewayAuth(withPaths, serviceKey);
-  return injectCodeSamples(withAuth);
+  return sanitizeIntegratorCopy(injectCodeSamples(withAuth));
+}
+
+/** Remove internal gateway vendor names from published OpenAPI copy. */
+function sanitizeIntegratorCopy(doc) {
+  const scrub = (value) => {
+    if (typeof value !== "string") return value;
+    return value
+      .replace(/Tyk gateway/gi, "Fluide API gateway")
+      .replace(/\bTyk\b/g, "API gateway");
+  };
+
+  const paths = {};
+  for (const [pathKey, pathItem] of Object.entries(doc.paths ?? {})) {
+    const nextPathItem = { ...pathItem };
+    for (const [method, operation] of Object.entries(pathItem)) {
+      if (!HTTP_METHODS.has(method) || !operation || typeof operation !== "object") continue;
+      const nextOp = { ...operation };
+      if (nextOp.summary) nextOp.summary = scrub(nextOp.summary);
+      if (nextOp.description) nextOp.description = scrub(nextOp.description);
+      if (nextOp.responses) {
+        const responses = {};
+        for (const [code, response] of Object.entries(nextOp.responses)) {
+          responses[code] =
+            response && typeof response === "object"
+              ? { ...response, description: scrub(response.description) }
+              : response;
+        }
+        nextOp.responses = responses;
+      }
+      nextPathItem[method] = nextOp;
+    }
+    paths[pathKey] = nextPathItem;
+  }
+
+  const info = doc.info ? { ...doc.info, description: scrub(doc.info.description) } : doc.info;
+  return { ...doc, info, paths };
 }

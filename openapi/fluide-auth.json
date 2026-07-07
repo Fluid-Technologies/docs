@@ -4363,7 +4363,7 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": "RFC 7517 JWKS document (unwrapped — consumed by Tyk gateway JWT middleware).",
+            "description": "RFC 7517 JWKS document (unwrapped — consumed by Fluide API gateway JWT middleware).",
             "content": {
               "application/json": {
                 "schema": {

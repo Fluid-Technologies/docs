@@ -5,7 +5,7 @@ description: How organization tenants, partner workspaces, and acting-client hea
 
 # Multi-tenancy
 
-Fluide APIs are **multi-tenant by design**. Every product route (HR, Payroll, Pay, Books, Utils) scopes data to a tenant context resolved by the **Tyk gateway** from your JWT and headers.
+Fluide APIs are **multi-tenant by design**. Every product route (HR, Payroll, Pay, Books, Utils) scopes data to a tenant context resolved from your JWT and request headers.
 
 This page explains the two tenancy models Connect developers need to understand, when to use each, and which APIs to call.
 

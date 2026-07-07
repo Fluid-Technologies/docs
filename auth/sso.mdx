@@ -38,6 +38,6 @@ description: Configure OIDC SSO providers for fluide-admin and fluide-capital-ad
 
 JWT issuance uses the same fragment contract as social OAuth via `JwtIssuerService`.
 
-## Gateway
+## API routing
 
-Tyk `FluideGateway/apps/auth.json` already proxies `/api/v1/auth/*`; no extra SSO path rules are required.
+SSO endpoints live under `/api/v1/auth/sso/*` on the same Fluide API base URL as other Auth routes (sandbox: `https://test.api.fluidehr.com`). No separate host or path prefix is required for Connect integrations.
