@@ -138,6 +138,42 @@ Cache the `accessToken` until `exp` and refresh before it expires. See [First re
 
 For **organization vs partner (multi-merchant) tenancy**, see [Multi-tenancy](/getting-started/multi-tenancy).
 
+## Partner acting-client headers (ISV / multi-merchant)
+
+When you integrate **many end-customers** under your service partner org, product APIs need two **extra headers** on top of Bearer + API key:
+
+| Header | Value |
+| --- | --- |
+| `X-Workspace-Id` | Workspace UUID (from `GET /api/v1/workspaces`) |
+| `X-Acting-Company-Id` | Client company UUID (from `GET /api/v1/workspaces/{id}/companies`) |
+
+In the **API reference playground**, these appear as optional **header parameters** on HR, Payroll, Pay, Books, and Utils endpoints — fill them in per request when scoping to a merchant. Direct single-org integrations can omit them.
+
+<CodeGroup>
+
+```bash curl
+curl -X GET "$FLUIDE_BASE_URL/api/v1/hr/employees?limit=10" \
+  -H "Authorization: Bearer $FLUIDE_ACCESS_TOKEN" \
+  -H "X-Fluide-Api-Key: $FLUIDE_API_KEY" \
+  -H "X-Fluide-Client-Id: fluide-developer" \
+  -H "X-Workspace-Id: $FLUIDE_WORKSPACE_ID" \
+  -H "X-Acting-Company-Id: $FLUIDE_COMPANY_ID"
+```
+
+```javascript Node.js
+const res = await fetch(`${baseUrl}/api/v1/hr/employees?limit=10`, {
+  headers: {
+    Authorization: `Bearer ${accessToken}`,
+    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,
+    'X-Fluide-Client-Id': 'fluide-developer',
+    'X-Workspace-Id': process.env.FLUIDE_WORKSPACE_ID,
+    'X-Acting-Company-Id': process.env.FLUIDE_COMPANY_ID,
+  },
+});
+```
+
+</CodeGroup>
+
 ## Rotate credentials
 
 If a secret is exposed, rotate it from the Connect dashboard or with a valid Bearer session:

@@ -42,6 +42,20 @@ export const CONNECT_SECURITY_SCHEMES = {
     description:
       "API secret used only during token exchange. Never send on product routes.",
   },
+  fluideWorkspaceId: {
+    type: "apiKey",
+    in: "header",
+    name: "X-Workspace-Id",
+    description:
+      "Partner / ISV only: workspace UUID that owns the client company. Send with X-Acting-Company-Id when acting for a merchant.",
+  },
+  fluideActingCompanyId: {
+    type: "apiKey",
+    in: "header",
+    name: "X-Acting-Company-Id",
+    description:
+      "Partner / ISV only: client company UUID to scope the request. Must belong to X-Workspace-Id.",
+  },
 };
 
 /** AND-combined headers required on product APIs through Tyk (see FluideGateway userFetcher). */
@@ -107,7 +121,29 @@ const HTTP_METHODS = new Set([
 ]);
 
 const PLAYGROUND_AUTH_NOTE =
-  " In the API playground, click Authorize and provide Bearer JWT, X-Fluide-Api-Key, and X-Fluide-Client-Id (fluide-developer).";
+  " In the API playground, click Authorize and provide Bearer JWT, X-Fluide-Api-Key, and X-Fluide-Client-Id (fluide-developer). For partner / ISV integrations acting on a merchant, also set optional X-Workspace-Id and X-Acting-Company-Id on each request (see Multi-tenancy).";
+
+/** Optional partner acting-client headers injected on product API operations. */
+export const ACTING_CLIENT_HEADER_PARAMETERS = [
+  {
+    name: "X-Workspace-Id",
+    in: "header",
+    required: false,
+    description:
+      "Partner / ISV only: UUID of the workspace that owns the client company. Required together with X-Acting-Company-Id when scoping product APIs to a merchant. See /getting-started/multi-tenancy.",
+    schema: { type: "string", format: "uuid" },
+    example: "b03fa178-67bd-4378-a5aa-d169c01ccb6f",
+  },
+  {
+    name: "X-Acting-Company-Id",
+    in: "header",
+    required: false,
+    description:
+      "Partner / ISV only: UUID of the client company to act on. Must belong to the workspace in X-Workspace-Id.",
+    schema: { type: "string", format: "uuid" },
+    example: "ab2df10a-c66c-4bef-b7d6-efda26cca494",
+  },
+];
 
 export const PRODUCT_META = {
   "fluide-auth": {
@@ -337,6 +373,31 @@ function injectAuthorizeTokenPath(paths) {
   };
 }
 
+function injectActingClientHeaderParameters(paths, serviceKey) {
+  if (!PRODUCT_SERVICE_KEYS.has(serviceKey)) return paths;
+
+  const next = {};
+  for (const [pathKey, pathItem] of Object.entries(paths)) {
+    const nextPathItem = { ...pathItem };
+    for (const [method, operation] of Object.entries(pathItem)) {
+      if (!HTTP_METHODS.has(method) || !operation || typeof operation !== "object") {
+        continue;
+      }
+      const existing = operation.parameters ?? [];
+      const existingNames = new Set(existing.map((p) => p.name));
+      const extra = ACTING_CLIENT_HEADER_PARAMETERS.filter(
+        (p) => !existingNames.has(p.name),
+      );
+      nextPathItem[method] =
+        extra.length > 0
+          ? { ...operation, parameters: [...existing, ...extra] }
+          : operation;
+    }
+    next[pathKey] = nextPathItem;
+  }
+  return next;
+}
+
 function clampOperationSummary(operation) {
   const summary = operation.summary;
   if (typeof summary !== "string" || summary.length <= MAX_OPERATION_SUMMARY_LENGTH) {
@@ -454,7 +515,10 @@ export function enrichOpenApiSpec(doc, serviceKey) {
     tagByName.set(name, current);
   }
 
-  const paths = injectAuthorizeTokenPath({ ...doc.paths });
+  const paths = injectActingClientHeaderParameters(
+    injectAuthorizeTokenPath({ ...doc.paths }),
+    serviceKey,
+  );
   for (const [pathKey, pathItem] of Object.entries(paths)) {
     const nextPathItem = { ...pathItem };
     for (const [method, operation] of Object.entries(pathItem)) {

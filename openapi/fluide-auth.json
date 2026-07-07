@@ -25040,7 +25040,7 @@
   },
   "info": {
     "title": "Fluide Auth API",
-    "description": "Developer credentials, session management, and identity for the Fluide Suite. In the API playground, click Authorize and provide Bearer JWT, X-Fluide-Api-Key, and X-Fluide-Client-Id (fluide-developer).",
+    "description": "Developer credentials, session management, and identity for the Fluide Suite. In the API playground, click Authorize and provide Bearer JWT, X-Fluide-Api-Key, and X-Fluide-Client-Id (fluide-developer). For partner / ISV integrations acting on a merchant, also set optional X-Workspace-Id and X-Acting-Company-Id on each request (see Multi-tenancy).",
     "version": "1.0",
     "contact": {}
   },
@@ -25175,6 +25175,18 @@
         "in": "header",
         "name": "X-Fluide-Api-Secret",
         "description": "API secret used only during token exchange. Never send on product routes."
+      },
+      "fluideWorkspaceId": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Workspace-Id",
+        "description": "Partner / ISV only: workspace UUID that owns the client company. Send with X-Acting-Company-Id when acting for a merchant."
+      },
+      "fluideActingCompanyId": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Acting-Company-Id",
+        "description": "Partner / ISV only: client company UUID to scope the request. Must belong to X-Workspace-Id."
       }
     },
     "schemas": {

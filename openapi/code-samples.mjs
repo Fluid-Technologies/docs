@@ -22,6 +22,8 @@ const HEADER_ENV = {
   "X-Fluide-Api-Key": "FLUIDE_API_KEY",
   "X-Fluide-Api-Secret": "FLUIDE_API_SECRET",
   "X-Fluide-Client-Id": "fluide-developer",
+  "X-Workspace-Id": "FLUIDE_WORKSPACE_ID",
+  "X-Acting-Company-Id": "FLUIDE_COMPANY_ID",
 };
 
 const MANAGED_SAMPLE_LANGS = new Set([
@@ -233,6 +235,53 @@ function resolveSecurityRequirements(operation, doc) {
   });
 }
 
+function headerParamLines(param) {
+  const name = param.name;
+  const envKey = HEADER_ENV[name];
+  if (name === "X-Fluide-Client-Id") {
+    return {
+      name,
+      curl: `${name}: fluide-developer`,
+      node: `'${name}': 'fluide-developer'`,
+      python: `"${name}": "fluide-developer"`,
+      java: `.header("${name}", "fluide-developer")`,
+      php: `'${name}: fluide-developer'`,
+    };
+  }
+  if (envKey) {
+    return {
+      name,
+      curl: `${name}: $${envKey}`,
+      node: `'${name}': process.env.${envKey}`,
+      python: `"${name}": os.environ["${envKey}"]`,
+      java: `.header("${name}", System.getenv("${envKey}"))`,
+      php: `'${name}: ' . getenv('${envKey}')`,
+    };
+  }
+  const example = param.example ?? param.schema?.example ?? `your_${name}`;
+  return {
+    name,
+    curl: `${name}: ${example}`,
+    node: `'${name}': '${example}'`,
+    python: `"${name}": "${example}"`,
+    java: `.header("${name}", "${example}")`,
+    php: `'${name}: ${example}'`,
+  };
+}
+
+function resolveOperationHeaderLines(operation, doc) {
+  const securityHeaders = resolveSecurityRequirements(operation, doc);
+  const paramHeaders = (operation.parameters ?? [])
+    .filter((p) => p.in === "header")
+    .map((p) => headerParamLines(p));
+  const seen = new Set();
+  return [...securityHeaders, ...paramHeaders].filter((h) => {
+    if (seen.has(h.name)) return false;
+    seen.add(h.name);
+    return true;
+  });
+}
+
 function requestBodyExample(operation, components) {
   const body = operation.requestBody;
   if (!body?.content) return undefined;
@@ -271,7 +320,7 @@ function buildCurlSample({ operation, pathKey, method, serverUrl, doc }) {
   const upperMethod = method.toUpperCase();
   const lines = [`curl -sS -X ${upperMethod} "${url}" \\`];
 
-  for (const header of resolveSecurityRequirements(operation, doc)) {
+  for (const header of resolveOperationHeaderLines(operation, doc)) {
     lines.push(`  -H "${header.curl}" \\`);
   }
 
@@ -295,7 +344,7 @@ function buildNodeSample({ operation, pathKey, method, serverUrl, doc }) {
   );
   const relativeUrl = buildUrl(pathKey, pathParams, queryParams, components);
   const upperMethod = method.toUpperCase();
-  const headerLines = resolveSecurityRequirements(operation, doc).map(
+  const headerLines = resolveOperationHeaderLines(operation, doc).map(
     (h) => `    ${h.node},`,
   );
 
@@ -339,7 +388,7 @@ function buildPythonSample({ operation, pathKey, method, doc }) {
   );
   const relativeUrl = buildUrl(pathKey, pathParams, queryParams, components);
   const upperMethod = method.toLowerCase();
-  const headerLines = resolveSecurityRequirements(operation, doc).map(
+  const headerLines = resolveOperationHeaderLines(operation, doc).map(
     (h) => `        ${h.python},`,
   );
   const body = requestBodyExample(operation, components);
@@ -380,7 +429,7 @@ function buildJavaSample({ operation, pathKey, method, doc }) {
   );
   const relativeUrl = buildUrl(pathKey, pathParams, queryParams, components);
   const upperMethod = method.toUpperCase();
-  const headerLines = resolveSecurityRequirements(operation, doc).map(
+  const headerLines = resolveOperationHeaderLines(operation, doc).map(
     (h) => `    ${h.java}`,
   );
   const body = requestBodyExample(operation, components);
@@ -425,7 +474,7 @@ function buildPhpSample({ operation, pathKey, method, doc }) {
   );
   const relativeUrl = buildUrl(pathKey, pathParams, queryParams, components);
   const upperMethod = method.toUpperCase();
-  const headerLines = resolveSecurityRequirements(operation, doc).map(
+  const headerLines = resolveOperationHeaderLines(operation, doc).map(
     (h) => `        ${h.php},`,
   );
   const body = requestBodyExample(operation, components);

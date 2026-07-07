@@ -148,6 +148,8 @@ const res = await fetch(`${baseUrl}/api/v1/hr/employees`, {
 
 <Tip>
 Store the active `workspaceId` and `companyId` in your integration layer (or pass them from your UI when an admin switches merchant). Missing acting-client headers on partner tokens will not scope requests to the intended end-customer.
+
+On each **product API** page in [API reference](/api-reference), set optional **X-Workspace-Id** and **X-Acting-Company-Id** header fields in the playground (in addition to Authorize → Bearer + API key).
 </Tip>
 
 ### Workspace and company APIs
