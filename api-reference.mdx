@@ -40,10 +40,4 @@ Every service exposes operational routes under the **Operations** tag group wher
 
 - **App** — service root (`GET`)
 - **Health** — liveness and dependency checks
-- **Prometheus** — metrics scrape target (`/metrics` or product-prefixed path)
-
-## Keep specs up to date
-
-```bash
-node export-openapi.mjs
-```
+- **Metrics** — request rates and latency (`/metrics` or the product-prefixed path)

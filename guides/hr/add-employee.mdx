@@ -72,7 +72,7 @@ Patch the employee or create an employment contract for start date, job title, a
 
 <Step title="Confirm payroll mirror">
 
-After create, HR calls Payroll internal mirror endpoints. Verify the employee appears:
+After create, Payroll receives the employee. Verify the employee appears:
 
 ```bash
 curl -sS "$FLUIDE_BASE_URL/api/v1/payroll/employees" \

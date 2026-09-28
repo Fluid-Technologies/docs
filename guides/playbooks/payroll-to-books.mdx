@@ -5,7 +5,7 @@ description: Configure payroll GL mappings and understand automatic journal post
 
 # Payroll → Books GL posting
 
-When a payroll run **completes**, Fluide Payroll publishes a `PAYROLL_RUN_COMPLETED` event. **Fluide Books** consumes it and posts a double-entry journal entry using subsidiary-scoped payroll account mappings.
+When a payroll run **completes**, Fluide Books posts a double-entry journal entry using subsidiary-scoped payroll account mappings.
 
 ## Prerequisites
 
@@ -74,7 +74,7 @@ curl -sS "$FLUIDE_BASE_URL/api/v1/books/journal-entries?from=2026-06-01&to=2026-
 ## Tips
 
 - Mappings are **per subsidiary** — multi-entity companies need a complete set for each legal entity.
-- Posting is event-driven and idempotent on replay — re-consuming the same run event does not duplicate entries.
+- Posting is idempotent — completing the same run again does not duplicate the journal entry.
 - Partner integrations: include acting-client headers on Books API calls when scoping to a merchant.
 
 ## Troubleshooting

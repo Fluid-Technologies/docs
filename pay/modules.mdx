@@ -16,22 +16,3 @@ description: FluidePay API modules and payment rails.
 | Capabilities | `/api/v1/payments/capabilities/org` | Payout rails for the organization |
 
 Fluide selects the processor for a rail and corridor. Merchant paths are `payouts`, `collections`, and `checkout-sessions`.
-
-## Configuration
-
-Processor credentials are service environment variables, validated with Joi at bootstrap (`src/config/`).
-
-## Inter-service
-
-- **Kafka** for async transaction processing and inbound webhook fan-out
-- Wallets may be provisioned from payroll via Kafka commands
-- Internal banking ops: `/api/v1/payments/internal/banking/*` (internal API key)
-
-## Technology
-
-| Layer | Choice |
-| --- | --- |
-| Framework | NestJS 10 |
-| ORM | TypeORM |
-| HTTP client | Axios for provider APIs |
-| Docs | Swagger / OpenAPI |

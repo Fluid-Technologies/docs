@@ -63,12 +63,6 @@ Server errors (`5xx`) always return a **generic** `message` and `code: INTERNAL_
 
 ## Product-specific codes
 
-Each service maintains a registry in `src/errors/<service>.error-codes.ts`. After deploy, catalogs are merged into `openapi/error-codes-merged.json` via:
-
-```bash
-node scripts/merge-error-codes.mjs
-```
-
 ### HR (examples)
 
 | Code | HTTP | Meaning |

@@ -5,10 +5,10 @@ description: How HR mirrors employees and contracts into Payroll after you creat
 
 # HR → Payroll employee sync
 
-**Fluide HR** is the canonical source for employee and contract data. When you create or update records via the HR API, HR automatically mirrors them into **Fluide Payroll** using internal service-to-service calls.
+**Fluide HR** is the canonical source for employee and contract data. When you create or update records via the HR API, Payroll receives those records automatically.
 
 <Info>
-As a Connect integrator you only call **public HR and Payroll APIs**. Mirroring happens inside the platform — this guide explains the behavior so you can debug sync issues.
+Call the public HR and Payroll APIs. Sync happens inside the platform. This guide is the behavior you can rely on when a payroll list is briefly behind HR.
 </Info>
 
 ## When sync happens
@@ -43,9 +43,9 @@ curl -sS -X POST "$FLUIDE_BASE_URL/api/v1/hr/employees" \
 
 </Step>
 
-<Step title="Wait for mirror (usually seconds)">
+<Step title="Wait for sync (usually seconds)">
 
-HR publishes to Payroll internal endpoints asynchronously after commit.
+Payroll picks up the HR record shortly after the HR request succeeds.
 
 </Step>
 
@@ -69,17 +69,6 @@ Once mirrored, include the employee in a run — [Run payroll](/guides/payroll/r
 </Step>
 
 </Steps>
-
-## Internal mechanics (reference)
-
-HR calls Payroll with:
-
-- Header: `x-internal-api-key` (service mesh only — not for Connect developers)
-- `POST /api/v1/payroll/internal/employees/mirror-from-hr`
-- `POST /api/v1/payroll/internal/contracts/upsert-from-hr`
-- `POST /api/v1/payroll/internal/employees/provision-wallet`
-
-See also [HR payroll integration](/hr/payroll-integration) and [Payroll HR mirror](/payroll/hr-mirror) for service-side detail.
 
 ## Troubleshooting
 

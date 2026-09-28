@@ -44,7 +44,3 @@ Pass `force=true` to overwrite an artifact after upstream data corrections.
 REST surface under `/api/v1/app/document-jobs`.
 
 Use for long-running generation where synchronous `Documents` calls would time out. Create a job, poll status, then fetch the result URL.
-
-<Note>
-Internal controllers (`internal-*`) are excluded from public OpenAPI. They are called service-to-service with internal API keys, not from Connect integrations.
-</Note>

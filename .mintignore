@@ -13,4 +13,5 @@ scripts/dev-with-docs.mjs
 .env*
 # Internal platform docs (not published to integrators)
 platform/
+auth/kafka-email.mdx
 guides/_template.mdx

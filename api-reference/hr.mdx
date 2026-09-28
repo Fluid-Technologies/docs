@@ -24,9 +24,9 @@ In the API playground, click **Authorize** and fill all three fields before **Se
 | Endpoint | Purpose |
 | --- | --- |
 | `GET /api/v1/hr/health` | Liveness and dependency health |
-| `GET /api/v1/hr/metrics` | Prometheus scrape target |
+| `GET /api/v1/hr/metrics` | Request rates and latency |
 
-Use health endpoints in deployment pipelines. Point your metrics collector at the Prometheus path for request rates and latency.
+Use the health endpoint for uptime checks and the metrics endpoint for request rates and latency.
 
 ## Typical integration flow
 

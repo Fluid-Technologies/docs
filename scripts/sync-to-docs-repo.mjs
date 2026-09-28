@@ -51,6 +51,9 @@ const SYNC_PATHS = [
   "openapi/enrichment.mjs",
 ];
 
+/** Internal pages that must not land in the public docs repo. */
+const STRIP_FROM_TARGET = ["auth/kafka-email.mdx"];
+
 /** Starter-kit files replaced by Fluide Connect content. */
 const REMOVE_STALE = [
   "index.mdx",
@@ -103,6 +106,14 @@ async function main() {
 
   for (const rel of SYNC_PATHS) {
     await copyPath(rel);
+  }
+
+  for (const rel of STRIP_FROM_TARGET) {
+    const p = path.join(TARGET, rel);
+    if (await exists(p)) {
+      await rm(p, { force: true });
+      console.log(`✗ stripped from publish: ${rel}`);
+    }
   }
 
   const readme = `# Fluide Connect documentation (Mintlify)
