@@ -6,7 +6,7 @@
 
 import {
   DEFAULT_FLUIDE_API_BASE_URL,
-  DEFAULT_SERVER_DESCRIPTION,
+  FLUIDE_API_SERVERS,
 } from "./constants.mjs";
 import { injectCodeSamples } from "./code-samples.mjs";
 
@@ -170,7 +170,7 @@ export const PRODUCT_META = {
   "fluide-pay": {
     title: "Fluide Pay API",
     description:
-      "Digital wallets, transactions, and payment provider integrations (Ecobank, mobile money). Supports async settlement via Kafka.",
+      "Digital wallets, transactions, checkout sessions, payouts, and collections. Supports async settlement via Kafka.",
     basePath: "/api/v1/payments",
     productOverview: "/pay/overview",
   },
@@ -541,12 +541,7 @@ export function enrichOpenApiSpec(doc, serviceKey) {
   const withPaths = {
     ...doc,
     info,
-    servers: [
-      {
-        url: DEFAULT_FLUIDE_API_BASE_URL,
-        description: DEFAULT_SERVER_DESCRIPTION,
-      },
-    ],
+    servers: FLUIDE_API_SERVERS,
     tags: Array.from(tagByName.values()),
     paths,
     "x-mint": {

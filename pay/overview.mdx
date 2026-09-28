@@ -5,7 +5,7 @@ description: Digital wallets, transactions, and payment integrations.
 
 # Pay overview
 
-**Fluide Pay** provides digital wallets, ledger transactions, and integrations with external payment providers.
+**Fluide Pay** provides digital wallets, ledger transactions, hosted checkout, payouts, and collections.
 
 ## Base path
 
@@ -19,7 +19,11 @@ Authorize requests with your developer credentials — see [Authorization](/gett
 | --- | --- |
 | Wallets | PRIMARY, SAVINGS, ESCROW, and other account types |
 | Transactions | Transfers, deposits, and payment lifecycle |
-| Providers | Ecobank, mobile money, and other supported rails |
+| Checkout | Hosted checkout sessions (`card`, `mobile_money`) |
+| Payouts | Bank transfers via `/api/v1/payments/payouts/*` |
+| Collections | Mobile money charges via `/api/v1/payments/collections/*` |
+
+Merchants choose **rails and channels**. Fluide selects the processor from your org capabilities and corridor.
 
 Some transactions complete asynchronously. Poll status endpoints or use webhooks where your integration supports them — see [Pay API reference](/api-reference/pay).
 

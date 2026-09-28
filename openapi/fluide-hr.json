@@ -200,6 +200,15 @@
             }
           },
           {
+            "name": "departmentId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by department master-data UUID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "name": "engagementId",
             "required": true,
             "in": "query",
@@ -540,6 +549,15 @@
             }
           },
           {
+            "name": "departmentId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by department master-data UUID",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
             "name": "X-Workspace-Id",
             "in": "header",
             "required": false,
@@ -843,25 +861,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Download branded employee import template (CSV or XLSX)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/ApiResponseDto"
-                    },
-                    {
-                      "properties": {
-                        "data": {
-                          "description": "Endpoint-specific payload"
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            }
+            "description": "CSV or XLSX employee import template file"
           },
           "400": {
             "description": "Validation failed or invalid request parameters",
@@ -981,25 +981,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Export employees for the active company (CSV or XLSX)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/ApiResponseDto"
-                    },
-                    {
-                      "properties": {
-                        "data": {
-                          "description": "Endpoint-specific payload"
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            }
+            "description": "CSV or XLSX employee directory export"
           },
           "400": {
             "description": "Validation failed or invalid request parameters",
@@ -1492,6 +1474,88 @@
         ]
       }
     },
+    "/api/v1/hr/employees/bulk/status": {
+      "post": {
+        "operationId": "EmployeesController_bulkUpdateStatus",
+        "parameters": [
+          {
+            "name": "X-Workspace-Id",
+            "in": "header",
+            "required": false,
+            "description": "Partner / ISV only: UUID of the workspace that owns the client company. Required together with X-Acting-Company-Id when scoping product APIs to a merchant. See /getting-started/multi-tenancy.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "b03fa178-67bd-4378-a5aa-d169c01ccb6f"
+          },
+          {
+            "name": "X-Acting-Company-Id",
+            "in": "header",
+            "required": false,
+            "description": "Partner / ISV only: UUID of the client company to act on. Must belong to the workspace in X-Workspace-Id.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "ab2df10a-c66c-4bef-b7d6-efda26cca494"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkUpdateStatusDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
+        ],
+        "summary": "Bulk update employment status for selected employees (partial success)",
+        "tags": [
+          "HR Employees"
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X POST \"$FLUIDE_BASE_URL/api/v1/hr/employees/bulk/status\" \\\n  -H \"Authorization: Bearer $FLUIDE_ACCESS_TOKEN\" \\\n  -H \"X-Fluide-Api-Key: $FLUIDE_API_KEY\" \\\n  -H \"X-Fluide-Client-Id: fluide-developer\" \\\n  -H \"X-Workspace-Id: $FLUIDE_WORKSPACE_ID\" \\\n  -H \"X-Acting-Company-Id: $FLUIDE_COMPANY_ID\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}'"
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/hr/employees/bulk/status`, {\n  method: 'POST',\n  headers: {\n    Authorization: `Bearer ${process.env.FLUIDE_ACCESS_TOKEN}`,\n    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,\n    'X-Fluide-Client-Id': 'fluide-developer',\n    'X-Workspace-Id': process.env.FLUIDE_WORKSPACE_ID,\n    'X-Acting-Company-Id': process.env.FLUIDE_COMPANY_ID,\n    'Content-Type': 'application/json',\n  },\n  body: JSON.stringify({}),\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n        \"Authorization\": f\"Bearer {os.environ['FLUIDE_ACCESS_TOKEN']}\",\n        \"X-Fluide-Api-Key\": os.environ[\"FLUIDE_API_KEY\"],\n        \"X-Fluide-Client-Id\": \"fluide-developer\",\n        \"X-Workspace-Id\": os.environ[\"FLUIDE_WORKSPACE_ID\"],\n        \"X-Acting-Company-Id\": os.environ[\"FLUIDE_COMPANY_ID\"],\n}\n\nresponse = requests.post(\n    f\"{base_url}/api/v1/hr/employees/bulk/status\",\n    headers=headers,\n    json={},\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/hr/employees/bulk/status\"))\n    .header(\"Authorization\", \"Bearer \" + System.getenv(\"FLUIDE_ACCESS_TOKEN\"))\n    .header(\"X-Fluide-Api-Key\", System.getenv(\"FLUIDE_API_KEY\"))\n    .header(\"X-Fluide-Client-Id\", \"fluide-developer\")\n    .header(\"X-Workspace-Id\", System.getenv(\"FLUIDE_WORKSPACE_ID\"))\n    .header(\"X-Acting-Company-Id\", System.getenv(\"FLUIDE_COMPANY_ID\"))\n    .header(\"Content-Type\", \"application/json\")\n    .POST(HttpRequest.BodyPublishers.ofString(\"{}\"))\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/hr/employees/bulk/status\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'POST',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'X-Fluide-Api-Key: ' . getenv('FLUIDE_API_KEY'),\n        'X-Fluide-Client-Id: fluide-developer',\n        'X-Workspace-Id: ' . getenv('FLUIDE_WORKSPACE_ID'),\n        'X-Acting-Company-Id: ' . getenv('FLUIDE_COMPANY_ID'),\n        'Content-Type: application/json',\n    ],\n    CURLOPT_POSTFIELDS => \"{}\",\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
     "/api/v1/hr/employees/payout-import-template": {
       "get": {
         "operationId": "EmployeesController_payoutImportTemplate",
@@ -1529,25 +1593,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Successful response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/ApiResponseDto"
-                    },
-                    {
-                      "properties": {
-                        "data": {
-                          "description": "Endpoint-specific payload"
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            }
+            "description": "CSV or XLSX payment rails import template file"
           },
           "400": {
             "description": "Validation failed or invalid request parameters",
@@ -2585,6 +2631,86 @@
         ]
       }
     },
+    "/api/v1/hr/employees/{id}/compensation/reveal": {
+      "post": {
+        "operationId": "EmployeesController_recordCompensationReveal",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Workspace-Id",
+            "in": "header",
+            "required": false,
+            "description": "Partner / ISV only: UUID of the workspace that owns the client company. Required together with X-Acting-Company-Id when scoping product APIs to a merchant. See /getting-started/multi-tenancy.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "b03fa178-67bd-4378-a5aa-d169c01ccb6f"
+          },
+          {
+            "name": "X-Acting-Company-Id",
+            "in": "header",
+            "required": false,
+            "description": "Partner / ISV only: UUID of the client company to act on. Must belong to the workspace in X-Workspace-Id.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "ab2df10a-c66c-4bef-b7d6-efda26cca494"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
+        ],
+        "summary": "Audit log when a privileged viewer reveals compensation",
+        "tags": [
+          "HR Employees"
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X POST \"$FLUIDE_BASE_URL/api/v1/hr/employees/string/compensation/reveal\" \\\n  -H \"Authorization: Bearer $FLUIDE_ACCESS_TOKEN\" \\\n  -H \"X-Fluide-Api-Key: $FLUIDE_API_KEY\" \\\n  -H \"X-Fluide-Client-Id: fluide-developer\" \\\n  -H \"X-Workspace-Id: $FLUIDE_WORKSPACE_ID\" \\\n  -H \"X-Acting-Company-Id: $FLUIDE_COMPANY_ID\""
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/hr/employees/string/compensation/reveal`, {\n  method: 'POST',\n  headers: {\n    Authorization: `Bearer ${process.env.FLUIDE_ACCESS_TOKEN}`,\n    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,\n    'X-Fluide-Client-Id': 'fluide-developer',\n    'X-Workspace-Id': process.env.FLUIDE_WORKSPACE_ID,\n    'X-Acting-Company-Id': process.env.FLUIDE_COMPANY_ID,\n  },\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n        \"Authorization\": f\"Bearer {os.environ['FLUIDE_ACCESS_TOKEN']}\",\n        \"X-Fluide-Api-Key\": os.environ[\"FLUIDE_API_KEY\"],\n        \"X-Fluide-Client-Id\": \"fluide-developer\",\n        \"X-Workspace-Id\": os.environ[\"FLUIDE_WORKSPACE_ID\"],\n        \"X-Acting-Company-Id\": os.environ[\"FLUIDE_COMPANY_ID\"],\n}\n\nresponse = requests.post(\n    f\"{base_url}/api/v1/hr/employees/string/compensation/reveal\",\n    headers=headers,\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/hr/employees/string/compensation/reveal\"))\n    .header(\"Authorization\", \"Bearer \" + System.getenv(\"FLUIDE_ACCESS_TOKEN\"))\n    .header(\"X-Fluide-Api-Key\", System.getenv(\"FLUIDE_API_KEY\"))\n    .header(\"X-Fluide-Client-Id\", \"fluide-developer\")\n    .header(\"X-Workspace-Id\", System.getenv(\"FLUIDE_WORKSPACE_ID\"))\n    .header(\"X-Acting-Company-Id\", System.getenv(\"FLUIDE_COMPANY_ID\"))\n    .POST(HttpRequest.BodyPublishers.noBody())\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/hr/employees/string/compensation/reveal\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'POST',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'X-Fluide-Api-Key: ' . getenv('FLUIDE_API_KEY'),\n        'X-Fluide-Client-Id: fluide-developer',\n        'X-Workspace-Id: ' . getenv('FLUIDE_WORKSPACE_ID'),\n        'X-Acting-Company-Id: ' . getenv('FLUIDE_COMPANY_ID'),\n    ],\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
     "/api/v1/hr/employees/{id}/cv": {
       "get": {
         "operationId": "EmployeesController_downloadCv",
@@ -2631,25 +2757,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Download consolidated employee CV (PDF or DOCX)",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/ApiResponseDto"
-                    },
-                    {
-                      "properties": {
-                        "data": {
-                          "description": "Endpoint-specific payload"
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            }
+            "description": "Employee CV file (PDF or DOCX)"
           },
           "400": {
             "description": "Validation failed or invalid request parameters",
@@ -7748,6 +7856,15 @@
                 "pending",
                 "inactive"
               ]
+            }
+          },
+          {
+            "name": "departmentId",
+            "required": false,
+            "in": "query",
+            "description": "Filter by department master-data UUID",
+            "schema": {
+              "type": "string"
             }
           },
           {
@@ -13677,25 +13794,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Export Executive",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/ApiResponseDto"
-                    },
-                    {
-                      "properties": {
-                        "data": {
-                          "description": "Endpoint-specific payload"
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            }
+            "description": "Executive insights export file"
           },
           "400": {
             "description": "Validation failed or invalid request parameters",
@@ -17059,423 +17158,6 @@
             "lang": "php",
             "label": "PHP",
             "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/hr/recruitment/applications/string/hire-ready\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'POST',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'X-Fluide-Api-Key: ' . getenv('FLUIDE_API_KEY'),\n        'X-Fluide-Client-Id: fluide-developer',\n        'X-Workspace-Id: ' . getenv('FLUIDE_WORKSPACE_ID'),\n        'X-Acting-Company-Id: ' . getenv('FLUIDE_COMPANY_ID'),\n    ],\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
-          }
-        ]
-      }
-    },
-    "/api/v1/hr/workforce-planning/scenarios": {
-      "get": {
-        "operationId": "WorkforcePlanningController_list",
-        "parameters": [
-          {
-            "name": "X-Workspace-Id",
-            "in": "header",
-            "required": false,
-            "description": "Partner / ISV only: UUID of the workspace that owns the client company. Required together with X-Acting-Company-Id when scoping product APIs to a merchant. See /getting-started/multi-tenancy.",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "example": "b03fa178-67bd-4378-a5aa-d169c01ccb6f"
-          },
-          {
-            "name": "X-Acting-Company-Id",
-            "in": "header",
-            "required": false,
-            "description": "Partner / ISV only: UUID of the client company to act on. Must belong to the workspace in X-Workspace-Id.",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "example": "ab2df10a-c66c-4bef-b7d6-efda26cca494"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "List",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/ApiResponseDto"
-                    },
-                    {
-                      "properties": {
-                        "data": {
-                          "description": "Endpoint-specific payload"
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation failed or invalid request parameters\n\nValidation failed or invalid request parameters",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponseDto"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Missing or invalid JWT / API key\n\nMissing or invalid JWT / API key",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponseDto"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Token valid but insufficient permission for this operation\n\nToken valid but insufficient permission for this operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponseDto"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Resource not found or outside caller scope\n\nResource not found or outside caller scope",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponseDto"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearer": [],
-            "fluideApiKey": [],
-            "fluideClientId": []
-          }
-        ],
-        "summary": "List",
-        "tags": [
-          "Workforce planning"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "bash",
-            "label": "cURL",
-            "source": "curl -sS -X GET \"$FLUIDE_BASE_URL/api/v1/hr/workforce-planning/scenarios\" \\\n  -H \"Authorization: Bearer $FLUIDE_ACCESS_TOKEN\" \\\n  -H \"X-Fluide-Api-Key: $FLUIDE_API_KEY\" \\\n  -H \"X-Fluide-Client-Id: fluide-developer\" \\\n  -H \"X-Workspace-Id: $FLUIDE_WORKSPACE_ID\" \\\n  -H \"X-Acting-Company-Id: $FLUIDE_COMPANY_ID\""
-          },
-          {
-            "lang": "node",
-            "label": "Node.js",
-            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/hr/workforce-planning/scenarios`, {\n  method: 'GET',\n  headers: {\n    Authorization: `Bearer ${process.env.FLUIDE_ACCESS_TOKEN}`,\n    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,\n    'X-Fluide-Client-Id': 'fluide-developer',\n    'X-Workspace-Id': process.env.FLUIDE_WORKSPACE_ID,\n    'X-Acting-Company-Id': process.env.FLUIDE_COMPANY_ID,\n  },\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
-          },
-          {
-            "lang": "python",
-            "label": "Python",
-            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n        \"Authorization\": f\"Bearer {os.environ['FLUIDE_ACCESS_TOKEN']}\",\n        \"X-Fluide-Api-Key\": os.environ[\"FLUIDE_API_KEY\"],\n        \"X-Fluide-Client-Id\": \"fluide-developer\",\n        \"X-Workspace-Id\": os.environ[\"FLUIDE_WORKSPACE_ID\"],\n        \"X-Acting-Company-Id\": os.environ[\"FLUIDE_COMPANY_ID\"],\n}\n\nresponse = requests.get(\n    f\"{base_url}/api/v1/hr/workforce-planning/scenarios\",\n    headers=headers,\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
-          },
-          {
-            "lang": "java",
-            "label": "Java",
-            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/hr/workforce-planning/scenarios\"))\n    .header(\"Authorization\", \"Bearer \" + System.getenv(\"FLUIDE_ACCESS_TOKEN\"))\n    .header(\"X-Fluide-Api-Key\", System.getenv(\"FLUIDE_API_KEY\"))\n    .header(\"X-Fluide-Client-Id\", \"fluide-developer\")\n    .header(\"X-Workspace-Id\", System.getenv(\"FLUIDE_WORKSPACE_ID\"))\n    .header(\"X-Acting-Company-Id\", System.getenv(\"FLUIDE_COMPANY_ID\"))\n    .GET(HttpRequest.BodyPublishers.noBody())\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
-          },
-          {
-            "lang": "php",
-            "label": "PHP",
-            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/hr/workforce-planning/scenarios\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'GET',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'X-Fluide-Api-Key: ' . getenv('FLUIDE_API_KEY'),\n        'X-Fluide-Client-Id: fluide-developer',\n        'X-Workspace-Id: ' . getenv('FLUIDE_WORKSPACE_ID'),\n        'X-Acting-Company-Id: ' . getenv('FLUIDE_COMPANY_ID'),\n    ],\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
-          }
-        ]
-      },
-      "post": {
-        "operationId": "WorkforcePlanningController_create",
-        "parameters": [
-          {
-            "name": "X-Workspace-Id",
-            "in": "header",
-            "required": false,
-            "description": "Partner / ISV only: UUID of the workspace that owns the client company. Required together with X-Acting-Company-Id when scoping product APIs to a merchant. See /getting-started/multi-tenancy.",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "example": "b03fa178-67bd-4378-a5aa-d169c01ccb6f"
-          },
-          {
-            "name": "X-Acting-Company-Id",
-            "in": "header",
-            "required": false,
-            "description": "Partner / ISV only: UUID of the client company to act on. Must belong to the workspace in X-Workspace-Id.",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "example": "ab2df10a-c66c-4bef-b7d6-efda26cca494"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateWorkforceScenarioDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Create scenarios — created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/ApiResponseDto"
-                    },
-                    {
-                      "properties": {
-                        "data": {
-                          "description": "Endpoint-specific payload"
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation failed or invalid request parameters",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponseDto"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Missing or invalid JWT / API key",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponseDto"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Token valid but insufficient permission for this operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponseDto"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Resource not found or outside caller scope",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponseDto"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearer": [],
-            "fluideApiKey": [],
-            "fluideClientId": []
-          }
-        ],
-        "summary": "Create scenarios",
-        "tags": [
-          "Workforce planning"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "bash",
-            "label": "cURL",
-            "source": "curl -sS -X POST \"$FLUIDE_BASE_URL/api/v1/hr/workforce-planning/scenarios\" \\\n  -H \"Authorization: Bearer $FLUIDE_ACCESS_TOKEN\" \\\n  -H \"X-Fluide-Api-Key: $FLUIDE_API_KEY\" \\\n  -H \"X-Fluide-Client-Id: fluide-developer\" \\\n  -H \"X-Workspace-Id: $FLUIDE_WORKSPACE_ID\" \\\n  -H \"X-Acting-Company-Id: $FLUIDE_COMPANY_ID\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}'"
-          },
-          {
-            "lang": "node",
-            "label": "Node.js",
-            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/hr/workforce-planning/scenarios`, {\n  method: 'POST',\n  headers: {\n    Authorization: `Bearer ${process.env.FLUIDE_ACCESS_TOKEN}`,\n    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,\n    'X-Fluide-Client-Id': 'fluide-developer',\n    'X-Workspace-Id': process.env.FLUIDE_WORKSPACE_ID,\n    'X-Acting-Company-Id': process.env.FLUIDE_COMPANY_ID,\n    'Content-Type': 'application/json',\n  },\n  body: JSON.stringify({}),\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
-          },
-          {
-            "lang": "python",
-            "label": "Python",
-            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n        \"Authorization\": f\"Bearer {os.environ['FLUIDE_ACCESS_TOKEN']}\",\n        \"X-Fluide-Api-Key\": os.environ[\"FLUIDE_API_KEY\"],\n        \"X-Fluide-Client-Id\": \"fluide-developer\",\n        \"X-Workspace-Id\": os.environ[\"FLUIDE_WORKSPACE_ID\"],\n        \"X-Acting-Company-Id\": os.environ[\"FLUIDE_COMPANY_ID\"],\n}\n\nresponse = requests.post(\n    f\"{base_url}/api/v1/hr/workforce-planning/scenarios\",\n    headers=headers,\n    json={},\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
-          },
-          {
-            "lang": "java",
-            "label": "Java",
-            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/hr/workforce-planning/scenarios\"))\n    .header(\"Authorization\", \"Bearer \" + System.getenv(\"FLUIDE_ACCESS_TOKEN\"))\n    .header(\"X-Fluide-Api-Key\", System.getenv(\"FLUIDE_API_KEY\"))\n    .header(\"X-Fluide-Client-Id\", \"fluide-developer\")\n    .header(\"X-Workspace-Id\", System.getenv(\"FLUIDE_WORKSPACE_ID\"))\n    .header(\"X-Acting-Company-Id\", System.getenv(\"FLUIDE_COMPANY_ID\"))\n    .header(\"Content-Type\", \"application/json\")\n    .POST(HttpRequest.BodyPublishers.ofString(\"{}\"))\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
-          },
-          {
-            "lang": "php",
-            "label": "PHP",
-            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/hr/workforce-planning/scenarios\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'POST',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'X-Fluide-Api-Key: ' . getenv('FLUIDE_API_KEY'),\n        'X-Fluide-Client-Id: fluide-developer',\n        'X-Workspace-Id: ' . getenv('FLUIDE_WORKSPACE_ID'),\n        'X-Acting-Company-Id: ' . getenv('FLUIDE_COMPANY_ID'),\n        'Content-Type: application/json',\n    ],\n    CURLOPT_POSTFIELDS => \"{}\",\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
-          }
-        ]
-      }
-    },
-    "/api/v1/hr/workforce-planning/scenarios/{id}": {
-      "patch": {
-        "operationId": "WorkforcePlanningController_update",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "description": "id identifier",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "X-Workspace-Id",
-            "in": "header",
-            "required": false,
-            "description": "Partner / ISV only: UUID of the workspace that owns the client company. Required together with X-Acting-Company-Id when scoping product APIs to a merchant. See /getting-started/multi-tenancy.",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "example": "b03fa178-67bd-4378-a5aa-d169c01ccb6f"
-          },
-          {
-            "name": "X-Acting-Company-Id",
-            "in": "header",
-            "required": false,
-            "description": "Partner / ISV only: UUID of the client company to act on. Must belong to the workspace in X-Workspace-Id.",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "example": "ab2df10a-c66c-4bef-b7d6-efda26cca494"
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/UpdateWorkforceScenarioDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Update id",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/ApiResponseDto"
-                    },
-                    {
-                      "properties": {
-                        "data": {
-                          "description": "Endpoint-specific payload"
-                        }
-                      }
-                    }
-                  ]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Validation failed or invalid request parameters",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponseDto"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Missing or invalid JWT / API key",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponseDto"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Token valid but insufficient permission for this operation",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponseDto"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Resource not found or outside caller scope",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ApiErrorResponseDto"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "bearer": [],
-            "fluideApiKey": [],
-            "fluideClientId": []
-          }
-        ],
-        "summary": "Update id",
-        "tags": [
-          "Workforce planning"
-        ],
-        "x-codeSamples": [
-          {
-            "lang": "bash",
-            "label": "cURL",
-            "source": "curl -sS -X PATCH \"$FLUIDE_BASE_URL/api/v1/hr/workforce-planning/scenarios/string\" \\\n  -H \"Authorization: Bearer $FLUIDE_ACCESS_TOKEN\" \\\n  -H \"X-Fluide-Api-Key: $FLUIDE_API_KEY\" \\\n  -H \"X-Fluide-Client-Id: fluide-developer\" \\\n  -H \"X-Workspace-Id: $FLUIDE_WORKSPACE_ID\" \\\n  -H \"X-Acting-Company-Id: $FLUIDE_COMPANY_ID\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}'"
-          },
-          {
-            "lang": "node",
-            "label": "Node.js",
-            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/hr/workforce-planning/scenarios/string`, {\n  method: 'PATCH',\n  headers: {\n    Authorization: `Bearer ${process.env.FLUIDE_ACCESS_TOKEN}`,\n    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,\n    'X-Fluide-Client-Id': 'fluide-developer',\n    'X-Workspace-Id': process.env.FLUIDE_WORKSPACE_ID,\n    'X-Acting-Company-Id': process.env.FLUIDE_COMPANY_ID,\n    'Content-Type': 'application/json',\n  },\n  body: JSON.stringify({}),\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
-          },
-          {
-            "lang": "python",
-            "label": "Python",
-            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n        \"Authorization\": f\"Bearer {os.environ['FLUIDE_ACCESS_TOKEN']}\",\n        \"X-Fluide-Api-Key\": os.environ[\"FLUIDE_API_KEY\"],\n        \"X-Fluide-Client-Id\": \"fluide-developer\",\n        \"X-Workspace-Id\": os.environ[\"FLUIDE_WORKSPACE_ID\"],\n        \"X-Acting-Company-Id\": os.environ[\"FLUIDE_COMPANY_ID\"],\n}\n\nresponse = requests.patch(\n    f\"{base_url}/api/v1/hr/workforce-planning/scenarios/string\",\n    headers=headers,\n    json={},\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
-          },
-          {
-            "lang": "java",
-            "label": "Java",
-            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/hr/workforce-planning/scenarios/string\"))\n    .header(\"Authorization\", \"Bearer \" + System.getenv(\"FLUIDE_ACCESS_TOKEN\"))\n    .header(\"X-Fluide-Api-Key\", System.getenv(\"FLUIDE_API_KEY\"))\n    .header(\"X-Fluide-Client-Id\", \"fluide-developer\")\n    .header(\"X-Workspace-Id\", System.getenv(\"FLUIDE_WORKSPACE_ID\"))\n    .header(\"X-Acting-Company-Id\", System.getenv(\"FLUIDE_COMPANY_ID\"))\n    .header(\"Content-Type\", \"application/json\")\n    .PATCH(HttpRequest.BodyPublishers.ofString(\"{}\"))\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
-          },
-          {
-            "lang": "php",
-            "label": "PHP",
-            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/hr/workforce-planning/scenarios/string\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'PATCH',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'X-Fluide-Api-Key: ' . getenv('FLUIDE_API_KEY'),\n        'X-Fluide-Client-Id: fluide-developer',\n        'X-Workspace-Id: ' . getenv('FLUIDE_WORKSPACE_ID'),\n        'X-Acting-Company-Id: ' . getenv('FLUIDE_COMPANY_ID'),\n        'Content-Type: application/json',\n    ],\n    CURLOPT_POSTFIELDS => \"{}\",\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
           }
         ]
       }
@@ -23284,9 +22966,6 @@
       "name": "Recruitment"
     },
     {
-      "name": "Workforce planning"
-    },
-    {
       "name": "Expenses"
     },
     {
@@ -23300,16 +22979,16 @@
     },
     {
       "name": "Talent"
-    },
-    {
-      "name": "Authorize",
-      "description": "Exchange API key and secret for a machine JWT, read developer metadata, rotate secrets, and manage API billing."
     }
   ],
   "servers": [
     {
       "url": "https://test.api.fluidehr.com",
-      "description": "API"
+      "description": "Sandbox"
+    },
+    {
+      "url": "https://api.fluideglobal.com",
+      "description": "Production"
     }
   ],
   "components": {
@@ -23650,7 +23329,8 @@
             "type": "number"
           },
           "hireDate": {
-            "type": "string"
+            "type": "string",
+            "description": "ISO date YYYY-MM-DD (normalized from Excel/regional formats on import)"
           },
           "employmentType": {
             "type": "string",
@@ -23709,6 +23389,37 @@
         "required": [
           "mode",
           "rows"
+        ]
+      },
+      "BulkUpdateStatusDto": {
+        "type": "object",
+        "properties": {
+          "employeeIds": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "status": {
+            "enum": [
+              "PENDING",
+              "ACTIVE",
+              "INACTIVE",
+              "TERMINATED",
+              "ON_LEAVE"
+            ],
+            "type": "string"
+          },
+          "reason": {
+            "type": "string",
+            "maxLength": 500
+          }
+        },
+        "required": [
+          "employeeIds",
+          "status"
         ]
       },
       "EmployeePayoutBulkRowDto": {
@@ -24888,47 +24599,6 @@
           },
           "isActive": {
             "type": "boolean"
-          }
-        }
-      },
-      "CreateWorkforceScenarioDto": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "string"
-          },
-          "name": {
-            "type": "string"
-          },
-          "targetHeadcount": {
-            "type": "number",
-            "minimum": 0,
-            "default": 0
-          },
-          "assumptions": {
-            "type": "object"
-          }
-        },
-        "required": [
-          "code",
-          "name"
-        ]
-      },
-      "UpdateWorkforceScenarioDto": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string"
-          },
-          "status": {
-            "type": "string"
-          },
-          "targetHeadcount": {
-            "type": "number",
-            "minimum": 0
-          },
-          "assumptions": {
-            "type": "object"
           }
         }
       },

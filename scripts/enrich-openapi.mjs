@@ -6,6 +6,7 @@
 import { readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import { enrichOpenApiSpec } from "../openapi/enrichment.mjs";
+import { stripThirdPartyPaymentSurfaces } from "../openapi/strip-providers.mjs";
 
 const ROOT = path.join(import.meta.dirname, "..");
 const OUT_DIR = path.join(ROOT, "openapi");
@@ -19,13 +20,18 @@ const SPECS = [
   { key: "fluide-utils", file: "fluide-utils.json" },
 ];
 
+const PROVIDER_HIDDEN_SPECS = new Set(["fluide-pay", "fluide-books"]);
+
 async function main() {
   for (const { key, file } of SPECS) {
     const filePath = path.join(OUT_DIR, file);
     try {
       const raw = await readFile(filePath, "utf8");
       const doc = JSON.parse(raw);
-      const enriched = enrichOpenApiSpec(doc, key);
+      const enrichedDoc = enrichOpenApiSpec(doc, key);
+      const enriched = PROVIDER_HIDDEN_SPECS.has(key)
+        ? stripThirdPartyPaymentSurfaces(enrichedDoc)
+        : enrichedDoc;
       await writeFile(filePath, `${JSON.stringify(enriched, null, 2)}\n`, "utf8");
       console.log(`✓ enriched ${file}`);
     } catch (err) {

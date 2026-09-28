@@ -1,26 +1,31 @@
 ---
 title: Pay modules
-description: FluidePay API modules and provider integrations.
+description: FluidePay API modules and payment rails.
 ---
 
 # Pay modules
 
 | Module | Path | Description |
 | --- | --- | --- |
-| Accounts | `/api/v1/accounts` | Create and manage wallets |
-| Transactions | `/api/v1/transactions` | CREDIT / DEBIT processing |
-| Ecobank | `/api/v1/ecobank` | Ecobank provider integration |
-| Mobile money | `/api/v1/mobile-money` | Mobile money integration |
+| Wallets | `/api/v1/payments/wallets` | Create and manage wallets |
+| Transactions | `/api/v1/payments/transactions` | CREDIT / DEBIT processing |
+| Checkout sessions | `/api/v1/payments/checkout-sessions` | Hosted checkout and payment links |
+| Payouts | `/api/v1/payments/payouts` | Bank payout beneficiaries and transfers |
+| Collections | `/api/v1/payments/collections` | Mobile money collection and verify |
+| Channels | `/api/v1/payments/channels` | Org collection channel policy |
+| Capabilities | `/api/v1/payments/capabilities/org` | Payout rails for the organization |
+
+Fluide selects the processor for a rail and corridor. Merchant paths are `payouts`, `collections`, and `checkout-sessions`.
 
 ## Configuration
 
-Provider settings live in `src/config/` (`app.config.ts`, legacy `config.service.ts`). Validate env with Joi at bootstrap.
+Processor credentials are service environment variables, validated with Joi at bootstrap (`src/config/`).
 
 ## Inter-service
 
-- **TCP** RPC on microservice port for internal calls
-- **Kafka** for async transaction processing
+- **Kafka** for async transaction processing and inbound webhook fan-out
 - Wallets may be provisioned from payroll via Kafka commands
+- Internal banking ops: `/api/v1/payments/internal/banking/*` (internal API key)
 
 ## Technology
 

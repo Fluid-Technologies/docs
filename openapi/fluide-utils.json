@@ -765,6 +765,274 @@
         ]
       }
     },
+    "/api/v1/app/notifications/preferences": {
+      "get": {
+        "operationId": "NotificationsController_listPreferences",
+        "parameters": [
+          {
+            "name": "X-Workspace-Id",
+            "in": "header",
+            "required": false,
+            "description": "Partner / ISV only: UUID of the workspace that owns the client company. Required together with X-Acting-Company-Id when scoping product APIs to a merchant. See /getting-started/multi-tenancy.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "b03fa178-67bd-4378-a5aa-d169c01ccb6f"
+          },
+          {
+            "name": "X-Acting-Company-Id",
+            "in": "header",
+            "required": false,
+            "description": "Partner / ISV only: UUID of the client company to act on. Must belong to the workspace in X-Workspace-Id.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "ab2df10a-c66c-4bef-b7d6-efda26cca494"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Notification preferences",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponseDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "description": "Endpoint-specific payload"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed or invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid JWT / API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Token valid but insufficient permission for this operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside caller scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
+        ],
+        "summary": "List notification channel preferences for the current user",
+        "tags": [
+          "Notifications"
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X GET \"$FLUIDE_BASE_URL/api/v1/app/notifications/preferences\" \\\n  -H \"Authorization: Bearer $FLUIDE_ACCESS_TOKEN\" \\\n  -H \"X-Fluide-Api-Key: $FLUIDE_API_KEY\" \\\n  -H \"X-Fluide-Client-Id: fluide-developer\" \\\n  -H \"X-Workspace-Id: $FLUIDE_WORKSPACE_ID\" \\\n  -H \"X-Acting-Company-Id: $FLUIDE_COMPANY_ID\""
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/app/notifications/preferences`, {\n  method: 'GET',\n  headers: {\n    Authorization: `Bearer ${process.env.FLUIDE_ACCESS_TOKEN}`,\n    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,\n    'X-Fluide-Client-Id': 'fluide-developer',\n    'X-Workspace-Id': process.env.FLUIDE_WORKSPACE_ID,\n    'X-Acting-Company-Id': process.env.FLUIDE_COMPANY_ID,\n  },\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n        \"Authorization\": f\"Bearer {os.environ['FLUIDE_ACCESS_TOKEN']}\",\n        \"X-Fluide-Api-Key\": os.environ[\"FLUIDE_API_KEY\"],\n        \"X-Fluide-Client-Id\": \"fluide-developer\",\n        \"X-Workspace-Id\": os.environ[\"FLUIDE_WORKSPACE_ID\"],\n        \"X-Acting-Company-Id\": os.environ[\"FLUIDE_COMPANY_ID\"],\n}\n\nresponse = requests.get(\n    f\"{base_url}/api/v1/app/notifications/preferences\",\n    headers=headers,\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/app/notifications/preferences\"))\n    .header(\"Authorization\", \"Bearer \" + System.getenv(\"FLUIDE_ACCESS_TOKEN\"))\n    .header(\"X-Fluide-Api-Key\", System.getenv(\"FLUIDE_API_KEY\"))\n    .header(\"X-Fluide-Client-Id\", \"fluide-developer\")\n    .header(\"X-Workspace-Id\", System.getenv(\"FLUIDE_WORKSPACE_ID\"))\n    .header(\"X-Acting-Company-Id\", System.getenv(\"FLUIDE_COMPANY_ID\"))\n    .GET(HttpRequest.BodyPublishers.noBody())\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/app/notifications/preferences\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'GET',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'X-Fluide-Api-Key: ' . getenv('FLUIDE_API_KEY'),\n        'X-Fluide-Client-Id: fluide-developer',\n        'X-Workspace-Id: ' . getenv('FLUIDE_WORKSPACE_ID'),\n        'X-Acting-Company-Id: ' . getenv('FLUIDE_COMPANY_ID'),\n    ],\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      },
+      "patch": {
+        "operationId": "NotificationsController_updatePreferences",
+        "parameters": [
+          {
+            "name": "X-Workspace-Id",
+            "in": "header",
+            "required": false,
+            "description": "Partner / ISV only: UUID of the workspace that owns the client company. Required together with X-Acting-Company-Id when scoping product APIs to a merchant. See /getting-started/multi-tenancy.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "b03fa178-67bd-4378-a5aa-d169c01ccb6f"
+          },
+          {
+            "name": "X-Acting-Company-Id",
+            "in": "header",
+            "required": false,
+            "description": "Partner / ISV only: UUID of the client company to act on. Must belong to the workspace in X-Workspace-Id.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "ab2df10a-c66c-4bef-b7d6-efda26cca494"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePreferenceDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Updated notification preference",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponseDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "description": "Endpoint-specific payload"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed or invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid JWT / API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Token valid but insufficient permission for this operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside caller scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
+        ],
+        "summary": "Update a notification category preference",
+        "tags": [
+          "Notifications"
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X PATCH \"$FLUIDE_BASE_URL/api/v1/app/notifications/preferences\" \\\n  -H \"Authorization: Bearer $FLUIDE_ACCESS_TOKEN\" \\\n  -H \"X-Fluide-Api-Key: $FLUIDE_API_KEY\" \\\n  -H \"X-Fluide-Client-Id: fluide-developer\" \\\n  -H \"X-Workspace-Id: $FLUIDE_WORKSPACE_ID\" \\\n  -H \"X-Acting-Company-Id: $FLUIDE_COMPANY_ID\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}'"
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/app/notifications/preferences`, {\n  method: 'PATCH',\n  headers: {\n    Authorization: `Bearer ${process.env.FLUIDE_ACCESS_TOKEN}`,\n    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,\n    'X-Fluide-Client-Id': 'fluide-developer',\n    'X-Workspace-Id': process.env.FLUIDE_WORKSPACE_ID,\n    'X-Acting-Company-Id': process.env.FLUIDE_COMPANY_ID,\n    'Content-Type': 'application/json',\n  },\n  body: JSON.stringify({}),\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n        \"Authorization\": f\"Bearer {os.environ['FLUIDE_ACCESS_TOKEN']}\",\n        \"X-Fluide-Api-Key\": os.environ[\"FLUIDE_API_KEY\"],\n        \"X-Fluide-Client-Id\": \"fluide-developer\",\n        \"X-Workspace-Id\": os.environ[\"FLUIDE_WORKSPACE_ID\"],\n        \"X-Acting-Company-Id\": os.environ[\"FLUIDE_COMPANY_ID\"],\n}\n\nresponse = requests.patch(\n    f\"{base_url}/api/v1/app/notifications/preferences\",\n    headers=headers,\n    json={},\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/app/notifications/preferences\"))\n    .header(\"Authorization\", \"Bearer \" + System.getenv(\"FLUIDE_ACCESS_TOKEN\"))\n    .header(\"X-Fluide-Api-Key\", System.getenv(\"FLUIDE_API_KEY\"))\n    .header(\"X-Fluide-Client-Id\", \"fluide-developer\")\n    .header(\"X-Workspace-Id\", System.getenv(\"FLUIDE_WORKSPACE_ID\"))\n    .header(\"X-Acting-Company-Id\", System.getenv(\"FLUIDE_COMPANY_ID\"))\n    .header(\"Content-Type\", \"application/json\")\n    .PATCH(HttpRequest.BodyPublishers.ofString(\"{}\"))\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/app/notifications/preferences\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'PATCH',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'X-Fluide-Api-Key: ' . getenv('FLUIDE_API_KEY'),\n        'X-Fluide-Client-Id: fluide-developer',\n        'X-Workspace-Id: ' . getenv('FLUIDE_WORKSPACE_ID'),\n        'X-Acting-Company-Id: ' . getenv('FLUIDE_COMPANY_ID'),\n        'Content-Type: application/json',\n    ],\n    CURLOPT_POSTFIELDS => \"{}\",\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
     "/api/v1/app/notifications/{id}/dismiss": {
       "patch": {
         "operationId": "NotificationsController_dismiss",
@@ -773,7 +1041,7 @@
             "name": "id",
             "required": true,
             "in": "path",
-            "description": "id identifier",
+            "description": "Notification UUID",
             "schema": {
               "type": "string"
             }
@@ -912,7 +1180,7 @@
             "name": "id",
             "required": true,
             "in": "path",
-            "description": "id identifier",
+            "description": "Notification UUID",
             "schema": {
               "type": "string"
             }
@@ -1776,6 +2044,145 @@
         ]
       }
     },
+    "/api/v1/app/files/{id}/make-public": {
+      "post": {
+        "operationId": "FileManagementController_makePublic",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "file_uploads id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Workspace-Id",
+            "in": "header",
+            "required": false,
+            "description": "Partner / ISV only: UUID of the workspace that owns the client company. Required together with X-Acting-Company-Id when scoping product APIs to a merchant. See /getting-started/multi-tenancy.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "b03fa178-67bd-4378-a5aa-d169c01ccb6f"
+          },
+          {
+            "name": "X-Acting-Company-Id",
+            "in": "header",
+            "required": false,
+            "description": "Partner / ISV only: UUID of the client company to act on. Must belong to the workspace in X-Workspace-Id.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "ab2df10a-c66c-4bef-b7d6-efda26cca494"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Updated file metadata",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponseDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "description": "Endpoint-specific payload"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed or invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid JWT / API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Token valid but insufficient permission for this operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside caller scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
+        ],
+        "summary": "Mark an image as public (payment-link covers)",
+        "tags": [
+          "File Management"
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X POST \"$FLUIDE_BASE_URL/api/v1/app/files/string/make-public\" \\\n  -H \"Authorization: Bearer $FLUIDE_ACCESS_TOKEN\" \\\n  -H \"X-Fluide-Api-Key: $FLUIDE_API_KEY\" \\\n  -H \"X-Fluide-Client-Id: fluide-developer\" \\\n  -H \"X-Workspace-Id: $FLUIDE_WORKSPACE_ID\" \\\n  -H \"X-Acting-Company-Id: $FLUIDE_COMPANY_ID\""
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/app/files/string/make-public`, {\n  method: 'POST',\n  headers: {\n    Authorization: `Bearer ${process.env.FLUIDE_ACCESS_TOKEN}`,\n    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,\n    'X-Fluide-Client-Id': 'fluide-developer',\n    'X-Workspace-Id': process.env.FLUIDE_WORKSPACE_ID,\n    'X-Acting-Company-Id': process.env.FLUIDE_COMPANY_ID,\n  },\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n        \"Authorization\": f\"Bearer {os.environ['FLUIDE_ACCESS_TOKEN']}\",\n        \"X-Fluide-Api-Key\": os.environ[\"FLUIDE_API_KEY\"],\n        \"X-Fluide-Client-Id\": \"fluide-developer\",\n        \"X-Workspace-Id\": os.environ[\"FLUIDE_WORKSPACE_ID\"],\n        \"X-Acting-Company-Id\": os.environ[\"FLUIDE_COMPANY_ID\"],\n}\n\nresponse = requests.post(\n    f\"{base_url}/api/v1/app/files/string/make-public\",\n    headers=headers,\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/app/files/string/make-public\"))\n    .header(\"Authorization\", \"Bearer \" + System.getenv(\"FLUIDE_ACCESS_TOKEN\"))\n    .header(\"X-Fluide-Api-Key\", System.getenv(\"FLUIDE_API_KEY\"))\n    .header(\"X-Fluide-Client-Id\", \"fluide-developer\")\n    .header(\"X-Workspace-Id\", System.getenv(\"FLUIDE_WORKSPACE_ID\"))\n    .header(\"X-Acting-Company-Id\", System.getenv(\"FLUIDE_COMPANY_ID\"))\n    .POST(HttpRequest.BodyPublishers.noBody())\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/app/files/string/make-public\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'POST',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'X-Fluide-Api-Key: ' . getenv('FLUIDE_API_KEY'),\n        'X-Fluide-Client-Id: fluide-developer',\n        'X-Workspace-Id: ' . getenv('FLUIDE_WORKSPACE_ID'),\n        'X-Acting-Company-Id: ' . getenv('FLUIDE_COMPANY_ID'),\n    ],\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
     "/api/v1/app/internal/files/buffer": {
       "post": {
         "description": "Used by fluide-capital-core and similar services. Requires FLUIDE_INTERNAL_FILE_TOKEN on caller and callee.",
@@ -2148,6 +2555,620 @@
             "lang": "php",
             "label": "PHP",
             "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/app/internal/files/string?organizationId=string\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'DELETE',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'X-Fluide-Api-Key: ' . getenv('FLUIDE_API_KEY'),\n        'X-Fluide-Client-Id: fluide-developer',\n        'X-Workspace-Id: ' . getenv('FLUIDE_WORKSPACE_ID'),\n        'X-Acting-Company-Id: ' . getenv('FLUIDE_COMPANY_ID'),\n    ],\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
+    "/api/v1/app/internal/files/upload-sessions": {
+      "post": {
+        "operationId": "InternalFileController_createUploadSession",
+        "parameters": [
+          {
+            "name": "X-Workspace-Id",
+            "in": "header",
+            "required": false,
+            "description": "Partner / ISV only: UUID of the workspace that owns the client company. Required together with X-Acting-Company-Id when scoping product APIs to a merchant. See /getting-started/multi-tenancy.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "b03fa178-67bd-4378-a5aa-d169c01ccb6f"
+          },
+          {
+            "name": "X-Acting-Company-Id",
+            "in": "header",
+            "required": false,
+            "description": "Partner / ISV only: UUID of the client company to act on. Must belong to the workspace in X-Workspace-Id.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "ab2df10a-c66c-4bef-b7d6-efda26cca494"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InternalCreateUploadSessionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
+        ],
+        "summary": "Create a multipart upload session (presigned parts)",
+        "tags": [
+          "Internal Files"
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X POST \"$FLUIDE_BASE_URL/api/v1/app/internal/files/upload-sessions\" \\\n  -H \"Authorization: Bearer $FLUIDE_ACCESS_TOKEN\" \\\n  -H \"X-Fluide-Api-Key: $FLUIDE_API_KEY\" \\\n  -H \"X-Fluide-Client-Id: fluide-developer\" \\\n  -H \"X-Workspace-Id: $FLUIDE_WORKSPACE_ID\" \\\n  -H \"X-Acting-Company-Id: $FLUIDE_COMPANY_ID\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}'"
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/app/internal/files/upload-sessions`, {\n  method: 'POST',\n  headers: {\n    Authorization: `Bearer ${process.env.FLUIDE_ACCESS_TOKEN}`,\n    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,\n    'X-Fluide-Client-Id': 'fluide-developer',\n    'X-Workspace-Id': process.env.FLUIDE_WORKSPACE_ID,\n    'X-Acting-Company-Id': process.env.FLUIDE_COMPANY_ID,\n    'Content-Type': 'application/json',\n  },\n  body: JSON.stringify({}),\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n        \"Authorization\": f\"Bearer {os.environ['FLUIDE_ACCESS_TOKEN']}\",\n        \"X-Fluide-Api-Key\": os.environ[\"FLUIDE_API_KEY\"],\n        \"X-Fluide-Client-Id\": \"fluide-developer\",\n        \"X-Workspace-Id\": os.environ[\"FLUIDE_WORKSPACE_ID\"],\n        \"X-Acting-Company-Id\": os.environ[\"FLUIDE_COMPANY_ID\"],\n}\n\nresponse = requests.post(\n    f\"{base_url}/api/v1/app/internal/files/upload-sessions\",\n    headers=headers,\n    json={},\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/app/internal/files/upload-sessions\"))\n    .header(\"Authorization\", \"Bearer \" + System.getenv(\"FLUIDE_ACCESS_TOKEN\"))\n    .header(\"X-Fluide-Api-Key\", System.getenv(\"FLUIDE_API_KEY\"))\n    .header(\"X-Fluide-Client-Id\", \"fluide-developer\")\n    .header(\"X-Workspace-Id\", System.getenv(\"FLUIDE_WORKSPACE_ID\"))\n    .header(\"X-Acting-Company-Id\", System.getenv(\"FLUIDE_COMPANY_ID\"))\n    .header(\"Content-Type\", \"application/json\")\n    .POST(HttpRequest.BodyPublishers.ofString(\"{}\"))\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/app/internal/files/upload-sessions\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'POST',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'X-Fluide-Api-Key: ' . getenv('FLUIDE_API_KEY'),\n        'X-Fluide-Client-Id: fluide-developer',\n        'X-Workspace-Id: ' . getenv('FLUIDE_WORKSPACE_ID'),\n        'X-Acting-Company-Id: ' . getenv('FLUIDE_COMPANY_ID'),\n        'Content-Type: application/json',\n    ],\n    CURLOPT_POSTFIELDS => \"{}\",\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
+    "/api/v1/app/internal/files/upload-sessions/{sessionId}/complete": {
+      "post": {
+        "operationId": "InternalFileController_completeUploadSession",
+        "parameters": [
+          {
+            "name": "sessionId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Workspace-Id",
+            "in": "header",
+            "required": false,
+            "description": "Partner / ISV only: UUID of the workspace that owns the client company. Required together with X-Acting-Company-Id when scoping product APIs to a merchant. See /getting-started/multi-tenancy.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "b03fa178-67bd-4378-a5aa-d169c01ccb6f"
+          },
+          {
+            "name": "X-Acting-Company-Id",
+            "in": "header",
+            "required": false,
+            "description": "Partner / ISV only: UUID of the client company to act on. Must belong to the workspace in X-Workspace-Id.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "ab2df10a-c66c-4bef-b7d6-efda26cca494"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InternalCompleteUploadSessionDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
+        ],
+        "summary": "Complete multipart upload and create file record",
+        "tags": [
+          "Internal Files"
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X POST \"$FLUIDE_BASE_URL/api/v1/app/internal/files/upload-sessions/string/complete\" \\\n  -H \"Authorization: Bearer $FLUIDE_ACCESS_TOKEN\" \\\n  -H \"X-Fluide-Api-Key: $FLUIDE_API_KEY\" \\\n  -H \"X-Fluide-Client-Id: fluide-developer\" \\\n  -H \"X-Workspace-Id: $FLUIDE_WORKSPACE_ID\" \\\n  -H \"X-Acting-Company-Id: $FLUIDE_COMPANY_ID\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}'"
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/app/internal/files/upload-sessions/string/complete`, {\n  method: 'POST',\n  headers: {\n    Authorization: `Bearer ${process.env.FLUIDE_ACCESS_TOKEN}`,\n    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,\n    'X-Fluide-Client-Id': 'fluide-developer',\n    'X-Workspace-Id': process.env.FLUIDE_WORKSPACE_ID,\n    'X-Acting-Company-Id': process.env.FLUIDE_COMPANY_ID,\n    'Content-Type': 'application/json',\n  },\n  body: JSON.stringify({}),\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n        \"Authorization\": f\"Bearer {os.environ['FLUIDE_ACCESS_TOKEN']}\",\n        \"X-Fluide-Api-Key\": os.environ[\"FLUIDE_API_KEY\"],\n        \"X-Fluide-Client-Id\": \"fluide-developer\",\n        \"X-Workspace-Id\": os.environ[\"FLUIDE_WORKSPACE_ID\"],\n        \"X-Acting-Company-Id\": os.environ[\"FLUIDE_COMPANY_ID\"],\n}\n\nresponse = requests.post(\n    f\"{base_url}/api/v1/app/internal/files/upload-sessions/string/complete\",\n    headers=headers,\n    json={},\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/app/internal/files/upload-sessions/string/complete\"))\n    .header(\"Authorization\", \"Bearer \" + System.getenv(\"FLUIDE_ACCESS_TOKEN\"))\n    .header(\"X-Fluide-Api-Key\", System.getenv(\"FLUIDE_API_KEY\"))\n    .header(\"X-Fluide-Client-Id\", \"fluide-developer\")\n    .header(\"X-Workspace-Id\", System.getenv(\"FLUIDE_WORKSPACE_ID\"))\n    .header(\"X-Acting-Company-Id\", System.getenv(\"FLUIDE_COMPANY_ID\"))\n    .header(\"Content-Type\", \"application/json\")\n    .POST(HttpRequest.BodyPublishers.ofString(\"{}\"))\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/app/internal/files/upload-sessions/string/complete\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'POST',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'X-Fluide-Api-Key: ' . getenv('FLUIDE_API_KEY'),\n        'X-Fluide-Client-Id: fluide-developer',\n        'X-Workspace-Id: ' . getenv('FLUIDE_WORKSPACE_ID'),\n        'X-Acting-Company-Id: ' . getenv('FLUIDE_COMPANY_ID'),\n        'Content-Type: application/json',\n    ],\n    CURLOPT_POSTFIELDS => \"{}\",\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
+    "/api/v1/app/internal/files/upload-sessions/{sessionId}": {
+      "delete": {
+        "operationId": "InternalFileController_abortUploadSession",
+        "parameters": [
+          {
+            "name": "sessionId",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "organizationId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Workspace-Id",
+            "in": "header",
+            "required": false,
+            "description": "Partner / ISV only: UUID of the workspace that owns the client company. Required together with X-Acting-Company-Id when scoping product APIs to a merchant. See /getting-started/multi-tenancy.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "b03fa178-67bd-4378-a5aa-d169c01ccb6f"
+          },
+          {
+            "name": "X-Acting-Company-Id",
+            "in": "header",
+            "required": false,
+            "description": "Partner / ISV only: UUID of the client company to act on. Must belong to the workspace in X-Workspace-Id.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "ab2df10a-c66c-4bef-b7d6-efda26cca494"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
+        ],
+        "summary": "Abort a pending upload session",
+        "tags": [
+          "Internal Files"
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X DELETE \"$FLUIDE_BASE_URL/api/v1/app/internal/files/upload-sessions/string?organizationId=string\" \\\n  -H \"Authorization: Bearer $FLUIDE_ACCESS_TOKEN\" \\\n  -H \"X-Fluide-Api-Key: $FLUIDE_API_KEY\" \\\n  -H \"X-Fluide-Client-Id: fluide-developer\" \\\n  -H \"X-Workspace-Id: $FLUIDE_WORKSPACE_ID\" \\\n  -H \"X-Acting-Company-Id: $FLUIDE_COMPANY_ID\""
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/app/internal/files/upload-sessions/string?organizationId=string`, {\n  method: 'DELETE',\n  headers: {\n    Authorization: `Bearer ${process.env.FLUIDE_ACCESS_TOKEN}`,\n    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,\n    'X-Fluide-Client-Id': 'fluide-developer',\n    'X-Workspace-Id': process.env.FLUIDE_WORKSPACE_ID,\n    'X-Acting-Company-Id': process.env.FLUIDE_COMPANY_ID,\n  },\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n        \"Authorization\": f\"Bearer {os.environ['FLUIDE_ACCESS_TOKEN']}\",\n        \"X-Fluide-Api-Key\": os.environ[\"FLUIDE_API_KEY\"],\n        \"X-Fluide-Client-Id\": \"fluide-developer\",\n        \"X-Workspace-Id\": os.environ[\"FLUIDE_WORKSPACE_ID\"],\n        \"X-Acting-Company-Id\": os.environ[\"FLUIDE_COMPANY_ID\"],\n}\n\nresponse = requests.delete(\n    f\"{base_url}/api/v1/app/internal/files/upload-sessions/string?organizationId=string\",\n    headers=headers,\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/app/internal/files/upload-sessions/string?organizationId=string\"))\n    .header(\"Authorization\", \"Bearer \" + System.getenv(\"FLUIDE_ACCESS_TOKEN\"))\n    .header(\"X-Fluide-Api-Key\", System.getenv(\"FLUIDE_API_KEY\"))\n    .header(\"X-Fluide-Client-Id\", \"fluide-developer\")\n    .header(\"X-Workspace-Id\", System.getenv(\"FLUIDE_WORKSPACE_ID\"))\n    .header(\"X-Acting-Company-Id\", System.getenv(\"FLUIDE_COMPANY_ID\"))\n    .DELETE(HttpRequest.BodyPublishers.noBody())\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/app/internal/files/upload-sessions/string?organizationId=string\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'DELETE',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'X-Fluide-Api-Key: ' . getenv('FLUIDE_API_KEY'),\n        'X-Fluide-Client-Id: fluide-developer',\n        'X-Workspace-Id: ' . getenv('FLUIDE_WORKSPACE_ID'),\n        'X-Acting-Company-Id: ' . getenv('FLUIDE_COMPANY_ID'),\n    ],\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
+    "/api/v1/app/internal/files/{id}/presigned-download": {
+      "get": {
+        "operationId": "InternalFileController_presignedDownload",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "organizationId",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "expiresInSeconds",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Workspace-Id",
+            "in": "header",
+            "required": false,
+            "description": "Partner / ISV only: UUID of the workspace that owns the client company. Required together with X-Acting-Company-Id when scoping product APIs to a merchant. See /getting-started/multi-tenancy.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "b03fa178-67bd-4378-a5aa-d169c01ccb6f"
+          },
+          {
+            "name": "X-Acting-Company-Id",
+            "in": "header",
+            "required": false,
+            "description": "Partner / ISV only: UUID of the client company to act on. Must belong to the workspace in X-Workspace-Id.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "ab2df10a-c66c-4bef-b7d6-efda26cca494"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
+        ],
+        "summary": "Get a time-limited presigned download URL",
+        "tags": [
+          "Internal Files"
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X GET \"$FLUIDE_BASE_URL/api/v1/app/internal/files/string/presigned-download?organizationId=string&expiresInSeconds=string\" \\\n  -H \"Authorization: Bearer $FLUIDE_ACCESS_TOKEN\" \\\n  -H \"X-Fluide-Api-Key: $FLUIDE_API_KEY\" \\\n  -H \"X-Fluide-Client-Id: fluide-developer\" \\\n  -H \"X-Workspace-Id: $FLUIDE_WORKSPACE_ID\" \\\n  -H \"X-Acting-Company-Id: $FLUIDE_COMPANY_ID\""
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/app/internal/files/string/presigned-download?organizationId=string&expiresInSeconds=string`, {\n  method: 'GET',\n  headers: {\n    Authorization: `Bearer ${process.env.FLUIDE_ACCESS_TOKEN}`,\n    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,\n    'X-Fluide-Client-Id': 'fluide-developer',\n    'X-Workspace-Id': process.env.FLUIDE_WORKSPACE_ID,\n    'X-Acting-Company-Id': process.env.FLUIDE_COMPANY_ID,\n  },\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n        \"Authorization\": f\"Bearer {os.environ['FLUIDE_ACCESS_TOKEN']}\",\n        \"X-Fluide-Api-Key\": os.environ[\"FLUIDE_API_KEY\"],\n        \"X-Fluide-Client-Id\": \"fluide-developer\",\n        \"X-Workspace-Id\": os.environ[\"FLUIDE_WORKSPACE_ID\"],\n        \"X-Acting-Company-Id\": os.environ[\"FLUIDE_COMPANY_ID\"],\n}\n\nresponse = requests.get(\n    f\"{base_url}/api/v1/app/internal/files/string/presigned-download?organizationId=string&expiresInSeconds=string\",\n    headers=headers,\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/app/internal/files/string/presigned-download?organizationId=string&expiresInSeconds=string\"))\n    .header(\"Authorization\", \"Bearer \" + System.getenv(\"FLUIDE_ACCESS_TOKEN\"))\n    .header(\"X-Fluide-Api-Key\", System.getenv(\"FLUIDE_API_KEY\"))\n    .header(\"X-Fluide-Client-Id\", \"fluide-developer\")\n    .header(\"X-Workspace-Id\", System.getenv(\"FLUIDE_WORKSPACE_ID\"))\n    .header(\"X-Acting-Company-Id\", System.getenv(\"FLUIDE_COMPANY_ID\"))\n    .GET(HttpRequest.BodyPublishers.noBody())\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/app/internal/files/string/presigned-download?organizationId=string&expiresInSeconds=string\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'GET',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'X-Fluide-Api-Key: ' . getenv('FLUIDE_API_KEY'),\n        'X-Fluide-Client-Id: fluide-developer',\n        'X-Workspace-Id: ' . getenv('FLUIDE_WORKSPACE_ID'),\n        'X-Acting-Company-Id: ' . getenv('FLUIDE_COMPANY_ID'),\n    ],\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
+    "/api/v1/app/public/files/{id}": {
+      "get": {
+        "operationId": "PublicFilesController_download",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "file_uploads id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Workspace-Id",
+            "in": "header",
+            "required": false,
+            "description": "Partner / ISV only: UUID of the workspace that owns the client company. Required together with X-Acting-Company-Id when scoping product APIs to a merchant. See /getting-started/multi-tenancy.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "b03fa178-67bd-4378-a5aa-d169c01ccb6f"
+          },
+          {
+            "name": "X-Acting-Company-Id",
+            "in": "header",
+            "required": false,
+            "description": "Partner / ISV only: UUID of the client company to act on. Must belong to the workspace in X-Workspace-Id.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "ab2df10a-c66c-4bef-b7d6-efda26cca494"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Public image bytes",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/ApiResponseDto"
+                    },
+                    {
+                      "properties": {
+                        "data": {
+                          "description": "Endpoint-specific payload"
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed or invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid JWT / API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Token valid but insufficient permission for this operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside caller scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Download a public image file by ID (no JWT)",
+        "tags": [
+          "Public files"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X GET \"$FLUIDE_BASE_URL/api/v1/app/public/files/string\" \\\n  -H \"Authorization: Bearer $FLUIDE_ACCESS_TOKEN\" \\\n  -H \"X-Fluide-Api-Key: $FLUIDE_API_KEY\" \\\n  -H \"X-Fluide-Client-Id: fluide-developer\" \\\n  -H \"X-Workspace-Id: $FLUIDE_WORKSPACE_ID\" \\\n  -H \"X-Acting-Company-Id: $FLUIDE_COMPANY_ID\""
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/app/public/files/string`, {\n  method: 'GET',\n  headers: {\n    Authorization: `Bearer ${process.env.FLUIDE_ACCESS_TOKEN}`,\n    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,\n    'X-Fluide-Client-Id': 'fluide-developer',\n    'X-Workspace-Id': process.env.FLUIDE_WORKSPACE_ID,\n    'X-Acting-Company-Id': process.env.FLUIDE_COMPANY_ID,\n  },\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n        \"Authorization\": f\"Bearer {os.environ['FLUIDE_ACCESS_TOKEN']}\",\n        \"X-Fluide-Api-Key\": os.environ[\"FLUIDE_API_KEY\"],\n        \"X-Fluide-Client-Id\": \"fluide-developer\",\n        \"X-Workspace-Id\": os.environ[\"FLUIDE_WORKSPACE_ID\"],\n        \"X-Acting-Company-Id\": os.environ[\"FLUIDE_COMPANY_ID\"],\n}\n\nresponse = requests.get(\n    f\"{base_url}/api/v1/app/public/files/string\",\n    headers=headers,\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/app/public/files/string\"))\n    .header(\"Authorization\", \"Bearer \" + System.getenv(\"FLUIDE_ACCESS_TOKEN\"))\n    .header(\"X-Fluide-Api-Key\", System.getenv(\"FLUIDE_API_KEY\"))\n    .header(\"X-Fluide-Client-Id\", \"fluide-developer\")\n    .header(\"X-Workspace-Id\", System.getenv(\"FLUIDE_WORKSPACE_ID\"))\n    .header(\"X-Acting-Company-Id\", System.getenv(\"FLUIDE_COMPANY_ID\"))\n    .GET(HttpRequest.BodyPublishers.noBody())\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/app/public/files/string\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'GET',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'X-Fluide-Api-Key: ' . getenv('FLUIDE_API_KEY'),\n        'X-Fluide-Client-Id: fluide-developer',\n        'X-Workspace-Id: ' . getenv('FLUIDE_WORKSPACE_ID'),\n        'X-Acting-Company-Id: ' . getenv('FLUIDE_COMPANY_ID'),\n    ],\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      },
+      "head": {
+        "operationId": "PublicFilesController_head",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "file_uploads id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Workspace-Id",
+            "in": "header",
+            "required": false,
+            "description": "Partner / ISV only: UUID of the workspace that owns the client company. Required together with X-Acting-Company-Id when scoping product APIs to a merchant. See /getting-started/multi-tenancy.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "b03fa178-67bd-4378-a5aa-d169c01ccb6f"
+          },
+          {
+            "name": "X-Acting-Company-Id",
+            "in": "header",
+            "required": false,
+            "description": "Partner / ISV only: UUID of the client company to act on. Must belong to the workspace in X-Workspace-Id.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "ab2df10a-c66c-4bef-b7d6-efda26cca494"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "400": {
+            "description": "Validation failed or invalid request parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid JWT / API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Token valid but insufficient permission for this operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Resource not found or outside caller scope",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "summary": "HEAD for a public image (CDN / browser preflight)",
+        "tags": [
+          "Public files"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X HEAD \"$FLUIDE_BASE_URL/api/v1/app/public/files/string\" \\\n  -H \"Authorization: Bearer $FLUIDE_ACCESS_TOKEN\" \\\n  -H \"X-Fluide-Api-Key: $FLUIDE_API_KEY\" \\\n  -H \"X-Fluide-Client-Id: fluide-developer\" \\\n  -H \"X-Workspace-Id: $FLUIDE_WORKSPACE_ID\" \\\n  -H \"X-Acting-Company-Id: $FLUIDE_COMPANY_ID\""
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/app/public/files/string`, {\n  method: 'HEAD',\n  headers: {\n    Authorization: `Bearer ${process.env.FLUIDE_ACCESS_TOKEN}`,\n    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,\n    'X-Fluide-Client-Id': 'fluide-developer',\n    'X-Workspace-Id': process.env.FLUIDE_WORKSPACE_ID,\n    'X-Acting-Company-Id': process.env.FLUIDE_COMPANY_ID,\n  },\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n        \"Authorization\": f\"Bearer {os.environ['FLUIDE_ACCESS_TOKEN']}\",\n        \"X-Fluide-Api-Key\": os.environ[\"FLUIDE_API_KEY\"],\n        \"X-Fluide-Client-Id\": \"fluide-developer\",\n        \"X-Workspace-Id\": os.environ[\"FLUIDE_WORKSPACE_ID\"],\n        \"X-Acting-Company-Id\": os.environ[\"FLUIDE_COMPANY_ID\"],\n}\n\nresponse = requests.head(\n    f\"{base_url}/api/v1/app/public/files/string\",\n    headers=headers,\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/app/public/files/string\"))\n    .header(\"Authorization\", \"Bearer \" + System.getenv(\"FLUIDE_ACCESS_TOKEN\"))\n    .header(\"X-Fluide-Api-Key\", System.getenv(\"FLUIDE_API_KEY\"))\n    .header(\"X-Fluide-Client-Id\", \"fluide-developer\")\n    .header(\"X-Workspace-Id\", System.getenv(\"FLUIDE_WORKSPACE_ID\"))\n    .header(\"X-Acting-Company-Id\", System.getenv(\"FLUIDE_COMPANY_ID\"))\n    .HEAD(HttpRequest.BodyPublishers.noBody())\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/app/public/files/string\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'HEAD',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'X-Fluide-Api-Key: ' . getenv('FLUIDE_API_KEY'),\n        'X-Fluide-Client-Id: fluide-developer',\n        'X-Workspace-Id: ' . getenv('FLUIDE_WORKSPACE_ID'),\n        'X-Acting-Company-Id: ' . getenv('FLUIDE_COMPANY_ID'),\n    ],\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
           }
         ]
       }
@@ -7508,6 +8529,182 @@
         ]
       }
     },
+    "/api/v1/app/internal/document-jobs": {
+      "post": {
+        "operationId": "InternalDocumentJobsController_create",
+        "parameters": [
+          {
+            "name": "X-Workspace-Id",
+            "in": "header",
+            "required": false,
+            "description": "Partner / ISV only: UUID of the workspace that owns the client company. Required together with X-Acting-Company-Id when scoping product APIs to a merchant. See /getting-started/multi-tenancy.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "b03fa178-67bd-4378-a5aa-d169c01ccb6f"
+          },
+          {
+            "name": "X-Acting-Company-Id",
+            "in": "header",
+            "required": false,
+            "description": "Partner / ISV only: UUID of the client company to act on. Must belong to the workspace in X-Workspace-Id.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "ab2df10a-c66c-4bef-b7d6-efda26cca494"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InternalCreateDocumentJobDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentJob"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Enqueue a document job from a trusted microservice",
+        "tags": [
+          "Internal Document Jobs"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X POST \"$FLUIDE_BASE_URL/api/v1/app/internal/document-jobs\" \\\n  -H \"Authorization: Bearer $FLUIDE_ACCESS_TOKEN\" \\\n  -H \"X-Fluide-Api-Key: $FLUIDE_API_KEY\" \\\n  -H \"X-Fluide-Client-Id: fluide-developer\" \\\n  -H \"X-Workspace-Id: $FLUIDE_WORKSPACE_ID\" \\\n  -H \"X-Acting-Company-Id: $FLUIDE_COMPANY_ID\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{}'"
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/app/internal/document-jobs`, {\n  method: 'POST',\n  headers: {\n    Authorization: `Bearer ${process.env.FLUIDE_ACCESS_TOKEN}`,\n    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,\n    'X-Fluide-Client-Id': 'fluide-developer',\n    'X-Workspace-Id': process.env.FLUIDE_WORKSPACE_ID,\n    'X-Acting-Company-Id': process.env.FLUIDE_COMPANY_ID,\n    'Content-Type': 'application/json',\n  },\n  body: JSON.stringify({}),\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n        \"Authorization\": f\"Bearer {os.environ['FLUIDE_ACCESS_TOKEN']}\",\n        \"X-Fluide-Api-Key\": os.environ[\"FLUIDE_API_KEY\"],\n        \"X-Fluide-Client-Id\": \"fluide-developer\",\n        \"X-Workspace-Id\": os.environ[\"FLUIDE_WORKSPACE_ID\"],\n        \"X-Acting-Company-Id\": os.environ[\"FLUIDE_COMPANY_ID\"],\n}\n\nresponse = requests.post(\n    f\"{base_url}/api/v1/app/internal/document-jobs\",\n    headers=headers,\n    json={},\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/app/internal/document-jobs\"))\n    .header(\"Authorization\", \"Bearer \" + System.getenv(\"FLUIDE_ACCESS_TOKEN\"))\n    .header(\"X-Fluide-Api-Key\", System.getenv(\"FLUIDE_API_KEY\"))\n    .header(\"X-Fluide-Client-Id\", \"fluide-developer\")\n    .header(\"X-Workspace-Id\", System.getenv(\"FLUIDE_WORKSPACE_ID\"))\n    .header(\"X-Acting-Company-Id\", System.getenv(\"FLUIDE_COMPANY_ID\"))\n    .header(\"Content-Type\", \"application/json\")\n    .POST(HttpRequest.BodyPublishers.ofString(\"{}\"))\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/app/internal/document-jobs\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'POST',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'X-Fluide-Api-Key: ' . getenv('FLUIDE_API_KEY'),\n        'X-Fluide-Client-Id: fluide-developer',\n        'X-Workspace-Id: ' . getenv('FLUIDE_WORKSPACE_ID'),\n        'X-Acting-Company-Id: ' . getenv('FLUIDE_COMPANY_ID'),\n        'Content-Type: application/json',\n    ],\n    CURLOPT_POSTFIELDS => \"{}\",\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
+    "/api/v1/app/internal/document-jobs/{id}": {
+      "get": {
+        "operationId": "InternalDocumentJobsController_getOne",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "X-Workspace-Id",
+            "in": "header",
+            "required": false,
+            "description": "Partner / ISV only: UUID of the workspace that owns the client company. Required together with X-Acting-Company-Id when scoping product APIs to a merchant. See /getting-started/multi-tenancy.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "b03fa178-67bd-4378-a5aa-d169c01ccb6f"
+          },
+          {
+            "name": "X-Acting-Company-Id",
+            "in": "header",
+            "required": false,
+            "description": "Partner / ISV only: UUID of the client company to act on. Must belong to the workspace in X-Workspace-Id.",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "example": "ab2df10a-c66c-4bef-b7d6-efda26cca494"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DocumentJob"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Get document job status for internal reconciliation",
+        "tags": [
+          "Internal Document Jobs"
+        ],
+        "security": [
+          {
+            "bearer": [],
+            "fluideApiKey": [],
+            "fluideClientId": []
+          }
+        ],
+        "x-codeSamples": [
+          {
+            "lang": "bash",
+            "label": "cURL",
+            "source": "curl -sS -X GET \"$FLUIDE_BASE_URL/api/v1/app/internal/document-jobs/string\" \\\n  -H \"Authorization: Bearer $FLUIDE_ACCESS_TOKEN\" \\\n  -H \"X-Fluide-Api-Key: $FLUIDE_API_KEY\" \\\n  -H \"X-Fluide-Client-Id: fluide-developer\" \\\n  -H \"X-Workspace-Id: $FLUIDE_WORKSPACE_ID\" \\\n  -H \"X-Acting-Company-Id: $FLUIDE_COMPANY_ID\""
+          },
+          {
+            "lang": "node",
+            "label": "Node.js",
+            "source": "const baseUrl = process.env.FLUIDE_BASE_URL;\n\nconst response = await fetch(`${baseUrl}/api/v1/app/internal/document-jobs/string`, {\n  method: 'GET',\n  headers: {\n    Authorization: `Bearer ${process.env.FLUIDE_ACCESS_TOKEN}`,\n    'X-Fluide-Api-Key': process.env.FLUIDE_API_KEY,\n    'X-Fluide-Client-Id': 'fluide-developer',\n    'X-Workspace-Id': process.env.FLUIDE_WORKSPACE_ID,\n    'X-Acting-Company-Id': process.env.FLUIDE_COMPANY_ID,\n  },\n});\n\nif (!response.ok) throw new Error(`HTTP ${response.status}: ${await response.text()}`);\nconsole.log(await response.json());"
+          },
+          {
+            "lang": "python",
+            "label": "Python",
+            "source": "import os\nimport requests\n\nbase_url = os.environ[\"FLUIDE_BASE_URL\"]\nheaders = {\n        \"Authorization\": f\"Bearer {os.environ['FLUIDE_ACCESS_TOKEN']}\",\n        \"X-Fluide-Api-Key\": os.environ[\"FLUIDE_API_KEY\"],\n        \"X-Fluide-Client-Id\": \"fluide-developer\",\n        \"X-Workspace-Id\": os.environ[\"FLUIDE_WORKSPACE_ID\"],\n        \"X-Acting-Company-Id\": os.environ[\"FLUIDE_COMPANY_ID\"],\n}\n\nresponse = requests.get(\n    f\"{base_url}/api/v1/app/internal/document-jobs/string\",\n    headers=headers,\n    timeout=30,\n)\nresponse.raise_for_status()\nprint(response.json())"
+          },
+          {
+            "lang": "java",
+            "label": "Java",
+            "source": "import java.net.URI;\nimport java.net.http.HttpClient;\nimport java.net.http.HttpRequest;\nimport java.net.http.HttpResponse;\n\nString baseUrl = System.getenv(\"FLUIDE_BASE_URL\");\nHttpClient client = HttpClient.newHttpClient();\nHttpRequest.Builder builder = HttpRequest.newBuilder()\n    .uri(URI.create(baseUrl + \"/api/v1/app/internal/document-jobs/string\"))\n    .header(\"Authorization\", \"Bearer \" + System.getenv(\"FLUIDE_ACCESS_TOKEN\"))\n    .header(\"X-Fluide-Api-Key\", System.getenv(\"FLUIDE_API_KEY\"))\n    .header(\"X-Fluide-Client-Id\", \"fluide-developer\")\n    .header(\"X-Workspace-Id\", System.getenv(\"FLUIDE_WORKSPACE_ID\"))\n    .header(\"X-Acting-Company-Id\", System.getenv(\"FLUIDE_COMPANY_ID\"))\n    .GET(HttpRequest.BodyPublishers.noBody())\n    .build();\nHttpResponse<String> response = client.send(builder.build(), HttpResponse.BodyHandlers.ofString());\nif (response.statusCode() >= 400) throw new RuntimeException(\"HTTP \" + response.statusCode() + \": \" + response.body());\nSystem.out.println(response.body());"
+          },
+          {
+            "lang": "php",
+            "label": "PHP",
+            "source": "<?php\n$baseUrl = getenv(\"FLUIDE_BASE_URL\");\n$ch = curl_init($baseUrl . \"/api/v1/app/internal/document-jobs/string\");\ncurl_setopt_array($ch, [\n    CURLOPT_RETURNTRANSFER => true,\n    CURLOPT_CUSTOMREQUEST => 'GET',\n    CURLOPT_HTTPHEADER => [\n        'Authorization: Bearer ' . getenv('FLUIDE_ACCESS_TOKEN'),\n        'X-Fluide-Api-Key: ' . getenv('FLUIDE_API_KEY'),\n        'X-Fluide-Client-Id: fluide-developer',\n        'X-Workspace-Id: ' . getenv('FLUIDE_WORKSPACE_ID'),\n        'X-Acting-Company-Id: ' . getenv('FLUIDE_COMPANY_ID'),\n    ],\n]);\n$response = curl_exec($ch);\nif ($response === false) throw new RuntimeException(curl_error($ch));\n$status = curl_getinfo($ch, CURLINFO_HTTP_CODE);\nif ($status >= 400) throw new RuntimeException(\"HTTP $status: $response\");\necho $response;"
+          }
+        ]
+      }
+    },
     "/api/v1/app/documents/registry": {
       "get": {
         "operationId": "DocumentManagementController_list",
@@ -8157,6 +9354,9 @@
       "name": "Internal Files"
     },
     {
+      "name": "Public files"
+    },
+    {
       "name": "Documents",
       "description": "Generate payslips, invoices, financial reports, and other PDF or spreadsheet artifacts."
     },
@@ -8173,17 +9373,20 @@
       "name": "Document jobs"
     },
     {
-      "name": "Document management"
+      "name": "Internal Document Jobs"
     },
     {
-      "name": "Authorize",
-      "description": "Exchange API key and secret for a machine JWT, read developer metadata, rotate secrets, and manage API billing."
+      "name": "Document management"
     }
   ],
   "servers": [
     {
       "url": "https://test.api.fluidehr.com",
-      "description": "API"
+      "description": "Sandbox"
+    },
+    {
+      "url": "https://api.fluideglobal.com",
+      "description": "Production"
     }
   ],
   "components": {
@@ -8384,6 +9587,43 @@
           "engagementId"
         ]
       },
+      "UpdatePreferenceDto": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "enum": [
+              "assigned",
+              "approval",
+              "mention",
+              "comment",
+              "calendar",
+              "drive",
+              "crm",
+              "due",
+              "general"
+            ]
+          },
+          "inApp": {
+            "type": "boolean"
+          },
+          "email": {
+            "type": "boolean"
+          },
+          "push": {
+            "type": "boolean"
+          },
+          "sms": {
+            "type": "boolean"
+          },
+          "whatsapp": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "category"
+        ]
+      },
       "InternalSaveBufferDto": {
         "type": "object",
         "properties": {
@@ -8419,6 +9659,80 @@
           "originalName",
           "mimeType",
           "contentBase64"
+        ]
+      },
+      "InternalCreateUploadSessionDto": {
+        "type": "object",
+        "properties": {
+          "organizationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "uploadedBy": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "originalName": {
+            "type": "string",
+            "maxLength": 512
+          },
+          "mimeType": {
+            "type": "string",
+            "maxLength": 120
+          },
+          "expectedSize": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 5368709120
+          }
+        },
+        "required": [
+          "organizationId",
+          "uploadedBy",
+          "originalName",
+          "mimeType",
+          "expectedSize"
+        ]
+      },
+      "UploadPartDto": {
+        "type": "object",
+        "properties": {
+          "partNumber": {
+            "type": "number",
+            "minimum": 1
+          },
+          "etag": {
+            "type": "string",
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "partNumber",
+          "etag"
+        ]
+      },
+      "InternalCompleteUploadSessionDto": {
+        "type": "object",
+        "properties": {
+          "organizationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "parts": {
+            "minItems": 1,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UploadPartDto"
+            }
+          },
+          "contentSha256": {
+            "type": "string",
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "organizationId",
+          "parts"
         ]
       },
       "PayslipBrandingDto": {
@@ -8659,6 +9973,27 @@
           "lineTotal"
         ]
       },
+      "IssuerBrandingDto": {
+        "type": "object",
+        "properties": {
+          "displayName": {
+            "type": "string",
+            "maxLength": 255
+          },
+          "logoUrl": {
+            "type": "string",
+            "maxLength": 2048
+          },
+          "primaryColor": {
+            "type": "string",
+            "maxLength": 32
+          },
+          "footerText": {
+            "type": "string",
+            "maxLength": 500
+          }
+        }
+      },
       "GenerateAccountingDocumentPdfDto": {
         "type": "object",
         "properties": {
@@ -8708,6 +10043,9 @@
           },
           "total": {
             "type": "number"
+          },
+          "issuerBranding": {
+            "$ref": "#/components/schemas/IssuerBrandingDto"
           }
         },
         "required": [
@@ -9765,6 +11103,14 @@
           "transactionReference": {
             "type": "string",
             "maxLength": 128
+          },
+          "issuerBranding": {
+            "$ref": "#/components/schemas/IssuerBrandingDto"
+          },
+          "collectedFieldsSummary": {
+            "type": "string",
+            "maxLength": 4000,
+            "description": "Formatted payer details collected at checkout"
           }
         },
         "required": [
@@ -10389,6 +11735,123 @@
           "sourceService",
           "jobKind",
           "correlationId"
+        ]
+      },
+      "InternalCreateDocumentJobDto": {
+        "type": "object",
+        "properties": {
+          "organizationId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "requestedByUserId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "sourceService": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 64,
+            "example": "fluide-crm"
+          },
+          "jobKind": {
+            "type": "string",
+            "minLength": 2,
+            "maxLength": 64,
+            "example": "DATA_IMPORT_PARSE"
+          },
+          "correlationId": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 64
+          },
+          "requestPayload": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "required": [
+          "organizationId",
+          "requestedByUserId",
+          "sourceService",
+          "jobKind",
+          "correlationId"
+        ]
+      },
+      "DocumentJob": {
+        "type": "object",
+        "properties": {
+          "organizationId": {
+            "type": "string"
+          },
+          "requestedByUserId": {
+            "type": "string"
+          },
+          "sourceService": {
+            "type": "string",
+            "description": "e.g. fluide-books"
+          },
+          "jobKind": {
+            "type": "string",
+            "description": "e.g. STATEMENT_EXPORT_BUNDLE, GENERIC_BYTES"
+          },
+          "correlationId": {
+            "type": "string",
+            "description": "Idempotency key from producer (e.g. books statement_export.id)"
+          },
+          "status": {
+            "enum": [
+              "PENDING",
+              "PROCESSING",
+              "COMPLETED",
+              "FAILED",
+              "CANCELLED"
+            ],
+            "type": "string"
+          },
+          "requestPayload": {
+            "type": "object"
+          },
+          "resultFileIds": {
+            "nullable": true,
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "errorMessage": {
+            "type": "string",
+            "nullable": true
+          },
+          "id": {
+            "type": "string"
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "deletedAt": {
+            "format": "date-time",
+            "type": "string"
+          }
+        },
+        "required": [
+          "organizationId",
+          "requestedByUserId",
+          "sourceService",
+          "jobKind",
+          "correlationId",
+          "status",
+          "requestPayload",
+          "resultFileIds",
+          "errorMessage",
+          "id",
+          "createdAt",
+          "updatedAt"
         ]
       },
       "RegisterDocumentDto": {

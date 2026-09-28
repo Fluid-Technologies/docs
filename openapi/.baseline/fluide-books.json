@@ -1435,7 +1435,7 @@
             "bearer": []
           }
         ],
-        "summary": "Create a hosted payment link for an invoice (Stripe Checkout via FluidePay)",
+        "summary": "Create a hosted payment link for an invoice",
         "tags": [
           "Invoices"
         ]
@@ -6044,21 +6044,6 @@
         ]
       }
     },
-    "/api/v1/internal/payments/stripe/checkout-session-completed": {
-      "post": {
-        "operationId": "InternalPaymentsController_stripeCheckoutCompleted",
-        "parameters": [],
-        "responses": {
-          "201": {
-            "description": ""
-          }
-        },
-        "summary": "Reconcile invoice allocation from Stripe checkout.session.completed (internal)",
-        "tags": [
-          "Internal Payments"
-        ]
-      }
-    },
     "/api/v1/internal/payments/collection/completed": {
       "post": {
         "operationId": "InternalPaymentsController_collectionCompleted",
@@ -6717,7 +6702,7 @@
           },
           "email": {
             "type": "string",
-            "description": "Customer email for Flutterwave customer creation"
+            "description": "Customer email for checkout"
           },
           "momoCountryCode": {
             "type": "string",
@@ -6737,7 +6722,7 @@
           },
           "cardNumber": {
             "type": "string",
-            "description": "Plain card number (Flutterwave card collect)"
+            "description": "Plain card number"
           },
           "cardExpiryMonth": {
             "type": "string"
