@@ -242,6 +242,8 @@ function stripMintlifyInvalidFields(value) {
   const out = {};
   for (const [key, child] of Object.entries(value)) {
     if (key === "examples") continue;
+    // Mintlify's parser treats `required: []` as a broken $ref and fails the whole file.
+    if (key === "required" && Array.isArray(child) && child.length === 0) continue;
     out[key] = stripMintlifyInvalidFields(child);
   }
   return out;

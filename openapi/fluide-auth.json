@@ -32325,8 +32325,7 @@
               "stage": {
                 "type": "object"
               }
-            },
-            "required": []
+            }
           },
           "readinessAssessment": {
             "type": "object"
